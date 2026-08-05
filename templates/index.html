@@ -7,6 +7,8 @@
     <meta name="description" content="Free online document converter. Merge, split, compress, and convert PDFs, Word, Excel, PowerPoint, and Image files securely. 100% free with no registration.">
     <meta name="keywords" content="PDF converter, merge PDF, split PDF, compress PDF, PDF to Word, Word to PDF, Excel to PDF, PPT to PDF, Image converter, online PDF tools">
     <meta name="robots" content="index, follow">
+    <meta name="application-name" content="Smart File Converter">
+    <meta name="agentic-browser" content="enabled">
     <meta property="og:title" content="Smart File Converter - All Your Document Tools in One Place">
     <meta property="og:description" content="Convert, compress, merge, translate and edit PDFs, Word documents, Excel sheets, and Images for free online securely and instantly.">
     <meta property="og:type" content="website">
@@ -31,13 +33,12 @@
     }
     </script>
 
-    <!-- Tailwind CSS Engine -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Google Fonts -->
+    <!-- Performance Preconnect & Deferred CSS Engine -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com" defer></script>
 
     <style>
         body {
@@ -45,6 +46,8 @@
             min-height: 100vh;
             font-family: 'Inter', sans-serif;
             color: #2d3748;
+            padding: 1.5rem;
+            margin: 0;
         }
         .tool-card {
             background: white;
@@ -53,6 +56,11 @@
             transition: all 0.2s ease;
             cursor: pointer;
             border: 1px solid #e2e8f0;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
         }
         .tool-card:hover, .tool-card:focus {
             transform: translateY(-4px);
@@ -64,6 +72,7 @@
             background: white;
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
         }
         .drag-area {
             border: 2px dashed #4f46e5;
@@ -86,9 +95,10 @@
             width: 0%;
             transition: width 0.3s ease;
         }
+        .hidden { display: none !important; }
     </style>
 </head>
-<body class="p-6">
+<body>
 
     <!-- HEADER -->
     <header class="text-center mb-10">
@@ -99,103 +109,103 @@
     <!-- GRID VIEW (Static HTML DOM for 3/3 Agentic Browsing & 100% SEO) -->
     <main id="gridContainer" class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         
-        <div id="tool-card-merge-pdf" role="button" tabindex="0" aria-label="Merge PDF - Combine multiple PDFs into one." onclick="openWorkspaceById('merge-pdf')" class="tool-card p-6 flex flex-col items-center text-center">
+        <div id="tool-card-merge-pdf" role="button" tabindex="0" aria-label="Merge PDF - Combine multiple PDFs into one." onclick="openWorkspaceById('merge-pdf')" class="tool-card">
             <div class="text-4xl mb-4" aria-hidden="true">📝</div>
             <h2 id="tool-title-merge-pdf" class="text-lg font-bold text-gray-900 mb-2">Merge PDF</h2>
             <p class="text-sm text-gray-600">Combine multiple PDFs into one.</p>
         </div>
 
-        <div id="tool-card-split-pdf" role="button" tabindex="0" aria-label="Split PDF - Separate pages into multiple PDFs." onclick="openWorkspaceById('split-pdf')" class="tool-card p-6 flex flex-col items-center text-center">
+        <div id="tool-card-split-pdf" role="button" tabindex="0" aria-label="Split PDF - Separate pages into multiple PDFs." onclick="openWorkspaceById('split-pdf')" class="tool-card">
             <div class="text-4xl mb-4" aria-hidden="true">✂️</div>
             <h2 id="tool-title-split-pdf" class="text-lg font-bold text-gray-900 mb-2">Split PDF</h2>
             <p class="text-sm text-gray-600">Separate pages into multiple PDFs.</p>
         </div>
 
-        <div id="tool-card-compress-pdf" role="button" tabindex="0" aria-label="Compress PDF - Reduce file size while saving quality." onclick="openWorkspaceById('compress-pdf')" class="tool-card p-6 flex flex-col items-center text-center">
+        <div id="tool-card-compress-pdf" role="button" tabindex="0" aria-label="Compress PDF - Reduce file size while saving quality." onclick="openWorkspaceById('compress-pdf')" class="tool-card">
             <div class="text-4xl mb-4" aria-hidden="true">🗜️</div>
             <h2 id="tool-title-compress-pdf" class="text-lg font-bold text-gray-900 mb-2">Compress PDF</h2>
             <p class="text-sm text-gray-600">Reduce file size while saving quality.</p>
         </div>
 
-        <div id="tool-card-pdf-to-word" role="button" tabindex="0" aria-label="PDF to Word - Convert PDFs to editable DOCX." onclick="openWorkspaceById('pdf-to-word')" class="tool-card p-6 flex flex-col items-center text-center">
+        <div id="tool-card-pdf-to-word" role="button" tabindex="0" aria-label="PDF to Word - Convert PDFs to editable DOCX." onclick="openWorkspaceById('pdf-to-word')" class="tool-card">
             <div class="text-4xl mb-4" aria-hidden="true">📝</div>
             <h2 id="tool-title-pdf-to-word" class="text-lg font-bold text-gray-900 mb-2">PDF to Word</h2>
             <p class="text-sm text-gray-600">Convert PDFs to editable DOCX.</p>
         </div>
 
-        <div id="tool-card-pdf-to-ppt" role="button" tabindex="0" aria-label="PDF to PPT - Convert PDFs to PowerPoint slides." onclick="openWorkspaceById('pdf-to-ppt')" class="tool-card p-6 flex flex-col items-center text-center">
+        <div id="tool-card-pdf-to-ppt" role="button" tabindex="0" aria-label="PDF to PPT - Convert PDFs to PowerPoint slides." onclick="openWorkspaceById('pdf-to-ppt')" class="tool-card">
             <div class="text-4xl mb-4" aria-hidden="true">📊</div>
             <h2 id="tool-title-pdf-to-ppt" class="text-lg font-bold text-gray-900 mb-2">PDF to PPT</h2>
             <p class="text-sm text-gray-600">Convert PDFs to PowerPoint slides.</p>
         </div>
 
-        <div id="tool-card-pdf-to-excel" role="button" tabindex="0" aria-label="PDF to Excel - Extract PDF tables to spreadsheet." onclick="openWorkspaceById('pdf-to-excel')" class="tool-card p-6 flex flex-col items-center text-center">
+        <div id="tool-card-pdf-to-excel" role="button" tabindex="0" aria-label="PDF to Excel - Extract PDF tables to spreadsheet." onclick="openWorkspaceById('pdf-to-excel')" class="tool-card">
             <div class="text-4xl mb-4" aria-hidden="true">📈</div>
             <h2 id="tool-title-pdf-to-excel" class="text-lg font-bold text-gray-900 mb-2">PDF to Excel</h2>
             <p class="text-sm text-gray-600">Extract PDF tables to spreadsheet.</p>
         </div>
 
-        <div id="tool-card-word-to-pdf" role="button" tabindex="0" aria-label="Word to PDF - Convert DOCX to standard PDF." onclick="openWorkspaceById('word-to-pdf')" class="tool-card p-6 flex flex-col items-center text-center">
+        <div id="tool-card-word-to-pdf" role="button" tabindex="0" aria-label="Word to PDF - Convert DOCX to standard PDF." onclick="openWorkspaceById('word-to-pdf')" class="tool-card">
             <div class="text-4xl mb-4" aria-hidden="true">📄</div>
             <h2 id="tool-title-word-to-pdf" class="text-lg font-bold text-gray-900 mb-2">Word to PDF</h2>
             <p class="text-sm text-gray-600">Convert DOCX to standard PDF.</p>
         </div>
 
-        <div id="tool-card-ppt-to-pdf" role="button" tabindex="0" aria-label="PPT to PDF - Make PowerPoint slides a PDF." onclick="openWorkspaceById('ppt-to-pdf')" class="tool-card p-6 flex flex-col items-center text-center">
+        <div id="tool-card-ppt-to-pdf" role="button" tabindex="0" aria-label="PPT to PDF - Make PowerPoint slides a PDF." onclick="openWorkspaceById('ppt-to-pdf')" class="tool-card">
             <div class="text-4xl mb-4" aria-hidden="true">📄</div>
             <h2 id="tool-title-ppt-to-pdf" class="text-lg font-bold text-gray-900 mb-2">PPT to PDF</h2>
             <p class="text-sm text-gray-600">Make PowerPoint slides a PDF.</p>
         </div>
 
-        <div id="tool-card-excel-to-pdf" role="button" tabindex="0" aria-label="Excel to PDF - Make spreadsheets into a PDF." onclick="openWorkspaceById('excel-to-pdf')" class="tool-card p-6 flex flex-col items-center text-center">
+        <div id="tool-card-excel-to-pdf" role="button" tabindex="0" aria-label="Excel to PDF - Make spreadsheets into a PDF." onclick="openWorkspaceById('excel-to-pdf')" class="tool-card">
             <div class="text-4xl mb-4" aria-hidden="true">📄</div>
             <h2 id="tool-title-excel-to-pdf" class="text-lg font-bold text-gray-900 mb-2">Excel to PDF</h2>
             <p class="text-sm text-gray-600">Make spreadsheets into a PDF.</p>
         </div>
 
-        <div id="tool-card-pdf-to-jpg" role="button" tabindex="0" aria-label="PDF to JPG - Extract PDF pages as images." onclick="openWorkspaceById('pdf-to-jpg')" class="tool-card p-6 flex flex-col items-center text-center">
+        <div id="tool-card-pdf-to-jpg" role="button" tabindex="0" aria-label="PDF to JPG - Extract PDF pages as images." onclick="openWorkspaceById('pdf-to-jpg')" class="tool-card">
             <div class="text-4xl mb-4" aria-hidden="true">🖼️</div>
             <h2 id="tool-title-pdf-to-jpg" class="text-lg font-bold text-gray-900 mb-2">PDF to JPG</h2>
             <p class="text-sm text-gray-600">Extract PDF pages as images.</p>
         </div>
 
-        <div id="tool-card-jpg-to-pdf" role="button" tabindex="0" aria-label="JPG to PDF - Combine images into a PDF." onclick="openWorkspaceById('jpg-to-pdf')" class="tool-card p-6 flex flex-col items-center text-center">
+        <div id="tool-card-jpg-to-pdf" role="button" tabindex="0" aria-label="JPG to PDF - Combine images into a PDF." onclick="openWorkspaceById('jpg-to-pdf')" class="tool-card">
             <div class="text-4xl mb-4" aria-hidden="true">🖼️</div>
             <h2 id="tool-title-jpg-to-pdf" class="text-lg font-bold text-gray-900 mb-2">JPG to PDF</h2>
             <p class="text-sm text-gray-600">Combine images into a PDF.</p>
         </div>
 
-        <div id="tool-card-unlock-pdf" role="button" tabindex="0" aria-label="Unlock PDF - Remove password restrictions." onclick="openWorkspaceById('unlock-pdf')" class="tool-card p-6 flex flex-col items-center text-center">
+        <div id="tool-card-unlock-pdf" role="button" tabindex="0" aria-label="Unlock PDF - Remove password restrictions." onclick="openWorkspaceById('unlock-pdf')" class="tool-card">
             <div class="text-4xl mb-4" aria-hidden="true">🔓</div>
             <h2 id="tool-title-unlock-pdf" class="text-lg font-bold text-gray-900 mb-2">Unlock PDF</h2>
             <p class="text-sm text-gray-600">Remove password restrictions.</p>
         </div>
 
-        <div id="tool-card-protect-pdf" role="button" tabindex="0" aria-label="Protect PDF - Add password to secure your PDF." onclick="openWorkspaceById('protect-pdf')" class="tool-card p-6 flex flex-col items-center text-center">
+        <div id="tool-card-protect-pdf" role="button" tabindex="0" aria-label="Protect PDF - Add password to secure your PDF." onclick="openWorkspaceById('protect-pdf')" class="tool-card">
             <div class="text-4xl mb-4" aria-hidden="true">🔒</div>
             <h2 id="tool-title-protect-pdf" class="text-lg font-bold text-gray-900 mb-2">Protect PDF</h2>
             <p class="text-sm text-gray-600">Add password to secure your PDF.</p>
         </div>
 
-        <div id="tool-card-page-numbers" role="button" tabindex="0" aria-label="Page Numbers - Stamp page numbers to a PDF." onclick="openWorkspaceById('page-numbers')" class="tool-card p-6 flex flex-col items-center text-center">
+        <div id="tool-card-page-numbers" role="button" tabindex="0" aria-label="Page Numbers - Stamp page numbers to a PDF." onclick="openWorkspaceById('page-numbers')" class="tool-card">
             <div class="text-4xl mb-4" aria-hidden="true">🔢</div>
             <h2 id="tool-title-page-numbers" class="text-lg font-bold text-gray-900 mb-2">Page Numbers</h2>
             <p class="text-sm text-gray-600">Stamp page numbers to a PDF.</p>
         </div>
 
-        <div id="tool-card-translate-pdf" role="button" tabindex="0" aria-label="Translate PDF - Extract and translate PDF text." onclick="openWorkspaceById('translate-pdf')" class="tool-card p-6 flex flex-col items-center text-center">
+        <div id="tool-card-translate-pdf" role="button" tabindex="0" aria-label="Translate PDF - Extract and translate PDF text." onclick="openWorkspaceById('translate-pdf')" class="tool-card">
             <div class="text-4xl mb-4" aria-hidden="true">🌍</div>
             <h2 id="tool-title-translate-pdf" class="text-lg font-bold text-gray-900 mb-2">Translate PDF</h2>
             <p class="text-sm text-gray-600">Extract and translate PDF text.</p>
         </div>
 
-        <div id="tool-card-compress-image" role="button" tabindex="0" aria-label="Compress Image - Squeeze images to target KB." onclick="openWorkspaceById('compress-image')" class="tool-card p-6 flex flex-col items-center text-center">
+        <div id="tool-card-compress-image" role="button" tabindex="0" aria-label="Compress Image - Squeeze images to target KB." onclick="openWorkspaceById('compress-image')" class="tool-card">
             <div class="text-4xl mb-4" aria-hidden="true">🗜️</div>
             <h2 id="tool-title-compress-image" class="text-lg font-bold text-gray-900 mb-2">Compress Image</h2>
             <p class="text-sm text-gray-600">Squeeze images to target KB.</p>
         </div>
 
-        <div id="tool-card-convert-image-format" role="button" tabindex="0" aria-label="Convert Image - Change format PNG, JPG, WEBP." onclick="openWorkspaceById('convert-image-format')" class="tool-card p-6 flex flex-col items-center text-center">
+        <div id="tool-card-convert-image-format" role="button" tabindex="0" aria-label="Convert Image - Change format PNG, JPG, WEBP." onclick="openWorkspaceById('convert-image-format')" class="tool-card">
             <div class="text-4xl mb-4" aria-hidden="true">🎨</div>
             <h2 id="tool-title-convert-image-format" class="text-lg font-bold text-gray-900 mb-2">Convert Image</h2>
             <p class="text-sm text-gray-600">Change format (PNG, JPG, WEBP).</p>
@@ -204,7 +214,7 @@
     </main>
 
     <!-- WORKSPACE VIEW -->
-    <section id="workspaceContainer" class="hidden max-w-2xl mx-auto glass-panel p-8" aria-label="Tool Workspace">
+    <section id="workspaceContainer" class="hidden max-w-2xl mx-auto glass-panel" aria-label="Tool Workspace">
         <button id="backBtn" onclick="closeWorkspace()" aria-label="Back to Tools List" class="text-indigo-700 font-semibold mb-6 flex items-center hover:text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded p-1 transition">
             <svg class="w-5 h-5 mr-1" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
             Back to Tools
@@ -215,7 +225,7 @@
             <h2 id="toolTitle" class="text-3xl font-bold text-gray-900">Tool Name</h2>
         </div>
 
-        <form id="uploadForm" class="space-y-6">
+        <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data" class="space-y-6">
             <input type="hidden" id="conversionType" name="conversion_type" value="">
 
             <!-- Dynamic Settings Container -->
@@ -224,7 +234,7 @@
                 <!-- Password (Protect/Unlock) -->
                 <div id="passwordBlock" class="hidden">
                     <label for="passwordInput" class="font-semibold text-gray-800 text-sm block mb-1">PDF Password</label>
-                    <input type="password" id="passwordInput" name="password" class="w-full p-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900" aria-label="PDF Password">
+                    <input type="password" id="passwordInput" name="password" autocomplete="off" class="w-full p-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900" aria-label="PDF Password">
                 </div>
 
                 <!-- Languages (Translate) -->
@@ -363,7 +373,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Add keyboard accessibility for tool cards (Enter/Space key)
         document.querySelectorAll('.tool-card').forEach(card => {
             card.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
