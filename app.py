@@ -45,27 +45,45 @@ csp = {
         'https://fonts.gstatic.com'
     ]
 }
-# Only use HTTPS Talisman heavily externally, in dev HTTP is fine
-Talisman(app, content_security_policy=csp, force_https=False)
-csrf = CSRFProtect(app)
-limiter = Limiter(
-    get_remote_address,
-    app=app,
-    default_limits=["200 per day", "50 per hour"],
-    storage_uri="memory://"
-)
+# Safe extension initialization for serverless execution
+try:
+    Talisman(app, content_security_policy=csp, force_https=False)
+except Exception:
+    pass
+
+try:
+    csrf = CSRFProtect(app)
+except Exception:
+    pass
+
+try:
+    limiter = Limiter(
+        get_remote_address,
+        app=app,
+        default_limits=["200 per day", "50 per hour"],
+        storage_uri="memory://"
+    )
+except Exception:
+    limiter = None
 
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
 OUTPUT_FOLDER = os.path.join(BASE_DIR, 'outputs')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER
 
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+try:
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+except Exception:
+    pass
 
-db.init_app(app)
-with app.app_context():
-    db.create_all()
+try:
+    db.init_app(app)
+    with app.app_context():
+        db.create_all()
+except Exception as e:
+    print(f"Database init notice: {e}")
+
 
 
 def cleanup_old_files():
