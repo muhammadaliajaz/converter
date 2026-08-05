@@ -18,7 +18,7 @@
   },
   "functions": [
     {
-      "$id": "converter-function",
+      "$id": "6a72ec36000d691292e1",
       "name": "File Converter Function",
       "runtime": "python-3.11",
       "execute": [
