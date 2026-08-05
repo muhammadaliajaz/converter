@@ -112,14 +112,18 @@ def index():
 
 @app.route('/robots.txt')
 def robots():
-    return "User-agent: *\nAllow: /\nSitemap: http://127.0.0.1:5000/sitemap.xml\n", 200, {'Content-Type': 'text/plain'}
+    host = request.headers.get('Host', 'officialali.dev')
+    return f"User-agent: *\nAllow: /\nSitemap: https://{host}/sitemap.xml\n", 200, {'Content-Type': 'text/plain'}
 
 @app.route('/sitemap.xml')
 def sitemap():
-    xml = '''<?xml version="1.0" encoding="UTF-8"?>
+    host = request.headers.get('Host', 'officialali.dev')
+    if '127.0.0.1' in host or 'localhost' in host:
+        host = 'officialali.dev'
+    xml = f'''<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://127.0.0.1:5000/</loc>
+    <loc>https://{host}/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>

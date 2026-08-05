@@ -58,6 +58,32 @@ def main(context):
             'Access-Control-Allow-Origin': '*'
         })
 
+    # Route: GET /robots.txt
+    if path == '/robots.txt':
+        host = headers.get('host', 'officialali.dev')
+        if '127.0.0.1' in host or 'localhost' in host: host = 'officialali.dev'
+        return res.text(f"User-agent: *\nAllow: /\nSitemap: https://{host}/sitemap.xml\n", 200, {
+            'content-type': 'text/plain; charset=utf-8',
+            'Access-Control-Allow-Origin': '*'
+        })
+
+    # Route: GET /sitemap.xml
+    if path == '/sitemap.xml':
+        host = headers.get('host', 'officialali.dev')
+        if '127.0.0.1' in host or 'localhost' in host: host = 'officialali.dev'
+        xml_content = f'''<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://{host}/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>'''
+        return res.text(xml_content, 200, {
+            'content-type': 'application/xml; charset=utf-8',
+            'Access-Control-Allow-Origin': '*'
+        })
+
     # Route: GET /health
     if path == '/health' or path == '/api/health':
         return res.json({
