@@ -3,10 +3,10 @@ import fitz
 from pptx import Presentation
 import pdfplumber
 import pandas as pd
-from pdf2docx import Converter
 
 def pdf_to_docx(input_path, output_path):
     try:
+        from pdf2docx import Converter
         cv = Converter(input_path)
         cv.convert(output_path, start=0, end=None)
         cv.close()
@@ -43,9 +43,7 @@ def pdf_to_excel(input_path, output_path):
                 tables = page.extract_tables()
                 for table in tables:
                     if table and len(table) > 1:
-                        # try to parse first row as col headers
                         headers = table[0]
-                        # Fix empty headers
                         headers = [h if h else f"Col_{j}" for j, h in enumerate(headers)]
                         df = pd.DataFrame(table[1:], columns=headers)
                         all_tables.append(df)
@@ -72,7 +70,7 @@ def ppt_to_pdf(input_path, output_path):
         powerpoint.Quit()
         return True, output_path
     except Exception as e:
-        return False, str(e)
+        return False, "PPT to PDF conversion requires Windows MS Office."
 
 def excel_to_pdf(input_path, output_path):
     try:
@@ -85,7 +83,7 @@ def excel_to_pdf(input_path, output_path):
         excel.Quit()
         return True, output_path
     except Exception as e:
-        return False, str(e)
+        return False, "Excel to PDF conversion requires Windows MS Office."
 
 def docx_to_pdf(input_path, output_path):
     try:
@@ -93,4 +91,4 @@ def docx_to_pdf(input_path, output_path):
         convert(os.path.abspath(input_path), os.path.abspath(output_path))
         return True, output_path
     except Exception as e:
-        return False, str(e)
+        return False, "DOCX to PDF conversion requires Windows MS Office."

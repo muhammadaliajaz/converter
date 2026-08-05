@@ -1,10 +1,10 @@
 # ============================================
 # File Converter Web App - Python Dependencies
-# Install: pip install -r requirements.txt
+# Optimized for Appwrite Cloud & Linux Containers
 # ============================================
 
 # --- Flask Core ---
-Flask>=3.0
+Flask>=3.0,<3.2
 Flask-SQLAlchemy>=3.1
 Flask-Talisman>=1.1
 Flask-Limiter>=3.5
@@ -12,29 +12,23 @@ Flask-WTF>=1.2
 
 # --- PDF Libraries ---
 PyPDF2>=3.0
-PyMuPDF>=1.24          # imported as: import fitz
+PyMuPDF>=1.24
 reportlab>=4.2
 pikepdf>=8.0
 pdfplumber>=0.11
-pdf2docx>=0.5
 
 # --- Office Document Libraries ---
-python-pptx>=1.0       # imported as: from pptx import Presentation
-pandas>=2.2
-openpyxl>=3.1          # required by pandas for .xlsx ExcelWriter
-docx2pdf>=0.1          # Word-to-PDF conversion
+python-pptx>=1.0
+pandas>=2.0,<2.3
+openpyxl>=3.1
 
 # --- Image Libraries ---
-Pillow>=10.3           # imported as: from PIL import Image
+Pillow>=10.3
 
 # --- OCR & Translation ---
-pytesseract>=0.3       # Python wrapper for Tesseract OCR
-deep-translator>=1.11  # imported as: from deep_translator import GoogleTranslator
+pytesseract>=0.3
+deep-translator>=1.11
 
-# --- Windows COM Automation ---
-comtypes>=1.4          # for ppt-to-pdf and excel-to-pdf via MS Office COM
-
-# --- Appwrite & Deployment ---
+# --- Appwrite & Serverless Deployment ---
 appwrite>=11.0.0
 gunicorn>=21.2.0
-
