@@ -51,6 +51,13 @@ def main(context):
         except Exception as e:
             context.error(f"Error reading index.html: {str(e)}")
 
+    # Route: GET /googleff8c761e6fbde718.html
+    if path == '/googleff8c761e6fbde718.html':
+        return res.text("google-site-verification: googleff8c761e6fbde718.html", 200, {
+            'content-type': 'text/html; charset=utf-8',
+            'Access-Control-Allow-Origin': '*'
+        })
+
     # Route: GET /health
     if path == '/health' or path == '/api/health':
         return res.json({
