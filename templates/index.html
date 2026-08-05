@@ -8,16 +8,18 @@
     <meta name="keywords" content="PDF converter, merge PDF, split PDF, compress PDF, PDF to Word, Word to PDF, Excel to PDF, PPT to PDF, Image converter, online PDF tools">
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="Smart File Converter - All Your Document Tools in One Place">
-    <meta property="og:description" content="Convert, compress, merge, translate and edit PDFs, Word documents, Excel sheets, and Images for free online. securely and instantly.">
+    <meta property="og:description" content="Convert, compress, merge, translate and edit PDFs, Word documents, Excel sheets, and Images for free online securely and instantly.">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://6a72f0b2002ee68ba48d.fra.appwrite.run/">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="canonical" href="http://127.0.0.1:5000/" />
+    <link rel="canonical" href="https://6a72f0b2002ee68ba48d.fra.appwrite.run/" />
+
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "Smart File Converter",
-      "url": "http://127.0.0.1:5000/",
+      "url": "https://6a72f0b2002ee68ba48d.fra.appwrite.run/",
       "description": "A comprehensive web-based document toolkit. Merge, split, compress, translate, and convert PDFs, Word, Excel, and images entirely for free.",
       "applicationCategory": "UtilitiesApplication",
       "operatingSystem": "All",
@@ -27,12 +29,15 @@
       }
     }
     </script>
+
     <!-- Tailwind CSS Engine -->
     <script src="https://cdn.tailwindcss.com"></script>
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
     <style>
         body {
             background: #f4f7f6;
@@ -80,20 +85,17 @@
             transition: width 0.3s ease;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="p-6">
 
     <!-- HEADER -->
     <header class="text-center mb-10">
-        <h1 class="text-4xl font-bold text-indigo-700 mb-2">Smart Tools</h1>
-        <p class="text-gray-500">Every tool you need to work with documents, in one place.</p>
+        <h1 id="mainHeading" class="text-4xl font-bold text-indigo-700 mb-2">Smart File Converter</h1>
+        <p class="text-gray-500">Every tool you need to work with documents and images in one secure place.</p>
     </header>
 
     <!-- GRID VIEW -->
     <main id="gridContainer" class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        
-        <!-- Generate cards using a script tag or hardcode -->
         <script>
             const tools = [
                 { id: 'merge-pdf', name: 'Merge PDF', icon: '📝', desc: 'Combine multiple PDFs into one.' },
@@ -118,10 +120,13 @@
             const grid = document.getElementById('gridContainer');
             tools.forEach(tool => {
                 const card = document.createElement('div');
+                card.id = 'tool-card-' + tool.id;
+                card.setAttribute('role', 'button');
+                card.setAttribute('aria-label', tool.name + ' - ' + tool.desc);
                 card.className = 'tool-card p-6 flex flex-col items-center text-center';
                 card.innerHTML = `
                     <div class="text-4xl mb-4">${tool.icon}</div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">${tool.name}</h3>
+                    <h3 id="tool-title-${tool.id}" class="text-lg font-bold text-gray-800 mb-2">${tool.name}</h3>
                     <p class="text-sm text-gray-500">${tool.desc}</p>
                 `;
                 card.onclick = () => openWorkspace(tool);
@@ -131,8 +136,8 @@
     </main>
 
     <!-- WORKSPACE VIEW -->
-    <section id="workspaceContainer" class="hidden max-w-2xl mx-auto glass-panel p-8">
-        <button onclick="closeWorkspace()" class="text-indigo-600 font-semibold mb-6 flex items-center hover:text-indigo-800 transition">
+    <section id="workspaceContainer" class="hidden max-w-2xl mx-auto glass-panel p-8" aria-label="Tool Workspace">
+        <button id="backBtn" onclick="closeWorkspace()" aria-label="Back to Tools" class="text-indigo-600 font-semibold mb-6 flex items-center hover:text-indigo-800 transition">
             <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
             Back to Tools
         </button>
@@ -150,14 +155,14 @@
                 
                 <!-- Password (Protect/Unlock) -->
                 <div id="passwordBlock" class="hidden">
-                    <label class="font-semibold text-gray-700 text-sm">PDF Password</label>
-                    <input type="password" name="password" class="w-full mt-1 p-2 border rounded outline-none focus:ring-2 focus:ring-indigo-500">
+                    <label for="passwordInput" class="font-semibold text-gray-700 text-sm">PDF Password</label>
+                    <input type="password" id="passwordInput" name="password" class="w-full mt-1 p-2 border rounded outline-none focus:ring-2 focus:ring-indigo-500" aria-label="PDF Password">
                 </div>
 
                 <!-- Languages (Translate) -->
                 <div id="languageBlock" class="hidden">
-                    <label class="font-semibold text-gray-700 text-sm">Target Language</label>
-                    <select name="target_lang" class="w-full mt-1 p-2 border rounded outline-none focus:ring-2 focus:ring-indigo-500">
+                    <label for="targetLangSelect" class="font-semibold text-gray-700 text-sm">Target Language</label>
+                    <select id="targetLangSelect" name="target_lang" class="w-full mt-1 p-2 border rounded outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Target Language">
                         <option value="en">English</option>
                         <option value="es">Spanish</option>
                         <option value="fr">French</option>
@@ -170,8 +175,8 @@
 
                 <!-- Compress PDF Level -->
                 <div id="compressPdfBlock" class="hidden">
-                    <label class="font-semibold text-gray-700 text-sm">Compression Level</label>
-                    <select name="compression_level" class="w-full mt-1 p-2 border rounded outline-none focus:ring-2 focus:ring-indigo-500">
+                    <label for="pdfCompressLevelSelect" class="font-semibold text-gray-700 text-sm">Compression Level</label>
+                    <select id="pdfCompressLevelSelect" name="compression_level" class="w-full mt-1 p-2 border rounded outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Compression Level">
                         <option value="low">Low (Fast)</option>
                         <option value="medium" selected>Medium (Recommended)</option>
                         <option value="high">High (Smallest Size)</option>
@@ -180,31 +185,34 @@
 
                 <!-- Image Compress Target KB -->
                 <div id="compressImgBlock" class="hidden">
-                    <label class="font-semibold text-gray-700 text-sm">Target Size (KB)</label>
-                    <input type="number" name="target_kb" value="500" min="10" class="w-full mt-1 p-2 border rounded outline-none focus:ring-2 focus:ring-indigo-500">
+                    <label for="imgCompressKbInput" class="font-semibold text-gray-700 text-sm">Target Size (KB)</label>
+                    <input type="number" id="imgCompressKbInput" name="target_kb" value="500" min="10" class="w-full mt-1 p-2 border rounded outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Target Image Size in KB">
                 </div>
 
                 <!-- Image Formatting -->
                 <div id="imgFormatBlock" class="hidden">
-                    <label class="font-semibold text-gray-700 text-sm">Target Image Format</label>
-                    <select name="target_format" class="w-full mt-1 p-2 border rounded outline-none focus:ring-2 focus:ring-indigo-500">
-                        <option value="JPG">JPG</option><option value="PNG">PNG</option>
-                        <option value="WEBP">WEBP</option><option value="BMP">BMP</option>
+                    <label for="imgFormatSelect" class="font-semibold text-gray-700 text-sm">Target Image Format</label>
+                    <select id="imgFormatSelect" name="target_format" class="w-full mt-1 p-2 border rounded outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Target Image Format">
+                        <option value="JPG">JPG</option>
+                        <option value="PNG">PNG</option>
+                        <option value="WEBP">WEBP</option>
+                        <option value="BMP">BMP</option>
                     </select>
                 </div>
 
             </div>
 
             <!-- Upload Area -->
-            <div id="dropZone" class="drag-area rounded-xl p-10 text-center cursor-pointer flex flex-col items-center justify-center min-h-[200px]">
+            <div id="dropZone" role="button" aria-label="Drop files here or click to upload" class="drag-area rounded-xl p-10 text-center cursor-pointer flex flex-col items-center justify-center min-h-[200px]">
                 <svg class="w-12 h-12 text-indigo-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                <p class="text-lg font-medium text-gray-700 mb-1">Drag files here</p>
-                <input type="file" id="fileInput" name="files[]" class="hidden" multiple required>
+                <p class="text-lg font-semibold text-gray-700">Drag & Drop files here</p>
+                <p class="text-sm text-gray-400 mt-1">or click to browse from computer</p>
+                <input type="file" id="fileInput" name="files[]" multiple class="hidden" aria-label="File Upload Input">
             </div>
-            
+
             <div id="fileInfo" class="hidden text-center text-sm font-medium text-indigo-600 bg-indigo-50 p-2 rounded-lg"></div>
 
-            <button type="submit" id="convertBtn" class="w-full py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-bold text-lg transition disabled:opacity-50">
+            <button type="submit" id="convertBtn" aria-label="Process Document" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-lg transition disabled:opacity-50 shadow-md">
                 Process Document
             </button>
         </form>
@@ -218,7 +226,7 @@
 
         <div id="resultArea" class="hidden mt-6 p-6 bg-green-50 rounded-xl border border-green-200 text-center">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Task Complete!</h3>
-            <a id="downloadLink" href="#" class="inline-block py-3 px-6 bg-green-500 hover:bg-green-600 text-white font-bold rounded shadow transition">Download File</a>
+            <a id="downloadLink" href="#" class="inline-block py-3 px-6 bg-green-600 hover:bg-green-700 text-white font-bold rounded shadow transition" aria-label="Download Converted File">Download File</a>
         </div>
     </section>
 
@@ -309,10 +317,10 @@
 
                 const payload = {
                     conversion_type: document.getElementById('conversionType').value,
-                    password: document.getElementById('password')?.value || '',
-                    target_lang: document.getElementById('targetLang')?.value || '',
-                    compression_level: document.getElementById('pdfCompressLevel')?.value || 'medium',
-                    target_kb: document.getElementById('imgCompressKb')?.value || '500',
+                    password: document.getElementById('passwordInput')?.value || '',
+                    target_lang: document.getElementById('targetLangSelect')?.value || '',
+                    compression_level: document.getElementById('pdfCompressLevelSelect')?.value || 'medium',
+                    target_kb: document.getElementById('imgCompressKbInput')?.value || '500',
                     target_format: document.getElementById('imgFormatSelect')?.value || 'JPG',
                     files: filesData
                 };
