@@ -86,15 +86,24 @@ except Exception as e:
 
 
 
+import random
+
 def cleanup_old_files():
-    now = datetime.datetime.now().timestamp()
-    for folder in [UPLOAD_FOLDER, OUTPUT_FOLDER]:
-        for filename in os.listdir(folder):
-            filepath = os.path.join(folder, filename)
-            if os.path.isfile(filepath):
-                if os.stat(filepath).st_mtime < now - 1800:
-                    try: os.remove(filepath)
-                    except: pass
+    # Only run file cleanup on 10% of requests to eliminate disk I/O latency
+    if random.random() > 0.1:
+        return
+    try:
+        now = datetime.datetime.now().timestamp()
+        for folder in [UPLOAD_FOLDER, OUTPUT_FOLDER]:
+            if os.path.exists(folder):
+                for filename in os.listdir(folder):
+                    filepath = os.path.join(folder, filename)
+                    if os.path.isfile(filepath) and not filename.startswith('.'):
+                        if os.stat(filepath).st_mtime < now - 1800:
+                            try: os.remove(filepath)
+                            except: pass
+    except Exception:
+        pass
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS

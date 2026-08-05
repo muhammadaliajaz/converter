@@ -1,7 +1,9 @@
 import os
+import io
 from PyPDF2 import PdfReader, PdfWriter, PdfMerger
 import fitz
 from reportlab.pdfgen import canvas
+from PIL import Image
 
 def merge_pdfs(input_paths, output_path):
     try:
@@ -25,7 +27,7 @@ def split_pdf(input_path, output_dir, unique_batch_id):
             out_path = os.path.join(output_dir, out_name)
             with open(out_path, "wb") as f:
                 writer.write(f)
-            output_files.append((out_name, out_name)) # tuple mapping real_name -> zip_name
+            output_files.append((out_name, out_name))
         return True, output_files
     except Exception as e:
         return False, str(e)
@@ -56,21 +58,48 @@ def add_page_numbers(input_path, output_path):
         return False, str(e)
 
 def compress_pdf(input_path, output_path, level='medium'):
+    """
+    High-performance PDF Compression using PyMuPDF and PIL image stream optimization
+    """
     try:
-        if level == 'low':
-            reader = PdfReader(input_path)
-            writer = PdfWriter()
-            for page in reader.pages:
-                page.compress_content_streams()
-                writer.add_page(page)
-            with open(output_path, "wb") as f:
-                writer.write(f)
+        doc = fitz.open(input_path)
+        
+        # Set quality level
+        if level == 'high':
+            quality = 40
+        elif level == 'low':
+            quality = 75
         else:
-            doc = fitz.open(input_path)
-            if level == 'high':
-                doc.save(output_path, garbage=4, deflate=True, clean=True)
-            else:
-                doc.save(output_path, garbage=3, deflate=True)
+            quality = 55 # medium
+
+        # Optimize embedded images in PDF
+        for page in doc:
+            image_list = page.get_images(full=True)
+            for img in image_list:
+                xref = img[0]
+                try:
+                    base_image = doc.extract_image(xref)
+                    if base_image:
+                        image_bytes = base_image["image"]
+                        pil_img = Image.open(io.BytesIO(image_bytes))
+                        
+                        # Convert RGBA/Palette to RGB
+                        if pil_img.mode in ("RGBA", "P", "LA"):
+                            pil_img = pil_img.convert("RGB")
+                        
+                        # Downscale very large images
+                        if pil_img.width > 1600 or pil_img.height > 1600:
+                            pil_img.thumbnail((1600, 1600), Image.Resampling.BILINEAR)
+
+                        img_out = io.BytesIO()
+                        pil_img.save(img_out, format="JPEG", quality=quality, optimize=True)
+                        doc.update_stream(xref, img_out.getvalue())
+                except Exception:
+                    pass
+
+        # Save with garbage collection, stream deflation, and compacting
+        doc.save(output_path, garbage=4, deflate=True, clean=True)
+        doc.close()
         return True, output_path
     except Exception as e:
         return False, str(e)

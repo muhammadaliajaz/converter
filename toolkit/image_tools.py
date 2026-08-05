@@ -14,6 +14,7 @@ def pdf_to_jpg(input_path, output_dir, unique_batch_id):
             out_path = os.path.join(output_dir, out_name)
             pix.save(out_path)
             output_files.append((out_name, out_name))
+        doc.close()
         return True, output_files
     except Exception as e:
         return False, str(e)
@@ -32,7 +33,7 @@ def jpg_to_pdf(input_paths, output_path):
                 images.append(img)
                 
         if first_image:
-            first_image.save(output_path, save_all=True, append_images=images)
+            first_image.save(output_path, save_all=True, append_images=images, optimize=True)
             return True, output_path
         else:
             return False, "No valid images provided."
@@ -40,50 +41,60 @@ def jpg_to_pdf(input_paths, output_path):
         return False, str(e)
 
 def compress_image_to_kb(input_path, output_path, target_kb):
+    """
+    Fast & High-reduction Image Compression
+    """
     try:
         target_bytes = int(target_kb) * 1024
         img = Image.open(input_path)
-        if img.mode in ("RGBA", "P"):
-            background = Image.new('RGB', img.size, (255, 255, 255))
+        
+        # Convert RGBA/Palette images to RGB
+        if img.mode in ("RGBA", "P", "LA"):
+            bg = Image.new('RGB', img.size, (255, 255, 255))
             if img.mode == 'P':
                 img = img.convert('RGBA')
-            if img.mode == 'RGBA':
-                background.paste(img, mask=img.split()[3])
-                img = background
+            if img.mode in ('RGBA', 'LA'):
+                bg.paste(img, mask=img.split()[-1])
+                img = bg
             else:
                 img = img.convert("RGB")
-            
-        low = 1
-        high = 95
-        best_quality = 1
-        
-        buffer = io.BytesIO()
-        img.save(buffer, format="JPEG", quality=high)
-        if buffer.tell() <= target_bytes:
-             best_quality = high
-        else:
-             while low <= high:
-                 mid = (low + high) // 2
-                 buffer = io.BytesIO()
-                 img.save(buffer, format="JPEG", quality=mid)
-                 if buffer.tell() <= target_bytes:
-                     best_quality = mid
-                     low = mid + 1
-                 else:
-                     high = mid - 1
-        
-        buffer = io.BytesIO()
-        img.save(buffer, format="JPEG", quality=best_quality)
-        
-        current_img = img.copy()
-        while buffer.tell() > target_bytes and current_img.size[0] > 100:
-            new_size = (int(current_img.size[0] * 0.9), int(current_img.size[1] * 0.9))
-            current_img = current_img.resize(new_size, Image.Resampling.LANCZOS)
-            buffer = io.BytesIO()
-            current_img.save(buffer, format="JPEG", quality=best_quality)
-            
+        elif img.mode != "RGB":
+            img = img.convert("RGB")
+
+        # Fast binary search for JPEG quality
+        low, high = 5, 90
+        best_quality = 40
+        best_data = None
+
+        for _ in range(6): # max 6 iterations fast
+            mid = (low + high) // 2
+            buf = io.BytesIO()
+            img.save(buf, format="JPEG", quality=mid, optimize=True)
+            size = buf.tell()
+
+            if size <= target_bytes:
+                best_quality = mid
+                best_data = buf.getvalue()
+                low = mid + 1
+            else:
+                high = mid - 1
+
+        # If quality alone didn't reach target KB, scale dimensions directly
+        if best_data is None or len(best_data) > target_bytes:
+            w, h = img.size
+            scale = 0.8
+            while scale >= 0.2:
+                nw, nh = int(w * scale), int(h * scale)
+                resized_img = img.resize((nw, nh), Image.Resampling.BILINEAR)
+                buf = io.BytesIO()
+                resized_img.save(buf, format="JPEG", quality=45, optimize=True)
+                if buf.tell() <= target_bytes or scale <= 0.25:
+                    best_data = buf.getvalue()
+                    break
+                scale -= 0.2
+
         with open(output_path, "wb") as f:
-            f.write(buffer.getvalue())
+            f.write(best_data if best_data else buf.getvalue())
             
         return True, output_path
         
@@ -100,13 +111,13 @@ def convert_image_format(input_path, output_path, target_format):
             background = Image.new('RGB', img.size, (255, 255, 255))
             if img.mode == 'P':
                 img = img.convert('RGBA')
-            if img.mode == 'RGBA':
-                background.paste(img, mask=img.split()[3])
+            if img.mode in ('RGBA', 'LA'):
+                background.paste(img, mask=img.split()[-1])
                 img = background
             else:
                 img = img.convert('RGB')
         
-        img.save(output_path, format=t_format)
+        img.save(output_path, format=t_format, optimize=True)
         return True, output_path
     except Exception as e:
         return False, str(e)
