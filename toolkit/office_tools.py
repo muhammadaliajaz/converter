@@ -2,7 +2,7 @@ import os
 import fitz
 from pptx import Presentation
 import pdfplumber
-import pandas as pd
+import openpyxl
 
 def pdf_to_docx(input_path, output_path):
     try:
@@ -43,18 +43,20 @@ def pdf_to_excel(input_path, output_path):
                 tables = page.extract_tables()
                 for table in tables:
                     if table and len(table) > 1:
-                        headers = table[0]
-                        headers = [h if h else f"Col_{j}" for j, h in enumerate(headers)]
-                        df = pd.DataFrame(table[1:], columns=headers)
-                        all_tables.append(df)
+                        all_tables.append(table)
                     
         if not all_tables:
             return False, "No tables found in PDF to convert to Excel."
             
-        with pd.ExcelWriter(output_path) as writer:
-            for i, df in enumerate(all_tables):
-                df.to_excel(writer, sheet_name=f'Table_{i+1}', index=False)
+        wb = openpyxl.Workbook()
+        wb.remove(wb.active) # Remove default sheet
+        
+        for i, table in enumerate(all_tables):
+            ws = wb.create_sheet(title=f'Table_{i+1}')
+            for row in table:
+                ws.append([cell if cell is not None else "" for cell in row])
                 
+        wb.save(output_path)
         return True, output_path
     except Exception as e:
         return False, str(e)
