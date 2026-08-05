@@ -26,17 +26,12 @@
         "price": "0"
       }
     }
-    <!-- Performance Preconnects for 0ms network setup -->
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <!-- Tailwind CSS Engine -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <!-- Asynchronous Non-Blocking Google Fonts (0ms render blocking delay) -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"></noscript>
-
-    <!-- Deferred Non-Blocking Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             background: #f4f7f6;
