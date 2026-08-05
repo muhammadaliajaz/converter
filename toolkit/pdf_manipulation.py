@@ -59,47 +59,54 @@ def add_page_numbers(input_path, output_path):
 
 def compress_pdf(input_path, output_path, level='medium'):
     """
-    High-performance PDF Compression using PyMuPDF and PIL image stream optimization
+    Robust & High-Reduction PDF Compression
     """
     try:
         doc = fitz.open(input_path)
         
-        # Set quality level
+        # 1. Image quality selection
         if level == 'high':
             quality = 40
+            deflate_garbage = 4
         elif level == 'low':
             quality = 75
+            deflate_garbage = 2
         else:
             quality = 55 # medium
+            deflate_garbage = 3
 
-        # Optimize embedded images in PDF
-        for page in doc:
-            image_list = page.get_images(full=True)
-            for img in image_list:
-                xref = img[0]
-                try:
-                    base_image = doc.extract_image(xref)
-                    if base_image:
-                        image_bytes = base_image["image"]
-                        pil_img = Image.open(io.BytesIO(image_bytes))
-                        
-                        # Convert RGBA/Palette to RGB
-                        if pil_img.mode in ("RGBA", "P", "LA"):
-                            pil_img = pil_img.convert("RGB")
-                        
-                        # Downscale very large images
-                        if pil_img.width > 1600 or pil_img.height > 1600:
-                            pil_img.thumbnail((1600, 1600), Image.Resampling.BILINEAR)
+        # 2. Try re-encoding embedded images in PDF
+        try:
+            for page in doc:
+                image_list = page.get_images(full=True)
+                for img in image_list:
+                    xref = img[0]
+                    try:
+                        base_image = doc.extract_image(xref)
+                        if base_image:
+                            image_bytes = base_image["image"]
+                            pil_img = Image.open(io.BytesIO(image_bytes))
+                            
+                            if pil_img.mode in ("RGBA", "P", "LA"):
+                                pil_img = pil_img.convert("RGB")
+                            
+                            if pil_img.width > 1400 or pil_img.height > 1400:
+                                pil_img.thumbnail((1400, 1400), Image.Resampling.BILINEAR)
 
-                        img_out = io.BytesIO()
-                        pil_img.save(img_out, format="JPEG", quality=quality, optimize=True)
-                        doc.update_stream(xref, img_out.getvalue())
-                except Exception:
-                    pass
+                            img_out = io.BytesIO()
+                            pil_img.save(img_out, format="JPEG", quality=quality, optimize=True)
+                            doc.update_stream(xref, img_out.getvalue())
+                    except Exception:
+                        pass
+        except Exception:
+            pass
 
-        # Save with garbage collection, stream deflation, and compacting
-        doc.save(output_path, garbage=4, deflate=True, clean=True)
+        doc.save(output_path, garbage=deflate_garbage, deflate=True, clean=True)
         doc.close()
-        return True, output_path
+        
+        if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
+            return True, output_path
+            
+        return False, "Compression failed"
     except Exception as e:
         return False, str(e)
