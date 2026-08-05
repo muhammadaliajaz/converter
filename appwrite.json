@@ -1,0 +1,60 @@
+{
+  "projectId": "YOUR_APPWRITE_PROJECT_ID",
+  "name": "converter-app",
+  "settings": {
+    "services": {
+      "account": true,
+      "avatars": true,
+      "databases": true,
+      "locale": true,
+      "health": true,
+      "storage": true,
+      "teams": true,
+      "users": true,
+      "functions": true,
+      "graphql": true,
+      "messaging": true
+    }
+  },
+  "functions": [
+    {
+      "$id": "converter-function",
+      "name": "File Converter Function",
+      "runtime": "python-3.11",
+      "execute": [
+        "any"
+      ],
+      "events": [],
+      "schedule": "",
+      "timeout": 300,
+      "enabled": true,
+      "logging": true,
+      "entrypoint": "main.py",
+      "commands": "pip install -r requirements.txt",
+      "path": "."
+    }
+  ],
+  "databases": [],
+  "collections": [],
+  "buckets": [
+    {
+      "$id": "converter-storage",
+      "name": "Converter Uploads Storage",
+      "permissions": [
+        "read(\"any\")",
+        "create(\"any\")",
+        "update(\"any\")",
+        "delete(\"any\")"
+      ],
+      "fileSecurity": false,
+      "enabled": true,
+      "maximumFileSize": 50000000,
+      "allowedFileExtensions": [
+        "pdf", "docx", "doc", "pptx", "ppt", "xlsx", "xls", "txt", "jpg", "jpeg", "png", "webp", "bmp", "gif"
+      ],
+      "compression": "none",
+      "encryption": true,
+      "antivirus": true
+    }
+  ]
+}
