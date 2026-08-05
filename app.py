@@ -117,15 +117,17 @@ def robots():
 
 @app.route('/sitemap.xml')
 def sitemap():
-    host = request.headers.get('Host', 'officialali.dev')
-    if '127.0.0.1' in host or 'localhost' in host:
-        host = 'officialali.dev'
-    xml = f'''<?xml version="1.0" encoding="UTF-8"?>
+    xml = '''<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://{host}/</loc>
+    <loc>https://officialali.dev/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://6a72f0b2002ee68ba48d.fra.appwrite.run/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
   </url>
 </urlset>'''
     return xml, 200, {'Content-Type': 'application/xml'}
