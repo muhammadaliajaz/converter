@@ -120,49 +120,90 @@ def sitemap():
     return xml, 200, {'Content-Type': 'application/xml'}
 
 @app.route('/upload', methods=['POST'])
-@limiter.limit("10 per minute")
 def upload_file():
     cleanup_old_files()
     
-    files = request.files.getlist('files[]')
-    if not files and 'file' in request.files:
-        files = [request.files['file']]
-        
-    if not files or files[0].filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-        
-    conversion_type = request.form.get('conversion_type')
-    if not conversion_type:
-        return jsonify({'error': 'No conversion type selected'}), 400
-
     unique_batch_id = str(uuid.uuid4())
     output_files = [] # list of tuples: (actual_filename_on_disk, clean_filename_for_zip)
     error_msgs = []
     saved_inputs = []
-    
-    ip_addr = request.remote_addr
-    user = User.query.filter_by(ip_address=ip_addr).first()
-    if not user:
-        user = User(ip_address=ip_addr)
-        db.session.add(user)
-        db.session.commit()
 
-    # Fast save
-    for idx, file in enumerate(files):
-        if file.filename == '': continue
-        if not allowed_file(file.filename):
-            error_msgs.append(f"{file.filename} extension not authorized")
-            continue
+    ip_addr = request.remote_addr or '127.0.0.1'
+    try:
+        user = User.query.filter_by(ip_address=ip_addr).first()
+        if not user:
+            user = User(ip_address=ip_addr)
+            db.session.add(user)
+            db.session.commit()
+    except Exception:
+        pass
+
+    # Support JSON Base64 payload for Serverless / Appwrite UTF-8 safety
+    if request.is_json or (request.content_type and 'application/json' in request.content_type):
+        data = request.get_json() or {}
+        conversion_type = data.get('conversion_type')
+        files_json = data.get('files', [])
+        
+        if not conversion_type:
+            return jsonify({'error': 'No conversion type selected'}), 400
+        if not files_json:
+            return jsonify({'error': 'No selected files'}), 400
+
+        for idx, item in enumerate(files_json):
+            orig_name = secure_filename(item.get('name', 'file.pdf'))
+            if not orig_name or not allowed_file(orig_name):
+                error_msgs.append(f"{orig_name} extension not authorized")
+                continue
+                
+            file_data_str = item.get('data', '')
+            if ',' in file_data_str:
+                _, base64_str = file_data_str.split(',', 1)
+            else:
+                base64_str = file_data_str
+                
+            try:
+                import base64
+                raw_bytes = base64.b64decode(base64_str)
+                _, ext = os.path.splitext(orig_name)
+                input_filename = f"{unique_batch_id}_{idx}_input{ext}"
+                input_path = os.path.join(app.config['UPLOAD_FOLDER'], input_filename)
+                with open(input_path, 'wb') as f:
+                    f.write(raw_bytes)
+                saved_inputs.append((input_path, orig_name))
+            except Exception as e:
+                error_msgs.append(f"Failed decoding {orig_name}: {str(e)}")
+
+        req_form = data
+    else:
+        files = request.files.getlist('files[]')
+        if not files and 'file' in request.files:
+            files = [request.files['file']]
             
-        filename = secure_filename(file.filename)
-        _, ext = os.path.splitext(filename)
-        input_filename = f"{unique_batch_id}_{idx}_input{ext}"
-        input_path = os.path.join(app.config['UPLOAD_FOLDER'], input_filename)
-        file.save(input_path)
-        saved_inputs.append((input_path, filename))
+        if not files or files[0].filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+            
+        conversion_type = request.form.get('conversion_type')
+        if not conversion_type:
+            return jsonify({'error': 'No conversion type selected'}), 400
+
+        for idx, file in enumerate(files):
+            if file.filename == '': continue
+            if not allowed_file(file.filename):
+                error_msgs.append(f"{file.filename} extension not authorized")
+                continue
+                
+            filename = secure_filename(file.filename)
+            _, ext = os.path.splitext(filename)
+            input_filename = f"{unique_batch_id}_{idx}_input{ext}"
+            input_path = os.path.join(app.config['UPLOAD_FOLDER'], input_filename)
+            file.save(input_path)
+            saved_inputs.append((input_path, filename))
+
+        req_form = request.form
 
     if not saved_inputs:
         return jsonify({'error': f'No valid files uploaded. Errors: {" | ".join(error_msgs)}'}), 400
+
 
     # Many-to-One behaviors:
     if conversion_type == 'merge-pdf':
@@ -207,7 +248,7 @@ def upload_file():
                 if success: output_files.append((out_name, f"{original_name}.txt"))
                 
             elif conversion_type == 'compress-pdf':
-                lvl = request.form.get('compression_level', 'medium')
+                lvl = req_form.get('compression_level', 'medium')
                 out_name = f"{unique_batch_id}_{idx}_{original_name}_compressed.pdf"
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
                 success, res = pdf_manipulation.compress_pdf(input_path, out_path, level=lvl)
@@ -220,14 +261,14 @@ def upload_file():
                 if success: output_files.append((out_name, f"{original_name}.pdf"))
                 
             elif conversion_type == 'compress-image':
-                kb = request.form.get('target_kb', '500')
+                kb = req_form.get('target_kb', '500')
                 out_name = f"{unique_batch_id}_{idx}_{original_name}_compressed.jpg"
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
                 success, res = image_tools.compress_image_to_kb(input_path, out_path, kb)
                 if success: output_files.append((out_name, f"{original_name}_compressed.jpg"))
                 
             elif conversion_type == 'convert-image-format':
-                fmt = request.form.get('target_format', 'JPG')
+                fmt = req_form.get('target_format', 'JPG')
                 out_name = f"{unique_batch_id}_{idx}_{original_name}.{fmt.lower()}"
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
                 success, res = image_tools.convert_image_format(input_path, out_path, fmt)
@@ -273,14 +314,14 @@ def upload_file():
                 else: res = out_list
                 
             elif conversion_type == 'unlock-pdf':
-                pwd = request.form.get('password', '')
+                pwd = req_form.get('password', '')
                 out_name = f"{unique_batch_id}_{idx}_{original_name}_unlocked.pdf"
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
                 success, res = security_tools.unlock_pdf(input_path, out_path, pwd)
                 if success: output_files.append((out_name, f"{original_name}_unlocked.pdf"))
                 
             elif conversion_type == 'protect-pdf':
-                pwd = request.form.get('password', '')
+                pwd = req_form.get('password', '')
                 out_name = f"{unique_batch_id}_{idx}_{original_name}_protected.pdf"
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
                 success, res = security_tools.protect_pdf(input_path, out_path, pwd)
