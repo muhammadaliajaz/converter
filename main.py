@@ -21,7 +21,7 @@ except Exception as e:
 def main(context):
     """
     Appwrite Function Entry Point
-    Routes requests to Flask backend & renders Web UI
+    Routes requests to Flask backend & renders Web UI with full binary support
     """
     req = context.req
     res = context.res
@@ -56,10 +56,15 @@ def main(context):
             "version": "1.0.0"
         })
 
-    # Forward all API & Upload requests to Flask Application
+    # Forward all API & Upload requests to Flask Application with safe binary handling
     if APP_LOADED and flask_app:
         try:
-            body_data = getattr(req, 'body_raw', None) or getattr(req, 'body', None) or ''
+            # Safely fetch raw binary request payload
+            body_data = getattr(req, 'body_raw', None)
+            if body_data is None:
+                body_data = getattr(req, 'body_binary', None)
+            if body_data is None:
+                body_data = getattr(req, 'body', '')
             
             with flask_app.test_client() as client:
                 rv = client.open(
@@ -73,11 +78,21 @@ def main(context):
                 resp_headers = {k: v for k, v in rv.headers if k.lower() != 'content-length'}
                 resp_headers['Access-Control-Allow-Origin'] = '*'
                 
-                return res.text(
-                    rv.get_data(as_text=True),
-                    rv.status_code,
-                    resp_headers
-                )
+                raw_response_bytes = rv.get_data()
+                
+                # Use Appwrite's binary response if available
+                if hasattr(res, 'binary'):
+                    return res.binary(raw_response_bytes, rv.status_code, resp_headers)
+                
+                # Try UTF-8 decode for text/JSON responses, fallback to binary/latin-1 for PDF/Docx files
+                try:
+                    text_content = raw_response_bytes.decode('utf-8')
+                    return res.text(text_content, rv.status_code, resp_headers)
+                except UnicodeDecodeError:
+                    if hasattr(res, 'send'):
+                        return res.send(raw_response_bytes, rv.status_code, resp_headers)
+                    return res.text(raw_response_bytes.decode('latin-1'), rv.status_code, resp_headers)
+                    
         except Exception as e:
             context.error(f"Flask execution error: {str(e)}")
             return res.json({"error": f"Function execution error: {str(e)}"}, 500)
