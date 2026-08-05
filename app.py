@@ -37,13 +37,11 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 ALLOWED_EXTENSIONS = {'pdf', 'docx', 'doc', 'pptx', 'ppt', 'xlsx', 'xls', 'txt', 'jpg', 'jpeg', 'png', 'webp', 'bmp', 'gif'}
 
 csp = {
-    'default-src': [
-        '\'self\'',
-        '\'unsafe-inline\'',
-        'https://cdn.tailwindcss.com',
-        'https://fonts.googleapis.com',
-        'https://fonts.gstatic.com'
-    ]
+    'default-src': ['\'self\'', '\'unsafe-inline\'', '\'unsafe-eval\'', 'https://cdn.tailwindcss.com', 'https://fonts.googleapis.com', 'https://fonts.gstatic.com'],
+    'script-src': ['\'self\'', '\'unsafe-inline\'', '\'unsafe-eval\'', 'https://cdn.tailwindcss.com'],
+    'style-src': ['\'self\'', '\'unsafe-inline\'', 'https://fonts.googleapis.com', 'https://cdn.tailwindcss.com'],
+    'font-src': ['\'self\'', 'https://fonts.gstatic.com'],
+    'connect-src': ['\'self\'', '*']
 }
 # Safe extension initialization for serverless execution
 try:
