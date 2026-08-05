@@ -112,17 +112,11 @@ def index():
 
 @app.route('/robots.txt')
 def robots():
-    host = request.headers.get('Host', 'officialali.dev')
-    return f"User-agent: *\nAllow: /\nSitemap: https://{host}/sitemap.xml\n", 200, {'Content-Type': 'text/plain'}
+    return "User-agent: *\nAllow: /\nSitemap: https://officialali.dev/sitemap.xml\n", 200, {'Content-Type': 'text/plain'}
 
 @app.route('/sitemap.xml')
 def sitemap():
-    raw_host = request.headers.get('X-Forwarded-Host', '') or request.headers.get('Host', '') or 'officialali.dev'
-    host = raw_host.split(':')[0].strip()
-    if '127.0.0.1' in host or 'localhost' in host or not host:
-        host = 'officialali.dev'
-        
-    base_url = f"https://{host}"
+    base_url = "https://officialali.dev"
     tools_list = [
         '', 'merge-pdf', 'split-pdf', 'compress-pdf', 'pdf-to-word',
         'pdf-to-ppt', 'pdf-to-excel', 'word-to-pdf', 'ppt-to-pdf',

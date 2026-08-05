@@ -60,21 +60,14 @@ def main(context):
 
     # Route: GET /robots.txt
     if path == '/robots.txt':
-        host = headers.get('host', 'officialali.dev')
-        if '127.0.0.1' in host or 'localhost' in host: host = 'officialali.dev'
-        return res.text(f"User-agent: *\nAllow: /\nSitemap: https://{host}/sitemap.xml\n", 200, {
+        return res.text("User-agent: *\nAllow: /\nSitemap: https://officialali.dev/sitemap.xml\n", 200, {
             'content-type': 'text/plain; charset=utf-8',
             'Access-Control-Allow-Origin': '*'
         })
 
     # Route: GET /sitemap.xml
     if path == '/sitemap.xml':
-        raw_host = headers.get('x-forwarded-host', '') or headers.get('host', '') or 'officialali.dev'
-        host = raw_host.split(':')[0].strip()
-        if '127.0.0.1' in host or 'localhost' in host or not host:
-            host = 'officialali.dev'
-            
-        base_url = f"https://{host}"
+        base_url = "https://officialali.dev"
         tools_list = [
             '', 'merge-pdf', 'split-pdf', 'compress-pdf', 'pdf-to-word',
             'pdf-to-ppt', 'pdf-to-excel', 'word-to-pdf', 'ppt-to-pdf',
