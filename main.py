@@ -4,12 +4,11 @@ import sys
 def main(context):
     """
     Appwrite Function Entry Point
-    Handles incoming HTTP requests from Appwrite Cloud / Appwrite Server
+    Handles Web UI rendering and API requests
     """
     req = context.req
     res = context.res
 
-    # Extract request metadata from Appwrite context
     path = getattr(req, 'path', '/') or '/'
     method = getattr(req, 'method', 'GET') or 'GET'
     
@@ -20,29 +19,30 @@ def main(context):
     if CURRENT_DIR not in sys.path:
         sys.path.insert(0, CURRENT_DIR)
 
-    # Safely load Flask app
-    try:
-        from app import app as flask_app
-        app_status = "loaded"
-    except Exception as e:
-        context.error(f"Flask App Import Warning: {str(e)}")
-        app_status = f"warning: {str(e)}"
+    # Route: GET / -> Render the Full HTML Website UI
+    if method == 'GET' and (path == '/' or path == '/index.html'):
+        try:
+            html_path = os.path.join(CURRENT_DIR, 'templates', 'index.html')
+            if os.path.exists(html_path):
+                with open(html_path, 'r', encoding='utf-8') as f:
+                    html_content = f.read()
+                return res.text(html_content, 200, {'content-type': 'text/html; charset=utf-8'})
+        except Exception as e:
+            context.error(f"Error loading index.html: {str(e)}")
 
-    # Handle health check endpoint
+    # Route: GET /health -> Health check
     if path == '/health' or path == '/api/health':
         return res.json({
             "status": "success",
             "message": "Converter app is running on Appwrite Function!",
-            "app_status": app_status,
             "version": "1.0.0"
         })
 
-    # Default API response for Appwrite Function execution
+    # Default API response
     return res.json({
         "status": "online",
         "service": "File Converter App",
         "method": method,
         "path": path,
-        "app_status": app_status,
         "message": "Appwrite Function is deployed and responding successfully!"
     })
