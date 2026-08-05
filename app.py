@@ -17,7 +17,15 @@ from toolkit import pdf_manipulation, office_tools, image_tools, security_tools,
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'super-secret-key-for-converter'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///converter.db'
+
+# Dynamic directory selection for local vs serverless (Appwrite) execution
+if os.access('/tmp', os.W_OK) and (os.environ.get('APPWRITE_FUNCTION_ID') or os.name != 'nt'):
+    BASE_DIR = '/tmp'
+else:
+    BASE_DIR = os.path.dirname(__file__)
+
+DB_PATH = os.path.join(BASE_DIR, 'converter.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Security constraints
@@ -47,8 +55,8 @@ limiter = Limiter(
     storage_uri="memory://"
 )
 
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
-OUTPUT_FOLDER = os.path.join(os.path.dirname(__file__), 'outputs')
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
+OUTPUT_FOLDER = os.path.join(BASE_DIR, 'outputs')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER
 
@@ -58,6 +66,7 @@ os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 db.init_app(app)
 with app.app_context():
     db.create_all()
+
 
 def cleanup_old_files():
     now = datetime.datetime.now().timestamp()
