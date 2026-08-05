@@ -69,19 +69,30 @@ def main(context):
 
     # Route: GET /sitemap.xml
     if path == '/sitemap.xml':
-        xml_content = '''<?xml version="1.0" encoding="UTF-8"?>
+        raw_host = headers.get('x-forwarded-host', '') or headers.get('host', '') or 'officialali.dev'
+        host = raw_host.split(':')[0].strip()
+        if '127.0.0.1' in host or 'localhost' in host or not host:
+            host = 'officialali.dev'
+            
+        base_url = f"https://{host}"
+        tools_list = [
+            '', 'merge-pdf', 'split-pdf', 'compress-pdf', 'pdf-to-word',
+            'pdf-to-ppt', 'pdf-to-excel', 'word-to-pdf', 'ppt-to-pdf',
+            'excel-to-pdf', 'pdf-to-jpg', 'jpg-to-pdf', 'unlock-pdf',
+            'protect-pdf', 'page-numbers', 'translate-pdf', 'compress-image',
+            'convert-image-format'
+        ]
+        
+        urls_xml = ""
+        for tool_path in tools_list:
+            loc_url = base_url if tool_path == '' else f"{base_url}/#{tool_path}"
+            priority = "1.0" if tool_path == '' else "0.8"
+            urls_xml += f"  <url>\n    <loc>{loc_url}</loc>\n    <changefreq>daily</changefreq>\n    <priority>{priority}</priority>\n  </url>\n"
+
+        xml_content = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://officialali.dev/</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://6a72f0b2002ee68ba48d.fra.appwrite.run/</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-</urlset>'''
+{urls_xml}</urlset>"""
+
         return res.text(xml_content, 200, {
             'content-type': 'application/xml; charset=utf-8',
             'Access-Control-Allow-Origin': '*'
