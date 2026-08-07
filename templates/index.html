@@ -464,6 +464,7 @@
                     password: document.getElementById('passwordInput')?.value || '',
                     target_lang: document.getElementById('targetLangSelect')?.value || '',
                     compression_level: document.getElementById('pdfCompressLevelSelect')?.value || 'medium',
+                    pdf_target_kb: document.getElementById('pdfCompressKbInput')?.value || '',
                     target_kb: document.getElementById('imgCompressKbInput')?.value || '500',
                     target_format: document.getElementById('imgFormatSelect')?.value || 'JPG',
                     files: filesData
@@ -476,7 +477,15 @@
                     },
                     body: JSON.stringify(payload)
                 });
-                const json = await res.json();
+                
+                const responseText = await res.text();
+                let json = {};
+                try {
+                    json = JSON.parse(responseText);
+                } catch (err) {
+                    throw new Error(responseText.substring(0, 150) || 'Server returned an invalid or empty response.');
+                }
+
                 clearInterval(pt);
                 pb.style.width = '100%';
 
