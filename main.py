@@ -36,14 +36,19 @@ def dispatch_wsgi(flask_app, path, method, headers, query, body_bytes):
     elif isinstance(query, str):
         query_str = query
 
+    host_header = 'officialali.dev'
+    if isinstance(headers, dict):
+        host_header = headers.get('host') or headers.get('Host') or 'officialali.dev'
+    server_name = host_header.split(':')[0]
+
     environ = {
         'REQUEST_METHOD': method,
         'SCRIPT_NAME': '',
         'PATH_INFO': path,
         'QUERY_STRING': query_str,
-        'SERVER_NAME': 'officialali.dev',
+        'SERVER_NAME': server_name,
         'SERVER_PORT': '443',
-        'HTTP_HOST': 'officialali.dev',
+        'HTTP_HOST': host_header,
         'SERVER_PROTOCOL': 'HTTP/1.1',
         'wsgi.version': (1, 0),
         'wsgi.url_scheme': 'https',
@@ -62,7 +67,7 @@ def dispatch_wsgi(flask_app, path, method, headers, query, body_bytes):
                 environ['CONTENT_TYPE'] = str(v)
             elif k_upper == 'CONTENT_LENGTH':
                 environ['CONTENT_LENGTH'] = str(v)
-            else:
+            elif k_upper != 'HOST':
                 environ[f'HTTP_{k_upper}'] = str(v)
 
     if 'CONTENT_TYPE' not in environ:
