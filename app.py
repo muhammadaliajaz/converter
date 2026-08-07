@@ -137,6 +137,7 @@ def sitemap():
     return xml, 200, {'Content-Type': 'application/xml'}
 
 @app.route('/upload', methods=['POST'])
+@csrf.exempt
 def upload_file():
     cleanup_old_files()
     
