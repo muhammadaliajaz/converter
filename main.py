@@ -104,9 +104,9 @@ def main(context):
     # Forward API requests (/upload, /download, etc.) to Flask App
     try:
         import json
+        import traceback
         flask_app = get_flask_app()
         
-        # Extract content-type before filtering headers
         content_type = 'application/json'
         headers_dict = {}
         if isinstance(headers, dict):
@@ -125,15 +125,19 @@ def main(context):
             body_data = getattr(req, 'body', '')
 
         if isinstance(body_data, dict):
-            body_data = json.dumps(body_data).encode('utf-8')
+            body_bytes = json.dumps(body_data).encode('utf-8')
         elif isinstance(body_data, str):
-            body_data = body_data.encode('utf-8')
+            body_bytes = body_data.encode('utf-8')
+        elif isinstance(body_data, bytes):
+            body_bytes = body_data
+        else:
+            body_bytes = str(body_data).encode('utf-8')
 
         with flask_app.test_client() as client:
             if method == 'POST':
                 rv = client.post(
                     path,
-                    data=body_data,
+                    data=body_bytes,
                     content_type=content_type
                 )
             else:
@@ -154,5 +158,6 @@ def main(context):
             return res.text(text_response, rv.status_code, resp_headers)
 
     except Exception as e:
-        context.error(f"Flask execution error: {str(e)}")
+        err_msg = f"Flask execution error: {str(e)}\n{traceback.format_exc()}"
+        context.error(err_msg)
         return res.json({"error": f"Function execution error: {str(e)}"}, 500)
