@@ -1,5 +1,8 @@
 import os
 import sys
+import io
+import json
+import traceback
 
 # Ensure current working directory is in sys.path
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -21,6 +24,66 @@ def get_flask_app():
         flask_app.config['WTF_CSRF_ENABLED'] = False
         _FLASK_APP = flask_app
     return _FLASK_APP
+
+def dispatch_wsgi(flask_app, path, method, headers, query, body_bytes):
+    """
+    Native PEP 3333 WSGI Dispatcher
+    Dispatches Appwrite HTTP request directly to Flask WSGI app without test_client state bugs.
+    """
+    query_str = ""
+    if isinstance(query, dict):
+        query_str = '&'.join([f"{k}={v}" for k, v in query.items()])
+    elif isinstance(query, str):
+        query_str = query
+
+    environ = {
+        'REQUEST_METHOD': method,
+        'SCRIPT_NAME': '',
+        'PATH_INFO': path,
+        'QUERY_STRING': query_str,
+        'SERVER_NAME': 'localhost',
+        'SERVER_PORT': '80',
+        'SERVER_PROTOCOL': 'HTTP/1.1',
+        'wsgi.version': (1, 0),
+        'wsgi.url_scheme': 'https',
+        'wsgi.input': io.BytesIO(body_bytes),
+        'wsgi.errors': io.StringIO(),
+        'wsgi.multithread': False,
+        'wsgi.multiprocess': False,
+        'wsgi.run_once': False,
+        'CONTENT_LENGTH': str(len(body_bytes)),
+    }
+
+    if isinstance(headers, dict):
+        for k, v in headers.items():
+            k_upper = k.upper().replace('-', '_')
+            if k_upper == 'CONTENT_TYPE':
+                environ['CONTENT_TYPE'] = str(v)
+            elif k_upper == 'CONTENT_LENGTH':
+                environ['CONTENT_LENGTH'] = str(v)
+            else:
+                environ[f'HTTP_{k_upper}'] = str(v)
+
+    if 'CONTENT_TYPE' not in environ:
+        environ['CONTENT_TYPE'] = 'application/json'
+
+    status_code_box = [200]
+    headers_box = []
+
+    def start_response(status, response_headers, exc_info=None):
+        try:
+            status_code_box[0] = int(status.split()[0])
+        except Exception:
+            status_code_box[0] = 200
+        headers_box.extend(response_headers)
+
+    response_chunks = flask_app(environ, start_response)
+    response_bytes = b''.join(response_chunks)
+    
+    resp_headers = {k: v for k, v in headers_box if k.lower() != 'content-length'}
+    resp_headers['Access-Control-Allow-Origin'] = '*'
+
+    return status_code_box[0], resp_headers, response_bytes
 
 def main(context):
     """
@@ -101,20 +164,9 @@ def main(context):
             "version": "1.0.0"
         })
 
-    # Forward API requests (/upload, /download, etc.) to Flask App
+    # Forward API requests (/upload, /download, etc.) to Flask App via native WSGI
     try:
-        import json
-        import traceback
         flask_app = get_flask_app()
-        
-        content_type = 'application/json'
-        headers_dict = {}
-        if isinstance(headers, dict):
-            for k, v in headers.items():
-                if k.lower() == 'content-type':
-                    content_type = v
-                elif k.lower() not in ('host', 'content-length'):
-                    headers_dict[k] = v
 
         body_data = getattr(req, 'body_raw', None)
         if not body_data:
@@ -133,31 +185,23 @@ def main(context):
         else:
             body_bytes = str(body_data).encode('utf-8')
 
-        with flask_app.test_client() as client:
-            if method == 'POST':
-                rv = client.post(
-                    path,
-                    data=body_bytes,
-                    content_type=content_type
-                )
-            else:
-                rv = client.get(
-                    path,
-                    query_string=query
-                )
-            
-            resp_headers = {k: v for k, v in rv.headers if k.lower() != 'content-length'}
-            resp_headers['Access-Control-Allow-Origin'] = '*'
-            
-            raw_response_bytes = rv.get_data()
-            text_response = raw_response_bytes.decode('utf-8', errors='replace')
-            
-            if hasattr(res, 'send'):
-                return res.send(text_response, rv.status_code, resp_headers)
-            
-            return res.text(text_response, rv.status_code, resp_headers)
+        status_code, resp_headers, response_bytes = dispatch_wsgi(
+            flask_app=flask_app,
+            path=path,
+            method=method,
+            headers=headers,
+            query=query,
+            body_bytes=body_bytes
+        )
+
+        text_response = response_bytes.decode('utf-8', errors='replace')
+        
+        if hasattr(res, 'send'):
+            return res.send(text_response, status_code, resp_headers)
+        
+        return res.text(text_response, status_code, resp_headers)
 
     except Exception as e:
-        err_msg = f"Flask execution error: {str(e)}\n{traceback.format_exc()}"
+        err_msg = f"Flask WSGI execution error: {str(e)}\n{traceback.format_exc()}"
         context.error(err_msg)
         return res.json({"error": f"Function execution error: {str(e)}"}, 500)
