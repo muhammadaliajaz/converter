@@ -132,15 +132,11 @@ def main(context):
                 rv = client.post(
                     path,
                     data=body_data,
-                    content_type=content_type,
-                    headers=headers_dict,
-                    query_string=query
+                    content_type=content_type
                 )
             else:
-                rv = client.open(
+                rv = client.get(
                     path,
-                    method=method,
-                    headers=headers_dict,
                     query_string=query
                 )
             
