@@ -106,7 +106,7 @@ def main(context):
         
         headers_dict = {}
         if isinstance(headers, dict):
-            headers_dict = {k: v for k, v in headers.items() if k.lower() not in ('host', 'content-length')}
+            headers_dict = {k: v for k, v in headers.items() if k.lower() not in ('host', 'content-length', 'content-type')}
             
         content_type = headers_dict.get('content-type') or headers_dict.get('Content-Type') or 'application/json'
 
