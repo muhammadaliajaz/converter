@@ -103,6 +103,13 @@ def main(context):
     try:
         import json
         flask_app = get_flask_app()
+        
+        headers_dict = {}
+        if isinstance(headers, dict):
+            headers_dict = {k: v for k, v in headers.items() if k.lower() not in ('host', 'content-length')}
+            
+        content_type = headers_dict.get('content-type') or headers_dict.get('Content-Type') or 'application/json'
+
         body_data = getattr(req, 'body_raw', None)
         if not body_data:
             body_data = getattr(req, 'body_text', None)
@@ -120,9 +127,10 @@ def main(context):
             rv = client.open(
                 path,
                 method=method,
-                headers=headers,
+                headers=headers_dict,
                 query_string=query,
-                data=body_data
+                data=body_data,
+                content_type=content_type
             )
             
             resp_headers = {k: v for k, v in rv.headers if k.lower() != 'content-length'}
