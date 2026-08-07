@@ -138,16 +138,14 @@ def main(context):
             
             raw_response_bytes = rv.get_data()
             
+            if hasattr(res, 'send'):
+                return res.send(raw_response_bytes, rv.status_code, resp_headers)
+            
             if hasattr(res, 'binary'):
                 return res.binary(raw_response_bytes, rv.status_code, resp_headers)
-            
-            try:
-                text_content = raw_response_bytes.decode('utf-8')
-                return res.text(text_content, rv.status_code, resp_headers)
-            except UnicodeDecodeError:
-                if hasattr(res, 'send'):
-                    return res.send(raw_response_bytes, rv.status_code, resp_headers)
-                return res.text(raw_response_bytes.decode('latin-1'), rv.status_code, resp_headers)
+
+            text_content = raw_response_bytes.decode('utf-8', errors='replace')
+            return res.text(text_content, rv.status_code, resp_headers)
 
     except Exception as e:
         context.error(f"Flask execution error: {str(e)}")
