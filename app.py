@@ -157,8 +157,20 @@ def upload_file():
         pass
 
     # Support JSON Base64 payload for Serverless / Appwrite UTF-8 safety
-    if request.is_json or (request.content_type and 'application/json' in request.content_type):
-        data = request.get_json() or {}
+    data = None
+    try:
+        data = request.get_json(silent=True, force=True)
+    except Exception:
+        data = None
+
+    if not data and request.data:
+        try:
+            import json
+            data = json.loads(request.data.decode('utf-8', errors='ignore'))
+        except Exception:
+            data = None
+
+    if data and isinstance(data, dict):
         conversion_type = data.get('conversion_type')
         files_json = data.get('files', [])
         
@@ -193,12 +205,16 @@ def upload_file():
 
         req_form = data
     else:
-        files = request.files.getlist('files[]')
-        if not files and 'file' in request.files:
-            files = [request.files['file']]
+        files = []
+        try:
+            files = request.files.getlist('files[]')
+            if not files and 'file' in request.files:
+                files = [request.files['file']]
+        except Exception:
+            files = []
             
         if not files or files[0].filename == '':
-            return jsonify({'error': 'No selected file'}), 400
+            return jsonify({'error': 'No selected file or invalid payload'}), 400
             
         conversion_type = request.form.get('conversion_type')
         if not conversion_type:
