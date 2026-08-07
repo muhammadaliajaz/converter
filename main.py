@@ -31,6 +31,8 @@ def main(context):
     res = context.res
 
     path = getattr(req, 'path', '/') or '/'
+    if not path.startswith('/'):
+        path = '/' + path
     method = (getattr(req, 'method', 'GET') or 'GET').upper()
     headers = getattr(req, 'headers', {}) or {}
     query = getattr(req, 'query', {}) or {}
