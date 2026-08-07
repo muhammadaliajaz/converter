@@ -104,11 +104,15 @@ def main(context):
         import json
         flask_app = get_flask_app()
         
+        # Extract content-type before filtering headers
+        content_type = 'application/json'
         headers_dict = {}
         if isinstance(headers, dict):
-            headers_dict = {k: v for k, v in headers.items() if k.lower() not in ('host', 'content-length', 'content-type')}
-            
-        content_type = headers_dict.get('content-type') or headers_dict.get('Content-Type') or 'application/json'
+            for k, v in headers.items():
+                if k.lower() == 'content-type':
+                    content_type = v
+                elif k.lower() not in ('host', 'content-length'):
+                    headers_dict[k] = v
 
         body_data = getattr(req, 'body_raw', None)
         if not body_data:
@@ -124,14 +128,21 @@ def main(context):
             body_data = body_data.encode('utf-8')
 
         with flask_app.test_client() as client:
-            rv = client.open(
-                path,
-                method=method,
-                headers=headers_dict,
-                query_string=query,
-                data=body_data,
-                content_type=content_type
-            )
+            if method == 'POST':
+                rv = client.post(
+                    path,
+                    data=body_data,
+                    content_type=content_type,
+                    headers=headers_dict,
+                    query_string=query
+                )
+            else:
+                rv = client.open(
+                    path,
+                    method=method,
+                    headers=headers_dict,
+                    query_string=query
+                )
             
             resp_headers = {k: v for k, v in rv.headers if k.lower() != 'content-length'}
             resp_headers['Access-Control-Allow-Origin'] = '*'
