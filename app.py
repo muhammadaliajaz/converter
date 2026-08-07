@@ -433,14 +433,14 @@ def download_file(filename):
 
         user_name = request.args.get('name')
         if user_name:
-            download_name = secure_filename(user_name)
+            download_name = user_name
         else:
             download_name = safe_filename
             import re
             download_name = re.sub(r'^[a-f0-9]{8,64}_\d+_', '', download_name)
             download_name = re.sub(r'^[a-f0-9]{8,64}_', '', download_name)
 
-        return send_file(return_data, download_name=download_name, as_attachment=True)
+        return send_file(return_data, download_name=download_name, as_attachment=True, mimetype='application/octet-stream')
     return "File not found or expired.", 404
 
 if __name__ == '__main__':

@@ -494,6 +494,15 @@
                         document.getElementById('statusArea').classList.add('hidden');
                         document.getElementById('resultArea').classList.remove('hidden');
                         document.getElementById('downloadLink').href = json.download_url;
+                        if (json.download_url && json.download_url.includes('name=')) {
+                            try {
+                                const params = new URLSearchParams(json.download_url.split('?')[1]);
+                                const cleanName = params.get('name');
+                                if (cleanName) {
+                                    document.getElementById('downloadLink').setAttribute('download', cleanName);
+                                }
+                            } catch (e) {}
+                        }
                     }, 500);
                 } else throw new Error(json.error || 'Conversion failed.');
             } catch (err) {
