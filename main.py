@@ -148,15 +148,12 @@ def main(context):
             resp_headers['Access-Control-Allow-Origin'] = '*'
             
             raw_response_bytes = rv.get_data()
+            text_response = raw_response_bytes.decode('utf-8', errors='replace')
             
             if hasattr(res, 'send'):
-                return res.send(raw_response_bytes, rv.status_code, resp_headers)
+                return res.send(text_response, rv.status_code, resp_headers)
             
-            if hasattr(res, 'binary'):
-                return res.binary(raw_response_bytes, rv.status_code, resp_headers)
-
-            text_content = raw_response_bytes.decode('utf-8', errors='replace')
-            return res.text(text_content, rv.status_code, resp_headers)
+            return res.text(text_response, rv.status_code, resp_headers)
 
     except Exception as e:
         context.error(f"Flask execution error: {str(e)}")
