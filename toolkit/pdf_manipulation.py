@@ -124,14 +124,9 @@ def compress_pdf(input_path, output_path, level='medium', target_kb=None):
 
         if target_bytes:
             passes = [
-                ('stream', 75, 1400),
-                ('stream', 50, 1000),
-                ('stream', 35, 750),
-                ('stream', 20, 500),
-                ('raster', 120, 65),
-                ('raster', 90, 50),
-                ('raster', 70, 35),
-                ('raster', 50, 25),
+                ('stream', 45, 900),
+                ('stream', 25, 600),
+                ('raster', 80, 40)
             ]
             temp_path = f"{output_path}_temp.pdf"
             for pass_type, p1, p2 in passes:
