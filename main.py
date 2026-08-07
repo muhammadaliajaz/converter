@@ -101,12 +101,20 @@ def main(context):
 
     # Forward API requests (/upload, /download, etc.) to Flask App
     try:
+        import json
         flask_app = get_flask_app()
         body_data = getattr(req, 'body_raw', None)
-        if body_data is None:
+        if not body_data:
+            body_data = getattr(req, 'body_text', None)
+        if not body_data:
             body_data = getattr(req, 'body_binary', None)
-        if body_data is None:
+        if not body_data:
             body_data = getattr(req, 'body', '')
+
+        if isinstance(body_data, dict):
+            body_data = json.dumps(body_data).encode('utf-8')
+        elif isinstance(body_data, str):
+            body_data = body_data.encode('utf-8')
 
         with flask_app.test_client() as client:
             rv = client.open(
