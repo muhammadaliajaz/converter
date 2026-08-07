@@ -268,9 +268,10 @@ def upload_file():
                 
             elif conversion_type == 'compress-pdf':
                 lvl = req_form.get('compression_level', 'medium')
+                target_kb_raw = req_form.get('pdf_target_kb') or req_form.get('target_kb')
                 out_name = f"{unique_batch_id}_{idx}_{original_name}_compressed.pdf"
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
-                success, res = pdf_manipulation.compress_pdf(input_path, out_path, level=lvl)
+                success, res = pdf_manipulation.compress_pdf(input_path, out_path, level=lvl, target_kb=target_kb_raw)
                 if success: output_files.append((out_name, f"{original_name}_compressed.pdf"))
                 
             elif conversion_type == 'word-to-pdf':

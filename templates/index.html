@@ -269,14 +269,21 @@
                     </select>
                 </div>
 
-                <!-- Compress PDF Level -->
-                <div id="compressPdfBlock" class="hidden">
-                    <label for="pdfCompressLevelSelect" class="font-semibold text-slate-700 text-sm block mb-1">Compression Level</label>
-                    <select id="pdfCompressLevelSelect" name="compression_level" class="w-full p-2.5 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-slate-900 bg-white" aria-label="Compression Level">
-                        <option value="low">Low (Fast)</option>
-                        <option value="medium" selected>Medium (Recommended)</option>
-                        <option value="high">High (Smallest Size)</option>
-                    </select>
+                <!-- Compress PDF Level & Target KB -->
+                <div id="compressPdfBlock" class="hidden space-y-3">
+                    <div>
+                        <label for="pdfCompressLevelSelect" class="font-semibold text-slate-700 text-sm block mb-1">Compression Option</label>
+                        <select id="pdfCompressLevelSelect" name="compression_level" onchange="togglePdfKbInput(this.value)" class="w-full p-2.5 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-slate-900 bg-white" aria-label="Compression Level">
+                            <option value="medium" selected>Medium (Recommended)</option>
+                            <option value="high">High (Smallest File)</option>
+                            <option value="low">Low (High Quality)</option>
+                            <option value="custom">Custom Target Size (in KB)</option>
+                        </select>
+                    </div>
+                    <div id="pdfTargetKbField" class="hidden">
+                        <label for="pdfCompressKbInput" class="font-semibold text-slate-700 text-sm block mb-1">Target PDF Size (KB)</label>
+                        <input type="number" id="pdfCompressKbInput" name="pdf_target_kb" placeholder="e.g. 200, 500, 1000" min="10" class="w-full p-2.5 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-slate-900 bg-white" aria-label="Target PDF Size in KB">
+                    </div>
                 </div>
 
                 <!-- Image Compress Target KB -->
@@ -383,6 +390,16 @@
             else dynamicSettings.classList.add('hidden');
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function togglePdfKbInput(val) {
+            const field = document.getElementById('pdfTargetKbField');
+            if (val === 'custom') {
+                field.classList.remove('hidden');
+            } else {
+                field.classList.add('hidden');
+                document.getElementById('pdfCompressKbInput').value = '';
+            }
         }
 
         function closeWorkspace() {

@@ -57,26 +57,30 @@ def add_page_numbers(input_path, output_path):
     except Exception as e:
         return False, str(e)
 
-def compress_pdf(input_path, output_path, level='medium'):
+def compress_pdf(input_path, output_path, level='medium', target_kb=None):
     """
-    Robust & High-Reduction PDF Compression
+    Robust & High-Reduction PDF Compression targeting exact KB size if requested.
     """
     try:
-        doc = fitz.open(input_path)
+        orig_size = os.path.getsize(input_path)
         
-        # 1. Image quality selection
-        if level == 'high':
-            quality = 40
-            deflate_garbage = 4
-        elif level == 'low':
-            quality = 75
-            deflate_garbage = 2
-        else:
-            quality = 55 # medium
-            deflate_garbage = 3
+        target_bytes = None
+        if target_kb:
+            try:
+                val = float(target_kb)
+                if val > 0:
+                    target_bytes = val * 1024
+            except ValueError:
+                pass
 
-        # 2. Try re-encoding embedded images in PDF
-        try:
+        if target_bytes and orig_size <= target_bytes:
+            doc = fitz.open(input_path)
+            doc.save(output_path, garbage=4, deflate=True, clean=True)
+            doc.close()
+            return True, output_path
+
+        def _try_image_stream_compression(quality, max_dim, out_file):
+            doc = fitz.open(input_path)
             for page in doc:
                 image_list = page.get_images(full=True)
                 for img in image_list:
@@ -86,27 +90,84 @@ def compress_pdf(input_path, output_path, level='medium'):
                         if base_image:
                             image_bytes = base_image["image"]
                             pil_img = Image.open(io.BytesIO(image_bytes))
-                            
                             if pil_img.mode in ("RGBA", "P", "LA"):
                                 pil_img = pil_img.convert("RGB")
-                            
-                            if pil_img.width > 1400 or pil_img.height > 1400:
-                                pil_img.thumbnail((1400, 1400), Image.Resampling.BILINEAR)
-
+                            if pil_img.width > max_dim or pil_img.height > max_dim:
+                                pil_img.thumbnail((max_dim, max_dim), Image.Resampling.BILINEAR)
                             img_out = io.BytesIO()
                             pil_img.save(img_out, format="JPEG", quality=quality, optimize=True)
                             doc.update_stream(xref, img_out.getvalue())
                     except Exception:
                         pass
-        except Exception:
-            pass
+            doc.save(out_file, garbage=4, deflate=True, clean=True)
+            doc.close()
 
-        doc.save(output_path, garbage=deflate_garbage, deflate=True, clean=True)
-        doc.close()
-        
+        def _try_page_rasterization(dpi, quality, out_file):
+            src_doc = fitz.open(input_path)
+            out_doc = fitz.open()
+            for page in src_doc:
+                pix = page.get_pixmap(dpi=dpi)
+                img_data = pix.tobytes("jpeg", jpg_quality=quality)
+                img_doc = fitz.open("jpeg", img_data)
+                rect = page.rect
+                pdf_bytes = img_doc.convert_to_pdf()
+                img_pdf = fitz.open("pdf", pdf_bytes)
+                page_inst = out_doc.new_page(width=rect.width, height=rect.height)
+                page_inst.show_pdf_page(rect, img_pdf, 0)
+                img_doc.close()
+                img_pdf.close()
+            src_doc.close()
+            out_doc.save(out_file, garbage=4, deflate=True, clean=True)
+            out_doc.close()
+
+        best_size = float('inf')
+
+        if target_bytes:
+            passes = [
+                ('stream', 75, 1400),
+                ('stream', 50, 1000),
+                ('stream', 35, 750),
+                ('stream', 20, 500),
+                ('raster', 120, 65),
+                ('raster', 90, 50),
+                ('raster', 70, 35),
+                ('raster', 50, 25),
+            ]
+            temp_path = f"{output_path}_temp.pdf"
+            for pass_type, p1, p2 in passes:
+                try:
+                    if pass_type == 'stream':
+                        _try_image_stream_compression(quality=p1, max_dim=p2, out_file=temp_path)
+                    else:
+                        _try_page_rasterization(dpi=p1, quality=p2, out_file=temp_path)
+
+                    if os.path.exists(temp_path):
+                        sz = os.path.getsize(temp_path)
+                        if sz < best_size:
+                            best_size = sz
+                            if os.path.exists(output_path):
+                                os.remove(output_path)
+                            os.rename(temp_path, output_path)
+                        else:
+                            os.remove(temp_path)
+
+                        if sz <= target_bytes:
+                            break
+                except Exception:
+                    if os.path.exists(temp_path):
+                        os.remove(temp_path)
+        else:
+            if level == 'high':
+                quality, max_dim = 30, 800
+            elif level == 'low':
+                quality, max_dim = 75, 1400
+            else:
+                quality, max_dim = 50, 1000
+            _try_image_stream_compression(quality=quality, max_dim=max_dim, out_file=output_path)
+
         if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
             return True, output_path
-            
+
         return False, "Compression failed"
     except Exception as e:
         return False, str(e)
