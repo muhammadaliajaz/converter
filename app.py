@@ -225,18 +225,20 @@ def upload_file():
     # Many-to-One behaviors:
     if conversion_type == 'merge-pdf':
         paths = [p[0] for p in saved_inputs]
+        first_name = os.path.splitext(saved_inputs[0][1])[0] if saved_inputs else "document"
         out_filename = f"{unique_batch_id}_merged.pdf"
         out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_filename)
         success, res = pdf_manipulation.merge_pdfs(paths, out_path)
-        if success: output_files.append((out_filename, "Merged_Document.pdf"))
+        if success: output_files.append((out_filename, f"{first_name}_merged.pdf"))
         else: error_msgs.append(res)
         
     elif conversion_type == 'jpg-to-pdf':
         paths = [p[0] for p in saved_inputs]
+        first_name = os.path.splitext(saved_inputs[0][1])[0] if saved_inputs else "image"
         out_filename = f"{unique_batch_id}_combined.pdf"
         out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_filename)
         success, res = image_tools.jpg_to_pdf(paths, out_path)
-        if success: output_files.append((out_filename, "Combined_Images.pdf"))
+        if success: output_files.append((out_filename, f"{first_name}_converted.pdf"))
         else: error_msgs.append(res)
         
     else:
@@ -250,19 +252,19 @@ def upload_file():
                 out_name = f"{unique_batch_id}_{idx}_{original_name}.docx"
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
                 success, res = office_tools.pdf_to_docx(input_path, out_path)
-                if success: output_files.append((out_name, f"{original_name}.docx"))
+                if success: output_files.append((out_name, f"{original_name}_pdf_to_word.docx"))
                 
             elif conversion_type == 'pdf-to-text':
                 out_name = f"{unique_batch_id}_{idx}_{original_name}.txt"
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
                 success, res = translate_tools.extract_text_from_pdf(input_path, out_path)
-                if success: output_files.append((out_name, f"{original_name}.txt"))
+                if success: output_files.append((out_name, f"{original_name}_text.txt"))
                 
             elif conversion_type == 'image-to-text':
                 out_name = f"{unique_batch_id}_{idx}_{original_name}.txt"
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
                 success, res = translate_tools.extract_text_from_image(input_path, out_path)
-                if success: output_files.append((out_name, f"{original_name}.txt"))
+                if success: output_files.append((out_name, f"{original_name}_text.txt"))
                 
             elif conversion_type == 'compress-pdf':
                 lvl = req_form.get('compression_level', 'medium')
@@ -275,7 +277,7 @@ def upload_file():
                 out_name = f"{unique_batch_id}_{idx}_{original_name}.pdf"
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
                 success, res = office_tools.docx_to_pdf(input_path, out_path)
-                if success: output_files.append((out_name, f"{original_name}.pdf"))
+                if success: output_files.append((out_name, f"{original_name}_word_to_pdf.pdf"))
                 
             elif conversion_type == 'compress-image':
                 kb = req_form.get('target_kb', '500')
@@ -289,45 +291,46 @@ def upload_file():
                 out_name = f"{unique_batch_id}_{idx}_{original_name}.{fmt.lower()}"
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
                 success, res = image_tools.convert_image_format(input_path, out_path, fmt)
-                if success: output_files.append((out_name, f"{original_name}.{fmt.lower()}"))
+                if success: output_files.append((out_name, f"{original_name}_converted.{fmt.lower()}"))
                 
-            # NEW FEATURES
             elif conversion_type == 'split-pdf':
                 success, out_list = pdf_manipulation.split_pdf(input_path, app.config['OUTPUT_FOLDER'], f"{unique_batch_id}_{idx}")
                 if success:
                     for f_disk, f_zip in out_list:
-                        output_files.append((f_disk, f"{original_name}_{f_zip.split('_page_')[1]}"))
+                        page_num = f_zip.split('_page_')[1] if '_page_' in f_zip else "page"
+                        output_files.append((f_disk, f"{original_name}_page_{page_num}"))
                 else: res = out_list
                 
             elif conversion_type == 'pdf-to-ppt':
                 out_name = f"{unique_batch_id}_{idx}_{original_name}.pptx"
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
                 success, res = office_tools.pdf_to_ppt(input_path, out_path)
-                if success: output_files.append((out_name, f"{original_name}.pptx"))
+                if success: output_files.append((out_name, f"{original_name}_pdf_to_ppt.pptx"))
                 
             elif conversion_type == 'pdf-to-excel':
                 out_name = f"{unique_batch_id}_{idx}_{original_name}.xlsx"
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
                 success, res = office_tools.pdf_to_excel(input_path, out_path)
-                if success: output_files.append((out_name, f"{original_name}.xlsx"))
+                if success: output_files.append((out_name, f"{original_name}_pdf_to_excel.xlsx"))
                 
             elif conversion_type == 'ppt-to-pdf':
                 out_name = f"{unique_batch_id}_{idx}_{original_name}.pdf"
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
                 success, res = office_tools.ppt_to_pdf(input_path, out_path)
-                if success: output_files.append((out_name, f"{original_name}.pdf"))
+                if success: output_files.append((out_name, f"{original_name}_ppt_to_pdf.pdf"))
                 
             elif conversion_type == 'excel-to-pdf':
                 out_name = f"{unique_batch_id}_{idx}_{original_name}.pdf"
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
                 success, res = office_tools.excel_to_pdf(input_path, out_path)
-                if success: output_files.append((out_name, f"{original_name}.pdf"))
+                if success: output_files.append((out_name, f"{original_name}_excel_to_pdf.pdf"))
                 
             elif conversion_type == 'pdf-to-jpg':
                 success, out_list = image_tools.pdf_to_jpg(input_path, app.config['OUTPUT_FOLDER'], f"{unique_batch_id}_{idx}")
                 if success:
                     for f_disk, f_zip in out_list:
-                        output_files.append((f_disk, f"{original_name}_{f_zip.split('_page_')[1]}"))
+                        page_num = f_zip.split('_page_')[1] if '_page_' in f_zip else "page"
+                        output_files.append((f_disk, f"{original_name}_page_{page_num}"))
                 else: res = out_list
                 
             elif conversion_type == 'unlock-pdf':
@@ -355,7 +358,7 @@ def upload_file():
                 out_name = f"{unique_batch_id}_{idx}_{original_name}_{lang}.txt"
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
                 success, res = translate_tools.translate_pdf_to_txt(input_path, out_path, lang)
-                if success: output_files.append((out_name, f"{original_name}_{lang}.txt"))
+                if success: output_files.append((out_name, f"{original_name}_translated_{lang}.txt"))
                 
             else:
                 return jsonify({'error': 'Invalid conversion type'}), 400
@@ -371,6 +374,8 @@ def upload_file():
     if not output_files:
         return jsonify({'error': f'Conversion failed for all files: {" | ".join(error_msgs)}'}), 500
 
+    first_orig_name = os.path.splitext(saved_inputs[0][1])[0] if saved_inputs else "document"
+
     if len(output_files) > 1:
         zip_filename = f"{unique_batch_id}_converted_files.zip"
         zip_path = os.path.join(app.config['OUTPUT_FOLDER'], zip_filename)
@@ -378,12 +383,13 @@ def upload_file():
             for out_f, arc_name in output_files:
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_f)
                 zipf.write(out_path, arcname=arc_name)
-                # Cleanup individual output parts after zipping
                 try: os.remove(out_path)
                 except: pass
         final_download = zip_filename
+        download_name_param = f"{first_orig_name}_{conversion_type}_files.zip"
     else:
         final_download = output_files[0][0]
+        download_name_param = output_files[0][1]
 
     # Cleanup origin inputs immediately
     for path, _ in saved_inputs:
@@ -392,7 +398,7 @@ def upload_file():
 
     return jsonify({
         'success': True, 
-        'download_url': f'/download/{final_download}',
+        'download_url': f'/download/{final_download}?name={download_name_param}',
         'partial_errors': error_msgs if error_msgs else None
     })
 
@@ -401,13 +407,22 @@ def download_file(filename):
     safe_filename = secure_filename(filename)
     file_path = os.path.join(app.config['OUTPUT_FOLDER'], safe_filename)
     if os.path.exists(file_path):
-        # Read the file to memory, then delete from disk immediately
         with open(file_path, 'rb') as f:
             data = f.read()
         try: os.remove(file_path)
         except: pass
         return_data = io.BytesIO(data)
-        return send_file(return_data, download_name=safe_filename, as_attachment=True)
+
+        user_name = request.args.get('name')
+        if user_name:
+            download_name = secure_filename(user_name)
+        else:
+            download_name = safe_filename
+            import re
+            download_name = re.sub(r'^[a-f0-9]{8,64}_\d+_', '', download_name)
+            download_name = re.sub(r'^[a-f0-9]{8,64}_', '', download_name)
+
+        return send_file(return_data, download_name=download_name, as_attachment=True)
     return "File not found or expired.", 404
 
 if __name__ == '__main__':
