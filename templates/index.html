@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="pageTitle">#1 Free Online PDF Converter & Document Tools | Smart File Converter</title>
-    <meta name="description" id="metaDescription" content="Free online PDF converter and document toolkit. Merge, split, compress, translate, and convert PDFs, Word (DOCX), Excel (XLSX), PowerPoint (PPTX), and Images securely with zero registration.">
+    <meta name="description" id="metaDescription" content="Free online PDF & document tools. Merge, split, compress, and convert PDF, Word, Excel, and images instantly. 100% free with zero registration required.">
     <meta name="keywords" content="PDF converter, free PDF converter online, merge PDF, split PDF, compress PDF size, PDF to Word converter, Word to PDF, Excel to PDF, PPT to PDF, translate PDF, image converter online, unlock PDF, free PDF tools">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <meta name="google-site-verification" content="googleff8c761e6fbde718" />
@@ -22,14 +22,14 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Smart File Converter">
     <meta property="og:title" id="ogTitle" content="#1 Free Online PDF Converter & Document Tools">
-    <meta property="og:description" id="ogDescription" content="Convert, compress, merge, translate and edit PDFs, Word documents, Excel sheets, and Images for free online securely and instantly.">
+    <meta property="og:description" id="ogDescription" content="Free online PDF & document tools. Merge, split, compress, and convert PDF, Word, Excel, and images instantly. 100% free with zero registration required.">
     <meta property="og:url" id="ogUrl" content="https://officialali.dev/">
     <meta property="og:image" content="https://officialali.dev/og-image.png">
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" id="twitterTitle" content="#1 Free Online PDF Converter & Document Tools">
-    <meta name="twitter:description" id="twitterDescription" content="Convert, compress, merge, translate and edit PDFs and images for free online securely.">
+    <meta name="twitter:description" id="twitterDescription" content="Free online PDF & document tools. Merge, split, compress, and convert PDF, Word, Excel, and images instantly. 100% free with zero registration required.">
     <meta name="twitter:image" content="https://officialali.dev/og-image.png">
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -50,7 +50,7 @@
         "@type": "SoftwareApplication",
         "name": "Smart File Converter",
         "url": "https://officialali.dev/",
-        "description": "#1 Free Online PDF Converter & Document Management Suite. Merge PDF, Split PDF, Compress PDF, PDF to Word, Excel, PPT, Translate PDF & Image Converter.",
+        "description": "Free online PDF & document tools. Merge, split, compress, and convert PDF, Word, Excel, and images instantly. 100% free with zero registration required.",
         "applicationCategory": "UtilitiesApplication",
         "operatingSystem": "All",
         "offers": {
@@ -182,13 +182,29 @@
 </head>
 <body>
 
+    <!-- TOP NAVIGATION BAR (Internal Canonical Links for Search Crawlers) -->
+    <nav class="max-w-6xl mx-auto flex items-center justify-between py-4 px-2 mb-8 border-b border-slate-200" aria-label="Main Navigation">
+        <a href="https://officialali.dev/" title="Smart File Converter - Free Online PDF & Document Tools" class="flex items-center gap-2 text-slate-900 font-extrabold text-xl hover:text-indigo-600 transition">
+            <span class="text-2xl">📄</span>
+            <span>Smart File Converter</span>
+        </a>
+        <div class="flex items-center gap-6 text-sm font-semibold text-slate-600">
+            <a href="https://officialali.dev/" title="Home" class="hover:text-indigo-600 transition">Home</a>
+            <a href="https://officialali.dev/#directoryHeading" title="PDF & Document Tools Directory" class="hover:text-indigo-600 transition">All Tools</a>
+            <a href="https://officialali.dev/#faqHeading" title="Frequently Asked Questions" class="hover:text-indigo-600 transition">FAQs</a>
+        </div>
+    </nav>
+
     <!-- HEADER -->
     <header class="text-center mb-10">
+        <div class="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-2">
+            <a href="https://officialali.dev/" title="Home Page" class="hover:underline">Home</a> &bull; Free Online PDF &amp; Document Suite
+        </div>
         <h1 id="mainHeading" class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-2.5 tracking-tight">
             #1 Free Online PDF Converter & Document Tools
         </h1>
         <p class="text-slate-600 font-medium text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-            Convert, Merge, Split, Compress, Translate, and Edit PDFs, Word, Excel, PowerPoint & Images online <strong>100% free</strong> with no registration required.
+            Convert, Merge, Split, Compress, Translate, and Edit PDFs, Word, Excel, PowerPoint & Images online <strong>100% free</strong> with zero registration required.
         </p>
     </header>
 
@@ -301,10 +317,10 @@
 
     <!-- WORKSPACE VIEW -->
     <section id="workspaceContainer" class="hidden max-w-2xl mx-auto glass-panel" aria-label="Tool Workspace">
-        <button id="backBtn" onclick="closeWorkspace()" aria-label="Back to Tools List" class="text-indigo-600 font-semibold mb-6 flex items-center hover:text-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded p-1.5 transition">
+        <a href="https://officialali.dev/" id="backBtn" onclick="closeWorkspace(); return false;" aria-label="Back to Home &amp; Tools List" class="inline-flex items-center text-indigo-600 font-semibold mb-6 hover:text-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded p-1.5 transition">
             <svg class="w-5 h-5 mr-1.5" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
             Back to Tools
-        </button>
+        </a>
 
         <div class="text-center mb-8">
             <div id="toolIcon" class="text-5xl mb-3" aria-hidden="true"></div>
@@ -511,8 +527,14 @@
 
     <!-- FOOTER -->
     <footer class="text-center py-10 text-xs text-slate-500 border-t border-slate-200 mt-20">
+        <div class="flex justify-center items-center gap-6 mb-4 font-semibold text-slate-600">
+            <a href="https://officialali.dev/" title="Home" class="hover:text-indigo-600 transition">Home</a>
+            <a href="https://officialali.dev/#directoryHeading" title="Tools Directory" class="hover:text-indigo-600 transition">Tools Directory</a>
+            <a href="https://officialali.dev/#faqHeading" title="FAQs" class="hover:text-indigo-600 transition">FAQs</a>
+            <a href="https://officialali.dev/sitemap.xml" title="Sitemap" class="hover:text-indigo-600 transition">Sitemap</a>
+        </div>
         <p class="mb-2 font-medium">Smart File Converter &copy; 2026. All rights reserved.</p>
-        <p>Free Online PDF, Word, Excel, PowerPoint, and Image Converter Toolkit.</p>
+        <p><a href="https://officialali.dev/" class="text-indigo-600 font-semibold hover:underline" title="Smart File Converter Home">Smart File Converter</a> - Free Online PDF, Word, Excel, PowerPoint, and Image Converter Toolkit.</p>
     </footer>
 
     <script>
@@ -578,7 +600,7 @@
                 document.getElementById('canonicalUrl')?.setAttribute('href', fullUrl);
             } else {
                 document.title = 'Smart File Converter - Free Online PDF & Document Tools';
-                const defaultDesc = 'Free online document converter. Merge, split, compress, translate, and convert PDFs, Word, Excel, PowerPoint, and Image files securely. 100% free with no registration.';
+                const defaultDesc = 'Free online PDF & document tools. Merge, split, compress, and convert PDF, Word, Excel, and images instantly. 100% free with zero registration required.';
                 document.getElementById('metaDescription')?.setAttribute('content', defaultDesc);
                 document.getElementById('ogTitle')?.setAttribute('content', 'Smart File Converter - All Your Document Tools in One Place');
                 document.getElementById('ogDescription')?.setAttribute('content', defaultDesc);
