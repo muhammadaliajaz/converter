@@ -3,35 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart File Converter - Free Online PDF & Document Tools</title>
-    <meta name="description" content="Free online document converter. Merge, split, compress, and convert PDFs, Word, Excel, PowerPoint, and Image files securely. 100% free with no registration.">
-    <meta name="keywords" content="PDF converter, merge PDF, split PDF, compress PDF, PDF to Word, Word to PDF, Excel to PDF, PPT to PDF, Image converter, online PDF tools">
-    <meta name="robots" content="index, follow">
+    <title id="pageTitle">Smart File Converter - Free Online PDF & Document Tools</title>
+    <meta name="description" id="metaDescription" content="Free online document converter. Merge, split, compress, translate, and convert PDFs, Word, Excel, PowerPoint, and Image files securely. 100% free with no registration.">
+    <meta name="keywords" content="PDF converter, merge PDF online, split PDF, compress PDF file size, PDF to Word converter, Word to PDF, Excel to PDF, PPT to PDF, translate PDF, image converter online, unlock PDF, free PDF tools">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <meta name="google-site-verification" content="googleff8c761e6fbde718" />
     <meta name="application-name" content="Smart File Converter">
-    <meta name="agentic-browser" content="enabled">
-    <meta property="og:title" content="Smart File Converter - All Your Document Tools in One Place">
-    <meta property="og:description" content="Convert, compress, merge, translate and edit PDFs, Word documents, Excel sheets, and Images for free online securely and instantly.">
+    <meta name="author" content="Smart File Converter">
+    <meta name="theme-color" content="#4f46e5">
+
+    <!-- Open Graph / Facebook Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://officialali.dev/">
+    <meta property="og:site_name" content="Smart File Converter">
+    <meta property="og:title" id="ogTitle" content="Smart File Converter - All Your Document Tools in One Place">
+    <meta property="og:description" id="ogDescription" content="Convert, compress, merge, translate and edit PDFs, Word documents, Excel sheets, and Images for free online securely and instantly.">
+    <meta property="og:url" id="ogUrl" content="https://officialali.dev/">
+    <meta property="og:image" content="https://officialali.dev/og-image.png">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" id="twitterTitle" content="Smart File Converter - Free Online Document Tools">
+    <meta name="twitter:description" id="twitterDescription" content="Convert, compress, merge, translate and edit PDFs and images for free online securely.">
+    <meta name="twitter:image" content="https://officialali.dev/og-image.png">
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="canonical" href="https://officialali.dev/" />
+    <link rel="canonical" id="canonicalUrl" href="https://officialali.dev/" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
 
+    <!-- JSON-LD Structured Data (Schema.org for Google Search Rich Snippets) -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "Smart File Converter",
-      "url": "https://officialali.dev/",
-      "description": "A comprehensive web-based document toolkit. Merge, split, compress, translate, and convert PDFs, Word, Excel, and images entirely for free.",
-      "applicationCategory": "UtilitiesApplication",
-      "operatingSystem": "All",
-      "offers": {
-        "@type": "Offer",
-        "price": "0"
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Smart File Converter",
+        "url": "https://officialali.dev/",
+        "description": "Free web-based document toolkit. Merge, split, compress, translate, and convert PDFs, Word, Excel, PowerPoint, and images securely.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "All",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is Smart File Converter 100% free to use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, Smart File Converter is completely free to use with no hidden fees, subscriptions, or registration requirements."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are my uploaded document files safe and secure?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. All uploaded files are encrypted, processed in memory, and automatically deleted from our servers after processing."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I merge multiple PDF files into one?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Select the Merge PDF tool, drag & drop your PDF files, order them as desired, and click Process Document to download your single merged PDF."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I convert PDF files to editable Word documents?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes! Our PDF to Word tool converts PDF files into fully editable Microsoft Word (DOCX) files while preserving layout and formatting."
+            }
+          }
+        ]
       }
-    }
+    ]
     </script>
 
     <!-- Tailwind CSS Engine -->
@@ -333,6 +387,120 @@
         </div>
     </section>
 
+    <!-- SEO CONTENT SECTION (Features, How It Works, Tools Directory, FAQs) -->
+    <article id="seoArticle" class="max-w-6xl mx-auto mt-16 space-y-16">
+        <!-- Features & Benefits -->
+        <section aria-labelledby="featuresHeading" class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+            <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
+                <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl font-bold mb-4">⚡</div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Fast & Free Online Tools</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Convert, compress, and edit documents in seconds. 100% free online solution with zero installation or registration required.</p>
+            </div>
+            <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
+                <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl font-bold mb-4">🔒</div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">100% Secure & Private</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Your files are processed securely over encrypted SSL connections and are automatically deleted from server memory after conversion.</p>
+            </div>
+            <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
+                <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl font-bold mb-4">💻</div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Works on Any Device</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">Access all PDF and Image tools from any web browser on Windows, Mac, iPhone, iPad, Android, or Linux seamlessly.</p>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section aria-labelledby="howToHeading" class="bg-white p-10 rounded-3xl border border-slate-100 shadow-sm text-center">
+            <h2 id="howToHeading" class="text-3xl font-extrabold text-slate-900 mb-3">How to Convert Documents & Images Online</h2>
+            <p class="text-slate-500 max-w-2xl mx-auto mb-10 text-sm">Follow three easy steps to manage your PDF files, Word documents, Excel sheets, and images.</p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+                <div class="flex flex-col items-center">
+                    <div class="w-14 h-14 rounded-full bg-indigo-600 text-white font-bold text-xl flex items-center justify-center mb-4 shadow-md shadow-indigo-200">1</div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-1">Choose a Tool</h3>
+                    <p class="text-xs text-slate-500 max-w-xs">Select from Merge PDF, Split PDF, Compress, PDF to Word, Translate, or Image Converter.</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-14 h-14 rounded-full bg-indigo-600 text-white font-bold text-xl flex items-center justify-center mb-4 shadow-md shadow-indigo-200">2</div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-1">Upload Your Files</h3>
+                    <p class="text-xs text-slate-500 max-w-xs">Drag and drop your document files or click to browse from your phone or computer.</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-14 h-14 rounded-full bg-indigo-600 text-white font-bold text-xl flex items-center justify-center mb-4 shadow-md shadow-indigo-200">3</div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-1">Download Converted File</h3>
+                    <p class="text-xs text-slate-500 max-w-xs">Click Process Document and instantly download your converted output file.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Internal Links Directory for Crawlers & Users -->
+        <section aria-labelledby="directoryHeading" class="bg-slate-50 p-8 rounded-2xl border border-slate-200">
+            <h2 id="directoryHeading" class="text-xl font-bold text-slate-800 mb-6 text-center">Popular Free Online PDF & Document Tools</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
+                <a href="/merge-pdf" onclick="openWorkspaceById('merge-pdf'); return false;" class="p-2.5 bg-white rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-indigo-500 hover:text-indigo-600 transition text-center block">📝 Merge PDF</a>
+                <a href="/split-pdf" onclick="openWorkspaceById('split-pdf'); return false;" class="p-2.5 bg-white rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-indigo-500 hover:text-indigo-600 transition text-center block">✂️ Split PDF</a>
+                <a href="/compress-pdf" onclick="openWorkspaceById('compress-pdf'); return false;" class="p-2.5 bg-white rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-indigo-500 hover:text-indigo-600 transition text-center block">🗜️ Compress PDF</a>
+                <a href="/pdf-to-word" onclick="openWorkspaceById('pdf-to-word'); return false;" class="p-2.5 bg-white rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-indigo-500 hover:text-indigo-600 transition text-center block">📝 PDF to Word</a>
+                <a href="/pdf-to-ppt" onclick="openWorkspaceById('pdf-to-ppt'); return false;" class="p-2.5 bg-white rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-indigo-500 hover:text-indigo-600 transition text-center block">📊 PDF to PPT</a>
+                <a href="/pdf-to-excel" onclick="openWorkspaceById('pdf-to-excel'); return false;" class="p-2.5 bg-white rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-indigo-500 hover:text-indigo-600 transition text-center block">📈 PDF to Excel</a>
+                <a href="/word-to-pdf" onclick="openWorkspaceById('word-to-pdf'); return false;" class="p-2.5 bg-white rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-indigo-500 hover:text-indigo-600 transition text-center block">📄 Word to PDF</a>
+                <a href="/ppt-to-pdf" onclick="openWorkspaceById('ppt-to-pdf'); return false;" class="p-2.5 bg-white rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-indigo-500 hover:text-indigo-600 transition text-center block">📄 PPT to PDF</a>
+                <a href="/excel-to-pdf" onclick="openWorkspaceById('excel-to-pdf'); return false;" class="p-2.5 bg-white rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-indigo-500 hover:text-indigo-600 transition text-center block">📄 Excel to PDF</a>
+                <a href="/pdf-to-jpg" onclick="openWorkspaceById('pdf-to-jpg'); return false;" class="p-2.5 bg-white rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-indigo-500 hover:text-indigo-600 transition text-center block">🖼️ PDF to JPG</a>
+                <a href="/jpg-to-pdf" onclick="openWorkspaceById('jpg-to-pdf'); return false;" class="p-2.5 bg-white rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-indigo-500 hover:text-indigo-600 transition text-center block">🖼️ JPG to PDF</a>
+                <a href="/unlock-pdf" onclick="openWorkspaceById('unlock-pdf'); return false;" class="p-2.5 bg-white rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-indigo-500 hover:text-indigo-600 transition text-center block">🔓 Unlock PDF</a>
+                <a href="/protect-pdf" onclick="openWorkspaceById('protect-pdf'); return false;" class="p-2.5 bg-white rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-indigo-500 hover:text-indigo-600 transition text-center block">🔒 Protect PDF</a>
+                <a href="/page-numbers" onclick="openWorkspaceById('page-numbers'); return false;" class="p-2.5 bg-white rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-indigo-500 hover:text-indigo-600 transition text-center block">🔢 Page Numbers</a>
+                <a href="/translate-pdf" onclick="openWorkspaceById('translate-pdf'); return false;" class="p-2.5 bg-white rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-indigo-500 hover:text-indigo-600 transition text-center block">🌍 Translate PDF</a>
+                <a href="/compress-image" onclick="openWorkspaceById('compress-image'); return false;" class="p-2.5 bg-white rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-indigo-500 hover:text-indigo-600 transition text-center block">🗜️ Compress Image</a>
+                <a href="/convert-image-format" onclick="openWorkspaceById('convert-image-format'); return false;" class="p-2.5 bg-white rounded-lg border border-slate-200 text-slate-700 font-medium hover:border-indigo-500 hover:text-indigo-600 transition text-center block">🎨 Convert Image</a>
+            </div>
+        </section>
+
+        <!-- Frequently Asked Questions (FAQ) Accordion -->
+        <section aria-labelledby="faqHeading" class="max-w-4xl mx-auto">
+            <h2 id="faqHeading" class="text-3xl font-extrabold text-slate-900 mb-8 text-center">Frequently Asked Questions</h2>
+            <div class="space-y-4">
+                <details class="group bg-white border border-slate-200 rounded-2xl p-5 [&_summary::-webkit-details-marker]:hidden cursor-pointer shadow-sm">
+                    <summary class="flex items-center justify-between font-bold text-slate-800 text-base">
+                        <span>Is Smart File Converter 100% free to use?</span>
+                        <span class="ml-4 transition group-open:-rotate-180">▼</span>
+                    </summary>
+                    <p class="mt-3 text-sm text-slate-600 leading-relaxed">Yes! Smart File Converter is completely free with no hidden charges, trial limits, or account registration required.</p>
+                </details>
+
+                <details class="group bg-white border border-slate-200 rounded-2xl p-5 [&_summary::-webkit-details-marker]:hidden cursor-pointer shadow-sm">
+                    <summary class="flex items-center justify-between font-bold text-slate-800 text-base">
+                        <span>Are my uploaded documents safe and private?</span>
+                        <span class="ml-4 transition group-open:-rotate-180">▼</span>
+                    </summary>
+                    <p class="mt-3 text-sm text-slate-600 leading-relaxed">Your privacy is guaranteed. All uploads are encrypted via HTTPS and files are automatically purged from our server storage after processing.</p>
+                </details>
+
+                <details class="group bg-white border border-slate-200 rounded-2xl p-5 [&_summary::-webkit-details-marker]:hidden cursor-pointer shadow-sm">
+                    <summary class="flex items-center justify-between font-bold text-slate-800 text-base">
+                        <span>How do I merge multiple PDF files into one?</span>
+                        <span class="ml-4 transition group-open:-rotate-180">▼</span>
+                    </summary>
+                    <p class="mt-3 text-sm text-slate-600 leading-relaxed">Click on the "Merge PDF" tool card, select or drag and drop your PDF files, and click "Process Document" to combine them into a single PDF.</p>
+                </details>
+
+                <details class="group bg-white border border-slate-200 rounded-2xl p-5 [&_summary::-webkit-details-marker]:hidden cursor-pointer shadow-sm">
+                    <summary class="flex items-center justify-between font-bold text-slate-800 text-base">
+                        <span>Can I convert PDF files to editable Word documents?</span>
+                        <span class="ml-4 transition group-open:-rotate-180">▼</span>
+                    </summary>
+                    <p class="mt-3 text-sm text-slate-600 leading-relaxed">Yes. Our PDF to Word tool extracts text and layouts from your PDF file and converts it into an editable Microsoft Word (.docx) document.</p>
+                </details>
+            </div>
+        </section>
+    </article>
+
+    <!-- FOOTER -->
+    <footer class="text-center py-10 text-xs text-slate-500 border-t border-slate-200 mt-20">
+        <p class="mb-2 font-medium">Smart File Converter &copy; 2026. All rights reserved.</p>
+        <p>Free Online PDF, Word, Excel, PowerPoint, and Image Converter Toolkit.</p>
+    </footer>
+
     <script>
         const toolsData = {
             'merge-pdf': { name: 'Merge PDF', icon: '📝' },
@@ -361,6 +529,52 @@
         const conversionTypeHidden = document.getElementById('conversionType');
         const dynamicSettings = document.getElementById('dynamicSettings');
 
+        const toolsSEOData = {
+            'merge-pdf': { title: 'Merge PDF Online - Combine Multiple PDF Files Free | Smart File Converter', desc: 'Merge PDF files online for free. Combine multiple PDF documents into a single organized PDF file quickly and securely without registration.' },
+            'split-pdf': { title: 'Split PDF Online - Separate PDF Pages Free | Smart File Converter', desc: 'Split PDF pages online for free. Extract specific page ranges or split PDF documents into separate single pages easily.' },
+            'compress-pdf': { title: 'Compress PDF Online - Reduce PDF Size Free | Smart File Converter', desc: 'Compress PDF files online for free. Reduce PDF file size significantly while preserving document quality and formatting.' },
+            'pdf-to-word': { title: 'PDF to Word Converter - Convert PDF to DOCX Free | Smart File Converter', desc: 'Convert PDF to editable Word (DOCX) online for free. Fast, accurate conversion retaining original fonts, tables, and formatting.' },
+            'pdf-to-ppt': { title: 'PDF to PPT Converter - Convert PDF to PowerPoint Free | Smart File Converter', desc: 'Convert PDF files to editable PowerPoint presentations (PPTX) online for free. Easy conversion with layout preservation.' },
+            'pdf-to-excel': { title: 'PDF to Excel Converter - Extract PDF Tables to XLSX Free | Smart File Converter', desc: 'Convert PDF to Excel spreadsheet (XLSX) online for free. Extract tables and spreadsheet data from PDF files accurately.' },
+            'word-to-pdf': { title: 'Word to PDF Converter - Convert DOCX to PDF Online Free | Smart File Converter', desc: 'Convert Word documents (DOCX & DOC) to standard PDF files online for free. Instant conversion with perfect layout retention.' },
+            'ppt-to-pdf': { title: 'PPT to PDF Converter - Convert PowerPoint to PDF Free | Smart File Converter', desc: 'Convert PowerPoint slides (PPTX & PPT) to PDF online for free. Present and share your slide decks securely.' },
+            'excel-to-pdf': { title: 'Excel to PDF Converter - Convert XLSX to PDF Online Free | Smart File Converter', desc: 'Convert Excel spreadsheets (XLSX & XLS) to PDF online for free. High-quality document conversion.' },
+            'pdf-to-jpg': { title: 'PDF to JPG Converter - Convert PDF Pages to Images Free | Smart File Converter', desc: 'Convert PDF pages into high-resolution JPG images online for free. Save PDF pages as image files instantly.' },
+            'jpg-to-pdf': { title: 'JPG to PDF Converter - Convert Images to PDF Online Free | Smart File Converter', desc: 'Convert JPG, PNG, WEBP, and BMP images into a single PDF file online for free. Fast image to PDF converter.' },
+            'unlock-pdf': { title: 'Unlock PDF Online - Remove PDF Password & Restrictions Free | Smart File Converter', desc: 'Unlock password-protected PDF files online for free. Remove owner and user passwords to print, copy, or edit PDFs.' },
+            'protect-pdf': { title: 'Protect PDF Online - Encrypt PDF with Password Free | Smart File Converter', desc: 'Encrypt PDF files with strong password protection online for free. Prevent unauthorized opening, copying, or printing.' },
+            'page-numbers': { title: 'Add Page Numbers to PDF - Stamp PDF Pages Free | Smart File Converter', desc: 'Add page numbers to your PDF documents easily online for free. Choose position, font style, and number formatting.' },
+            'translate-pdf': { title: 'Translate PDF Online - Free PDF Document Translator | Smart File Converter', desc: 'Translate PDF document text into English, Spanish, French, German, Chinese, Arabic, or Hindi online for free.' },
+            'compress-image': { title: 'Compress Image Online - Reduce JPG & PNG Size Free | Smart File Converter', desc: 'Compress JPG, PNG, and WEBP images online to target KB size for free. Optimize images for faster web page loading.' },
+            'convert-image-format': { title: 'Convert Image Format - JPG, PNG, WEBP Converter Free | Smart File Converter', desc: 'Convert image files between JPG, PNG, WEBP, and BMP formats online for free. Fast batch image format converter.' }
+        };
+
+        function updatePageMetadata(toolId) {
+            const baseUrl = 'https://officialali.dev/';
+            if (toolId && toolsSEOData[toolId]) {
+                const info = toolsSEOData[toolId];
+                document.title = info.title;
+                const fullUrl = baseUrl + toolId;
+                document.getElementById('metaDescription')?.setAttribute('content', info.desc);
+                document.getElementById('ogTitle')?.setAttribute('content', info.title);
+                document.getElementById('ogDescription')?.setAttribute('content', info.desc);
+                document.getElementById('ogUrl')?.setAttribute('content', fullUrl);
+                document.getElementById('twitterTitle')?.setAttribute('content', info.title);
+                document.getElementById('twitterDescription')?.setAttribute('content', info.desc);
+                document.getElementById('canonicalUrl')?.setAttribute('href', fullUrl);
+            } else {
+                document.title = 'Smart File Converter - Free Online PDF & Document Tools';
+                const defaultDesc = 'Free online document converter. Merge, split, compress, translate, and convert PDFs, Word, Excel, PowerPoint, and Image files securely. 100% free with no registration.';
+                document.getElementById('metaDescription')?.setAttribute('content', defaultDesc);
+                document.getElementById('ogTitle')?.setAttribute('content', 'Smart File Converter - All Your Document Tools in One Place');
+                document.getElementById('ogDescription')?.setAttribute('content', defaultDesc);
+                document.getElementById('ogUrl')?.setAttribute('content', baseUrl);
+                document.getElementById('twitterTitle')?.setAttribute('content', 'Smart File Converter - Free Online Document Tools');
+                document.getElementById('twitterDescription')?.setAttribute('content', defaultDesc);
+                document.getElementById('canonicalUrl')?.setAttribute('href', baseUrl);
+            }
+        }
+
         function openWorkspaceById(toolId) {
             const tool = toolsData[toolId] || { name: toolId, icon: '📄' };
             gridContainer.classList.add('hidden');
@@ -368,6 +582,8 @@
             toolIcon.innerText = tool.icon;
             toolTitle.innerText = tool.name;
             conversionTypeHidden.value = toolId;
+
+            updatePageMetadata(toolId);
 
             document.getElementById('uploadForm').reset();
             document.getElementById('fileInfo').classList.add('hidden');
@@ -388,6 +604,13 @@
 
             if (showSettings) dynamicSettings.classList.remove('hidden');
             else dynamicSettings.classList.add('hidden');
+
+            if (window.history && window.history.pushState) {
+                const currentPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
+                if (currentPath !== toolId) {
+                    window.history.pushState(null, null, '/' + toolId);
+                }
+            }
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -405,8 +628,35 @@
         function closeWorkspace() {
             gridContainer.classList.remove('hidden');
             workspaceContainer.classList.add('hidden');
+            updatePageMetadata(null);
+            if (window.history && window.history.pushState) {
+                window.history.pushState(null, null, '/');
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
+        function handleInitialRoute() {
+            const rawPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
+            const rawHash = window.location.hash.replace(/^#+/, '');
+            const toolId = rawPath || rawHash;
+            if (toolId && toolsData[toolId]) {
+                openWorkspaceById(toolId);
+            }
+        }
+
+        window.addEventListener('popstate', () => {
+            const rawPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
+            const rawHash = window.location.hash.replace(/^#+/, '');
+            const toolId = rawPath || rawHash;
+            if (toolId && toolsData[toolId]) {
+                openWorkspaceById(toolId);
+            } else {
+                gridContainer.classList.remove('hidden');
+                workspaceContainer.classList.add('hidden');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', handleInitialRoute);
 
         document.querySelectorAll('.tool-card').forEach(card => {
             card.addEventListener('keydown', (e) => {

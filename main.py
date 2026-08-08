@@ -9,6 +9,17 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 if CURRENT_DIR not in sys.path:
     sys.path.insert(0, CURRENT_DIR)
 
+from datetime import datetime
+
+# Known tools list for clean URL routing
+TOOLS_LIST = [
+    'merge-pdf', 'split-pdf', 'compress-pdf', 'pdf-to-word',
+    'pdf-to-ppt', 'pdf-to-excel', 'word-to-pdf', 'ppt-to-pdf',
+    'excel-to-pdf', 'pdf-to-jpg', 'jpg-to-pdf', 'unlock-pdf',
+    'protect-pdf', 'page-numbers', 'translate-pdf', 'compress-image',
+    'convert-image-format'
+]
+
 # Global Flask App cache for lazy loading
 _FLASK_APP = None
 
@@ -108,8 +119,9 @@ def main(context):
     
     context.log(f"Processing: {method} {path}")
 
-    # Route: GET / -> Render HTML Website UI INSTANTLY (< 50ms) without loading heavy python modules
-    if method == 'GET' and (path == '/' or path == '/index.html'):
+    clean_path = path.strip('/')
+    # Route: GET / or GET /<tool-name> -> Render HTML Website UI INSTANTLY (< 50ms) without loading heavy python modules
+    if method == 'GET' and (path == '/' or path == '/index.html' or clean_path in TOOLS_LIST):
         try:
             html_path = os.path.join(CURRENT_DIR, 'templates', 'index.html')
             if os.path.exists(html_path):
@@ -139,19 +151,18 @@ def main(context):
     # Route: GET /sitemap.xml
     if path == '/sitemap.xml':
         base_url = "https://officialali.dev"
-        tools_list = [
-            '', 'merge-pdf', 'split-pdf', 'compress-pdf', 'pdf-to-word',
-            'pdf-to-ppt', 'pdf-to-excel', 'word-to-pdf', 'ppt-to-pdf',
-            'excel-to-pdf', 'pdf-to-jpg', 'jpg-to-pdf', 'unlock-pdf',
-            'protect-pdf', 'page-numbers', 'translate-pdf', 'compress-image',
-            'convert-image-format'
-        ]
+        sitemap_routes = [''] + TOOLS_LIST
+        today_date = datetime.utcnow().strftime("%Y-%m-%d")
         
         urls_xml = ""
-        for tool_path in tools_list:
-            loc_url = base_url if tool_path == '' else f"{base_url}/#{tool_path}"
-            priority = "1.0" if tool_path == '' else "0.8"
-            urls_xml += f"  <url>\n    <loc>{loc_url}</loc>\n    <changefreq>daily</changefreq>\n    <priority>{priority}</priority>\n  </url>\n"
+        for tool_path in sitemap_routes:
+            if tool_path == '':
+                loc_url = f"{base_url}/"
+                priority = "1.0"
+            else:
+                loc_url = f"{base_url}/{tool_path}"
+                priority = "0.8"
+            urls_xml += f"  <url>\n    <loc>{loc_url}</loc>\n    <lastmod>{today_date}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>{priority}</priority>\n  </url>\n"
 
         xml_content = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

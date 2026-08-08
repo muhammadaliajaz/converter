@@ -106,8 +106,17 @@ def cleanup_old_files():
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+TOOLS_LIST = [
+    'merge-pdf', 'split-pdf', 'compress-pdf', 'pdf-to-word',
+    'pdf-to-ppt', 'pdf-to-excel', 'word-to-pdf', 'ppt-to-pdf',
+    'excel-to-pdf', 'pdf-to-jpg', 'jpg-to-pdf', 'unlock-pdf',
+    'protect-pdf', 'page-numbers', 'translate-pdf', 'compress-image',
+    'convert-image-format'
+]
+
 @app.route('/')
-def index():
+@app.route('/<tool_id>')
+def index(tool_id=None):
     return render_template('index.html')
 
 @app.route('/robots.txt')
@@ -117,24 +126,23 @@ def robots():
 @app.route('/sitemap.xml')
 def sitemap():
     base_url = "https://officialali.dev"
-    tools_list = [
-        '', 'merge-pdf', 'split-pdf', 'compress-pdf', 'pdf-to-word',
-        'pdf-to-ppt', 'pdf-to-excel', 'word-to-pdf', 'ppt-to-pdf',
-        'excel-to-pdf', 'pdf-to-jpg', 'jpg-to-pdf', 'unlock-pdf',
-        'protect-pdf', 'page-numbers', 'translate-pdf', 'compress-image',
-        'convert-image-format'
-    ]
+    sitemap_routes = [''] + TOOLS_LIST
+    today_date = datetime.datetime.utcnow().strftime("%Y-%m-%d")
     
     urls_xml = ""
-    for tool_path in tools_list:
-        loc_url = base_url if tool_path == '' else f"{base_url}/#{tool_path}"
-        priority = "1.0" if tool_path == '' else "0.8"
-        urls_xml += f"  <url>\n    <loc>{loc_url}</loc>\n    <changefreq>daily</changefreq>\n    <priority>{priority}</priority>\n  </url>\n"
+    for tool_path in sitemap_routes:
+        if tool_path == '':
+            loc_url = f"{base_url}/"
+            priority = "1.0"
+        else:
+            loc_url = f"{base_url}/{tool_path}"
+            priority = "0.8"
+        urls_xml += f"  <url>\n    <loc>{loc_url}</loc>\n    <lastmod>{today_date}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>{priority}</priority>\n  </url>\n"
 
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 {urls_xml}</urlset>"""
-    return xml, 200, {'Content-Type': 'application/xml'}
+    return xml, 200, {'Content-Type': 'application/xml; charset=utf-8'}
 
 @app.route('/upload', methods=['POST'])
 @csrf.exempt
