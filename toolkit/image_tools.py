@@ -49,7 +49,7 @@ def compress_image_to_kb(input_path, output_path, target_kb):
         img = Image.open(input_path)
         
         # Convert RGBA/Palette/CMYK images to RGB
-        if img.mode in ("RGBA", "P", "LA", "CMYK"):
+        if img.mode in ("RGBA", "P", "LA", "CMYK", "1"):
             bg = Image.new('RGB', img.size, (255, 255, 255))
             if img.mode == 'P':
                 img = img.convert('RGBA')
@@ -107,8 +107,9 @@ def convert_image_format(input_path, output_path, target_format):
         format_mapping = {'JPG': 'JPEG', 'JPEG': 'JPEG', 'PNG': 'PNG', 'WEBP': 'WEBP', 'BMP': 'BMP', 'GIF': 'GIF'}
         t_format = format_mapping.get(fmt_upper, 'JPEG')
         
+        # Standardize color mode to RGB or RGBA for 100% OS compatibility
         if t_format == 'JPEG':
-            if img.mode in ('RGBA', 'LA', 'P', 'CMYK'):
+            if img.mode in ('RGBA', 'LA', 'P', 'CMYK', '1'):
                 bg = Image.new('RGB', img.size, (255, 255, 255))
                 if img.mode == 'P':
                     img = img.convert('RGBA')
@@ -117,10 +118,16 @@ def convert_image_format(input_path, output_path, target_format):
                     img = bg
                 else:
                     img = img.convert('RGB')
-        elif t_format in ('PNG', 'WEBP', 'BMP', 'GIF'):
-            if img.mode == 'CMYK':
-                img = img.convert('RGB')
-            elif t_format == 'BMP' and img.mode in ('RGBA', 'LA', 'P'):
+        elif t_format in ('PNG', 'WEBP'):
+            if img.mode not in ('RGB', 'RGBA'):
+                if img.mode == 'P':
+                    img = img.convert('RGBA')
+                elif img.mode == 'CMYK':
+                    img = img.convert('RGB')
+                else:
+                    img = img.convert('RGBA')
+        elif t_format == 'BMP':
+            if img.mode != 'RGB':
                 img = img.convert('RGB')
         
         save_kwargs = {}
