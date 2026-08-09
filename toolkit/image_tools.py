@@ -48,8 +48,8 @@ def compress_image_to_kb(input_path, output_path, target_kb):
         target_bytes = int(target_kb) * 1024
         img = Image.open(input_path)
         
-        # Convert RGBA/Palette images to RGB
-        if img.mode in ("RGBA", "P", "LA"):
+        # Convert RGBA/Palette/CMYK images to RGB
+        if img.mode in ("RGBA", "P", "LA", "CMYK"):
             bg = Image.new('RGB', img.size, (255, 255, 255))
             if img.mode == 'P':
                 img = img.convert('RGBA')
@@ -66,7 +66,7 @@ def compress_image_to_kb(input_path, output_path, target_kb):
         best_quality = 40
         best_data = None
 
-        for _ in range(6): # max 6 iterations fast
+        for _ in range(6):
             mid = (low + high) // 2
             buf = io.BytesIO()
             img.save(buf, format="JPEG", quality=mid, optimize=True)
@@ -79,7 +79,6 @@ def compress_image_to_kb(input_path, output_path, target_kb):
             else:
                 high = mid - 1
 
-        # If quality alone didn't reach target KB, scale dimensions directly
         if best_data is None or len(best_data) > target_bytes:
             w, h = img.size
             scale = 0.8
@@ -104,20 +103,31 @@ def compress_image_to_kb(input_path, output_path, target_kb):
 def convert_image_format(input_path, output_path, target_format):
     try:
         img = Image.open(input_path)
+        fmt_upper = str(target_format).upper().strip()
         format_mapping = {'JPG': 'JPEG', 'JPEG': 'JPEG', 'PNG': 'PNG', 'WEBP': 'WEBP', 'BMP': 'BMP', 'GIF': 'GIF'}
-        t_format = format_mapping.get(target_format.upper(), 'JPEG')
+        t_format = format_mapping.get(fmt_upper, 'JPEG')
         
-        if t_format == 'JPEG' and img.mode in ('RGBA', 'LA', 'P'):
-            background = Image.new('RGB', img.size, (255, 255, 255))
-            if img.mode == 'P':
-                img = img.convert('RGBA')
-            if img.mode in ('RGBA', 'LA'):
-                background.paste(img, mask=img.split()[-1])
-                img = background
-            else:
+        if t_format == 'JPEG':
+            if img.mode in ('RGBA', 'LA', 'P', 'CMYK'):
+                bg = Image.new('RGB', img.size, (255, 255, 255))
+                if img.mode == 'P':
+                    img = img.convert('RGBA')
+                if img.mode in ('RGBA', 'LA'):
+                    bg.paste(img, mask=img.split()[-1])
+                    img = bg
+                else:
+                    img = img.convert('RGB')
+        elif t_format in ('PNG', 'WEBP', 'BMP', 'GIF'):
+            if img.mode == 'CMYK':
+                img = img.convert('RGB')
+            elif t_format == 'BMP' and img.mode in ('RGBA', 'LA', 'P'):
                 img = img.convert('RGB')
         
-        img.save(output_path, format=t_format, optimize=True)
+        save_kwargs = {}
+        if t_format in ('JPEG', 'PNG', 'WEBP'):
+            save_kwargs['optimize'] = True
+
+        img.save(output_path, format=t_format, **save_kwargs)
         return True, output_path
     except Exception as e:
         return False, str(e)
