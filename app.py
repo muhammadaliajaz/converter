@@ -430,20 +430,17 @@ def upload_file():
 
 @app.route('/download/<filename>')
 def download_file(filename):
-    safe_filename = secure_filename(filename)
-    file_path = os.path.join(app.config['OUTPUT_FOLDER'], safe_filename)
-    if os.path.exists(file_path):
-        with open(file_path, 'rb') as f:
-            data = f.read()
-        try: os.remove(file_path)
-        except: pass
-        return_data = io.BytesIO(data)
+    file_path = os.path.join(app.config['OUTPUT_FOLDER'], filename)
+    if not os.path.exists(file_path):
+        safe_filename = secure_filename(filename)
+        file_path = os.path.join(app.config['OUTPUT_FOLDER'], safe_filename)
 
+    if os.path.exists(file_path):
         user_name = request.args.get('name')
         if user_name:
             download_name = user_name
         else:
-            download_name = safe_filename
+            download_name = os.path.basename(file_path)
             import re
             download_name = re.sub(r'^[a-f0-9]{8,64}_\d+_', '', download_name)
             download_name = re.sub(r'^[a-f0-9]{8,64}_', '', download_name)
@@ -459,10 +456,16 @@ def download_file(filename):
                 mime_type = 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
             elif download_name.endswith('.pdf'):
                 mime_type = 'application/pdf'
+            elif download_name.endswith('.png'):
+                mime_type = 'image/png'
+            elif download_name.endswith('.jpg') or download_name.endswith('.jpeg'):
+                mime_type = 'image/jpeg'
+            elif download_name.endswith('.webp'):
+                mime_type = 'image/webp'
             else:
                 mime_type = 'application/octet-stream'
 
-        return send_file(return_data, download_name=download_name, as_attachment=True, mimetype=mime_type)
+        return send_file(file_path, download_name=download_name, as_attachment=True, mimetype=mime_type)
     return "File not found or expired.", 404
 
 if __name__ == '__main__':
