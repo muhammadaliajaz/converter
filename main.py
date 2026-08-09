@@ -211,12 +211,13 @@ def main(context):
             body_bytes=body_bytes
         )
 
-        text_response = response_bytes.decode('utf-8', errors='replace')
-        
-        if hasattr(res, 'send'):
-            return res.send(text_response, status_code, resp_headers)
-        
-        return res.text(text_response, status_code, resp_headers)
+        if hasattr(res, 'binary') and callable(getattr(res, 'binary')):
+            return res.binary(response_bytes, status_code, resp_headers)
+        elif hasattr(res, 'send'):
+            return res.send(response_bytes, status_code, resp_headers)
+        else:
+            text_response = response_bytes.decode('utf-8', errors='replace')
+            return res.text(text_response, status_code, resp_headers)
 
     except Exception as e:
         err_msg = f"Flask WSGI execution error: {str(e)}\n{traceback.format_exc()}"
