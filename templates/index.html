@@ -956,20 +956,40 @@
                 pb.style.width = '100%';
 
                 if (res.ok && json.success) {
-                    setTimeout(() => {
-                        document.getElementById('statusArea').classList.add('hidden');
-                        document.getElementById('resultArea').classList.remove('hidden');
-                        document.getElementById('downloadLink').href = json.download_url;
+                    try {
+                        const dlRes = await fetch(json.download_url);
+                        if (!dlRes.ok) throw new Error('Could not retrieve converted file binary.');
+
+                        const blob = await dlRes.blob();
+                        const blobUrl = URL.createObjectURL(blob);
+
+                        let fileName = 'converted_document';
                         if (json.download_url && json.download_url.includes('name=')) {
                             try {
                                 const params = new URLSearchParams(json.download_url.split('?')[1]);
-                                const cleanName = params.get('name');
-                                if (cleanName) {
-                                    document.getElementById('downloadLink').setAttribute('download', cleanName);
-                                }
-                            } catch (e) { }
+                                fileName = params.get('name') || fileName;
+                            } catch (e) {}
                         }
-                    }, 500);
+
+                        const dlLink = document.getElementById('downloadLink');
+                        dlLink.href = blobUrl;
+                        dlLink.setAttribute('download', fileName);
+
+                        setTimeout(() => {
+                            document.getElementById('statusArea').classList.add('hidden');
+                            document.getElementById('resultArea').classList.remove('hidden');
+
+                            // Auto trigger browser download
+                            const autoLink = document.createElement('a');
+                            autoLink.href = blobUrl;
+                            autoLink.download = fileName;
+                            document.body.appendChild(autoLink);
+                            autoLink.click();
+                            document.body.removeChild(autoLink);
+                        }, 300);
+                    } catch (dlErr) {
+                        throw new Error('Download failed: ' + dlErr.message);
+                    }
                 } else throw new Error(json.error || 'Conversion failed.');
             } catch (err) {
                 clearInterval(pt);
