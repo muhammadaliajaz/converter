@@ -448,7 +448,21 @@ def download_file(filename):
             download_name = re.sub(r'^[a-f0-9]{8,64}_\d+_', '', download_name)
             download_name = re.sub(r'^[a-f0-9]{8,64}_', '', download_name)
 
-        return send_file(return_data, download_name=download_name, as_attachment=True, mimetype='application/octet-stream')
+        import mimetypes
+        mime_type, _ = mimetypes.guess_type(download_name)
+        if not mime_type:
+            if download_name.endswith('.docx'):
+                mime_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            elif download_name.endswith('.xlsx'):
+                mime_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            elif download_name.endswith('.pptx'):
+                mime_type = 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+            elif download_name.endswith('.pdf'):
+                mime_type = 'application/pdf'
+            else:
+                mime_type = 'application/octet-stream'
+
+        return send_file(return_data, download_name=download_name, as_attachment=True, mimetype=mime_type)
     return "File not found or expired.", 404
 
 if __name__ == '__main__':
