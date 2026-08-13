@@ -143,7 +143,38 @@ def main(context):
 
     # Route: GET /robots.txt
     if path == '/robots.txt':
-        return res.text("User-agent: *\nAllow: /\nSitemap: https://officialali.dev/sitemap.xml\n", 200, {
+        robots_content = """User-agent: *
+Allow: /
+Allow: /sitemap.xml
+Allow: /merge-pdf
+Allow: /split-pdf
+Allow: /compress-pdf
+Allow: /pdf-to-word
+Allow: /pdf-to-ppt
+Allow: /pdf-to-excel
+Allow: /word-to-pdf
+Allow: /ppt-to-pdf
+Allow: /excel-to-pdf
+Allow: /pdf-to-jpg
+Allow: /jpg-to-pdf
+Allow: /unlock-pdf
+Allow: /protect-pdf
+Allow: /page-numbers
+Allow: /translate-pdf
+Allow: /compress-image
+Allow: /convert-image-format
+Disallow: /download/
+Disallow: /upload
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+Sitemap: https://officialali.dev/sitemap.xml
+"""
+        return res.text(robots_content, 200, {
             'content-type': 'text/plain; charset=utf-8',
             'Access-Control-Allow-Origin': '*'
         })

@@ -468,5 +468,12 @@ def download_file(filename):
         return send_file(file_path, download_name=download_name, as_attachment=True, mimetype=mime_type)
     return "File not found or expired.", 404
 
+@app.route('/robots.txt')
+def serve_robots():
+    robots_file = os.path.join(os.path.dirname(__file__), 'robots.txt')
+    if os.path.exists(robots_file):
+        return send_file(robots_file, mimetype='text/plain')
+    return "User-agent: *\nAllow: /\nSitemap: https://officialali.dev/sitemap.xml\n", 200, {'Content-Type': 'text/plain'}
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
