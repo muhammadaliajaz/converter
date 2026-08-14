@@ -198,6 +198,23 @@ def main(context):
     
     context.log(f"Processing: {method} {path}")
 
+    # 301 Permanent Redirect for trailing slash URL normalization
+    if path != '/' and path.endswith('/'):
+        clean_url = f"https://officialali.dev{path.rstrip('/')}"
+        return res.redirect(clean_url, 301, {
+            'Location': clean_url,
+            'Access-Control-Allow-Origin': '*'
+        })
+
+    # 301 Permanent Redirect for www domain normalization
+    host_val = str(headers.get('host') or headers.get('Host') or '').lower()
+    if host_val.startswith('www.'):
+        clean_url = f"https://officialali.dev{path}"
+        return res.redirect(clean_url, 301, {
+            'Location': clean_url,
+            'Access-Control-Allow-Origin': '*'
+        })
+
     clean_path = path.strip('/')
     # Route: GET /robots.txt
     if path == '/robots.txt':
