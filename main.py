@@ -179,6 +179,28 @@ Sitemap: https://officialali.dev/sitemap.xml
             'Access-Control-Allow-Origin': '*'
         })
 
+    # Route: GET /llms.txt
+    if path == '/llms.txt':
+        llms_file = os.path.join(CURRENT_DIR, 'llms.txt')
+        if os.path.exists(llms_file):
+            with open(llms_file, 'r', encoding='utf-8') as f:
+                llms_content = f.read()
+            return res.text(llms_content, 200, {
+                'content-type': 'text/markdown; charset=utf-8',
+                'Access-Control-Allow-Origin': '*'
+            })
+
+    # Route: GET /llms-full.txt
+    if path == '/llms-full.txt':
+        llms_full_file = os.path.join(CURRENT_DIR, 'llms-full.txt')
+        if os.path.exists(llms_full_file):
+            with open(llms_full_file, 'r', encoding='utf-8') as f:
+                llms_full_content = f.read()
+            return res.text(llms_full_content, 200, {
+                'content-type': 'text/markdown; charset=utf-8',
+                'Access-Control-Allow-Origin': '*'
+            })
+
     # Route: GET /sitemap.xml
     if path == '/sitemap.xml':
         base_url = "https://officialali.dev"

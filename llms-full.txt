@@ -1,0 +1,76 @@
+# Smart File Converter - Full Technical Documentation
+
+> Complete developer, API, and architectural overview for Smart File Converter (https://officialali.dev/).
+
+Smart File Converter is a high-performance web application designed for fast, secure, and private document processing. All file processing occurs with instant execution and automatic cleanup.
+
+## System Architecture
+
+- **Frontend**: Clean semantic HTML5, Vanilla JavaScript (ES6+), responsive UI, and CSS grid design system.
+- **Backend Framework**: Python WSGI Flask engine optimized for serverless edge deployment (Appwrite Functions / Linux Containers).
+- **Core Processing Engines**:
+  - `PyMuPDF (fitz)`: Ultra-fast PDF parsing, text extraction, block rendering, and image generation.
+  - `python-docx`: High-fidelity Microsoft Word (.docx) file creation, XML 1.0 sanitization, and paragraph formatting.
+  - `python-pptx`: Presentation slide construction and picture overlay rendering.
+  - `openpyxl`: Excel spreadsheet workbook generation and grid formatting.
+  - `reportlab`: Programmatic PDF generation from text, paragraphs, and data tables.
+  - `Pillow (PIL)`: High-efficiency image processing, format conversion (JPG, PNG, WEBP, BMP), and quality binary compression.
+
+## Detailed Tool Specifications
+
+### 1. Merge PDF (/merge-pdf)
+Combines multiple input PDF files into a single unified PDF document. Preserves page order, bookmarks, and vector graphic quality.
+
+### 2. Split PDF (/split-pdf)
+Splits a multi-page PDF into separate single-page PDF documents. Returns individual files or a compressed ZIP archive.
+
+### 3. Compress PDF (/compress-pdf)
+Reduces PDF file size using customizable compression profiles (Low, Medium, High, or Target KB limit). Re-samples embedded raster images and compresses vector streams.
+
+### 4. PDF to Word (/pdf-to-word)
+Converts PDF files into editable Microsoft Word (.docx) documents while preserving text layout, font sizes, colors, bold/italic styles, tables, and embedded images.
+
+### 5. PDF to PowerPoint (/pdf-to-ppt)
+Converts PDF pages into 16:9 widescreen PowerPoint (.pptx) presentation slides.
+
+### 6. PDF to Excel (/pdf-to-excel)
+Parses PDF tables and grid data into structured Microsoft Excel (.xlsx) worksheets.
+
+### 7. Word to PDF (/word-to-pdf)
+Converts Microsoft Word (.docx) documents into formatted PDF files.
+
+### 8. PPT to PDF (/ppt-to-pdf)
+Converts PowerPoint (.pptx) presentation slides into PDF documents.
+
+### 9. Excel to PDF (/excel-to-pdf)
+Converts Excel (.xlsx) spreadsheets into structured grid PDF tables with custom cell styling and headers.
+
+### 10. PDF to JPG (/pdf-to-jpg)
+Extracts and renders PDF pages into high-resolution 150 DPI JPG images.
+
+### 11. JPG to PDF (/jpg-to-pdf)
+Combines multiple JPG, PNG, or BMP images into a formatted multi-page PDF document.
+
+### 12. Unlock PDF (/unlock-pdf)
+Removes password protection and owner restrictions from encrypted PDF files.
+
+### 13. Protect PDF (/protect-pdf)
+Encrypts PDF files with user-specified passwords using standard PDF 128-bit encryption.
+
+### 14. Page Numbers (/page-numbers)
+Appends dynamic page numbers (e.g. "Page X of Y") to PDF footers.
+
+### 15. Translate PDF (/translate-pdf)
+Extracts text from PDF documents and translates it into selected target languages.
+
+### 16. Compress Image (/compress-image)
+Compresses JPG, PNG, and WEBP images to a specified target file size limit in KB.
+
+### 17. Convert Image (/convert-image-format)
+Converts images between JPG, PNG, WEBP, and BMP formats while standardizing color space to 32-bit RGBA or 24-bit RGB for 100% OS compatibility.
+
+## Security & Privacy Policy
+
+- Zero Registration: No user registration, accounts, or personal data collection required.
+- File Cleanup: Input and output files are processed in ephemeral storage and cleaned up automatically.
+- SSL/TLS Encryption: All data in transit is protected using HTTPS with TLS 1.3 encryption.

@@ -475,5 +475,19 @@ def serve_robots():
         return send_file(robots_file, mimetype='text/plain')
     return "User-agent: *\nAllow: /\nSitemap: https://officialali.dev/sitemap.xml\n", 200, {'Content-Type': 'text/plain'}
 
+@app.route('/llms.txt')
+def serve_llms():
+    llms_file = os.path.join(os.path.dirname(__file__), 'llms.txt')
+    if os.path.exists(llms_file):
+        return send_file(llms_file, mimetype='text/markdown; charset=utf-8')
+    return "# Smart File Converter\n> Free online PDF & document tools.", 200, {'Content-Type': 'text/markdown; charset=utf-8'}
+
+@app.route('/llms-full.txt')
+def serve_llms_full():
+    llms_full_file = os.path.join(os.path.dirname(__file__), 'llms-full.txt')
+    if os.path.exists(llms_full_file):
+        return send_file(llms_full_file, mimetype='text/markdown; charset=utf-8')
+    return "# Smart File Converter Full Documentation", 200, {'Content-Type': 'text/markdown; charset=utf-8'}
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
 Allow: /sitemap.xml
+Allow: /llms.txt
+Allow: /llms-full.txt
 Allow: /merge-pdf
 Allow: /split-pdf
 Allow: /compress-pdf

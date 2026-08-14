@@ -1,0 +1,36 @@
+# Smart File Converter
+
+> Free online PDF & document converter tools suite. Merge, split, compress, and convert PDF, Word, Excel, PowerPoint, and image files instantly online with 100% privacy and zero registration required.
+
+Smart File Converter (https://officialali.dev/) is a privacy-first web application providing 17 free online document processing and conversion tools.
+
+## Core Capabilities
+
+- **PDF Manipulation**: Merge, split, compress, unlock, protect, and add page numbers to PDF files.
+- **Office Document Conversion**: Convert PDF to Word (.docx), PDF to PowerPoint (.pptx), PDF to Excel (.xlsx), Word to PDF, PPT to PDF, and Excel to PDF while preserving formatting, fonts, colors, and layout.
+- **Image Processing**: Convert PDF to JPG, JPG to PDF, compress image size in KB, and convert between JPG, PNG, WEBP, and BMP image formats.
+- **Multilingual PDF Translation**: Extract and translate PDF content into multiple target languages.
+
+## Tools Directory
+
+- [Merge PDF](https://officialali.dev/merge-pdf): Combine multiple PDF documents into a single organized PDF file online for free.
+- [Split PDF](https://officialali.dev/split-pdf): Separate PDF pages or extract specific page ranges into individual PDF files.
+- [Compress PDF](https://officialali.dev/compress-pdf): Reduce PDF file size in KB/MB with selectable compression levels while maintaining visual quality.
+- [PDF to Word](https://officialali.dev/pdf-to-word): Convert PDF documents into editable Microsoft Word (.docx) files preserving formatting, tables, and images.
+- [PDF to PowerPoint](https://officialali.dev/pdf-to-ppt): Convert PDF files into editable Microsoft PowerPoint (.pptx) presentation slides.
+- [PDF to Excel](https://officialali.dev/pdf-to-excel): Extract tables and data from PDF documents into structured Microsoft Excel (.xlsx) spreadsheets.
+- [Word to PDF](https://officialali.dev/word-to-pdf): Convert Microsoft Word (.docx) documents into standard PDF files.
+- [PPT to PDF](https://officialali.dev/ppt-to-pdf): Convert Microsoft PowerPoint (.pptx) presentations into PDF documents.
+- [Excel to PDF](https://officialali.dev/excel-to-pdf): Convert Microsoft Excel (.xlsx) spreadsheets into formatted PDF files.
+- [PDF to JPG](https://officialali.dev/pdf-to-jpg): Convert PDF pages into high-resolution JPG images.
+- [JPG to PDF](https://officialali.dev/jpg-to-pdf): Convert JPG, PNG, and BMP images into a single PDF document.
+- [Unlock PDF](https://officialali.dev/unlock-pdf): Remove password protection and restrictions from PDF files.
+- [Protect PDF](https://officialali.dev/protect-pdf): Encrypt and password-protect PDF files with 128-bit security.
+- [Page Numbers](https://officialali.dev/page-numbers): Insert customizable page numbers into PDF documents.
+- [Translate PDF](https://officialali.dev/translate-pdf): Translate PDF text into English, Spanish, French, German, Arabic, Urdu, and more.
+- [Compress Image](https://officialali.dev/compress-image): Reduce image file size to a target KB limit without quality loss.
+- [Convert Image](https://officialali.dev/convert-image-format): Convert images between JPG, PNG, WEBP, and BMP formats.
+
+## Optional
+
+- [Full Documentation](https://officialali.dev/llms-full.txt): Complete detailed guide and API capabilities.
