@@ -20,6 +20,77 @@ TOOLS_LIST = [
     'convert-image-format'
 ]
 
+TOOLS_SEO_DATA = {
+    'merge-pdf': {
+        'title': 'Merge PDF Online - Combine PDF Files Free | Smart File Converter',
+        'desc': 'Merge multiple PDF files into one combined document online for free. Reorder PDF pages and combine files instantly with 100% privacy.'
+    },
+    'split-pdf': {
+        'title': 'Split PDF Online - Extract Pages from PDF Free | Smart File Converter',
+        'desc': 'Split PDF pages or extract page ranges from PDF files online for free. Separate multi-page PDFs into individual PDF documents instantly.'
+    },
+    'compress-pdf': {
+        'title': 'Compress PDF Online - Reduce PDF File Size Free | Smart File Converter',
+        'desc': 'Compress PDF file size online for free while maintaining original document quality. Choose compression levels or target KB size.'
+    },
+    'pdf-to-word': {
+        'title': 'PDF to Word Converter - Convert PDF to DOCX Online Free | Smart File Converter',
+        'desc': 'Convert PDF to editable Word (.docx) documents online for free. Preserves document layout, fonts, bold/italic formatting, tables, and images.'
+    },
+    'pdf-to-ppt': {
+        'title': 'PDF to PowerPoint Converter - PDF to PPTX Online Free | Smart File Converter',
+        'desc': 'Convert PDF documents into editable Microsoft PowerPoint (.pptx) presentation slides online for free. High-quality PDF to PPT converter.'
+    },
+    'pdf-to-excel': {
+        'title': 'PDF to Excel Converter - Extract PDF Tables to XLSX Free | Smart File Converter',
+        'desc': 'Convert PDF files into Microsoft Excel (.xlsx) spreadsheets online for free. Extract tables and structured data from PDF into clean Excel cells.'
+    },
+    'word-to-pdf': {
+        'title': 'Word to PDF Converter - Convert DOCX to PDF Online Free | Smart File Converter',
+        'desc': 'Convert Microsoft Word (.docx) documents to PDF online for free. Preserve original typography, tables, and document layout.'
+    },
+    'ppt-to-pdf': {
+        'title': 'PowerPoint to PDF Converter - Convert PPTX to PDF Free | Smart File Converter',
+        'desc': 'Convert PowerPoint (.pptx) presentations to PDF format online for free. Fast, reliable PPT to PDF document converter.'
+    },
+    'excel-to-pdf': {
+        'title': 'Excel to PDF Converter - Convert XLSX to PDF Online Free | Smart File Converter',
+        'desc': 'Convert Excel (.xlsx) spreadsheets into formatted PDF tables online for free. Convert Excel workbooks into PDF documents.'
+    },
+    'pdf-to-jpg': {
+        'title': 'PDF to JPG Converter - Convert PDF Pages to Images Free | Smart File Converter',
+        'desc': 'Convert PDF pages into high-resolution JPG images online for free. Save PDF pages as image files instantly.'
+    },
+    'jpg-to-pdf': {
+        'title': 'JPG to PDF Converter - Convert Images to PDF Online Free | Smart File Converter',
+        'desc': 'Convert JPG, PNG, WEBP, and BMP images into a single PDF file online for free. Fast image to PDF converter.'
+    },
+    'unlock-pdf': {
+        'title': 'Unlock PDF Online - Remove PDF Password & Restrictions Free | Smart File Converter',
+        'desc': 'Unlock password-protected PDF files online for free. Remove owner and user passwords to print, copy, or edit PDFs.'
+    },
+    'protect-pdf': {
+        'title': 'Protect PDF Online - Encrypt PDF with Password Free | Smart File Converter',
+        'desc': 'Encrypt PDF files with strong password protection online for free. Prevent unauthorized opening, copying, or printing.'
+    },
+    'page-numbers': {
+        'title': 'Add Page Numbers to PDF - Stamp PDF Pages Free | Smart File Converter',
+        'desc': 'Add page numbers to your PDF documents easily online for free. Choose position, font style, and number formatting.'
+    },
+    'translate-pdf': {
+        'title': 'Translate PDF Online - Free PDF Document Translator | Smart File Converter',
+        'desc': 'Translate PDF document text into English, Spanish, French, German, Chinese, Arabic, or Hindi online for free.'
+    },
+    'compress-image': {
+        'title': 'Compress Image Online - Reduce JPG & PNG Size Free | Smart File Converter',
+        'desc': 'Compress JPG, PNG, and WEBP images online to target KB size for free. Optimize images for faster web page loading.'
+    },
+    'convert-image-format': {
+        'title': 'Convert Image Format - JPG, PNG, WEBP Converter Free | Smart File Converter',
+        'desc': 'Convert image files between JPG, PNG, WEBP, and BMP formats online for free. Fast batch image format converter.'
+    }
+}
+
 # Global Flask App cache for lazy loading
 _FLASK_APP = None
 
@@ -221,6 +292,35 @@ Sitemap: https://officialali.dev/sitemap.xml
             if os.path.exists(html_path):
                 with open(html_path, 'r', encoding='utf-8') as f:
                     html_content = f.read()
+
+                # Dynamic Canonical, OG URL & Title Injection for 100% Indexable Pages
+                if clean_path and clean_path in TOOLS_SEO_DATA:
+                    info = TOOLS_SEO_DATA[clean_path]
+                    target_url = f"https://officialali.dev/{clean_path}"
+                    
+                    html_content = html_content.replace(
+                        'href="https://officialali.dev/"',
+                        f'href="{target_url}"'
+                    ).replace(
+                        'content="https://officialali.dev/"',
+                        f'content="{target_url}"'
+                    )
+                    
+                    if '<title id="pageTitle">' in html_content:
+                        import re
+                        html_content = re.sub(
+                            r'<title id="pageTitle">.*?</title>',
+                            f'<title id="pageTitle">{info["title"]}</title>',
+                            html_content,
+                            flags=re.DOTALL
+                        )
+                        html_content = re.sub(
+                            r'<meta name="description" id="metaDescription"\s+content=".*?"',
+                            f'<meta name="description" id="metaDescription" content="{info["desc"]}"',
+                            html_content,
+                            flags=re.DOTALL
+                        )
+
                 return res.text(html_content, 200, {
                     'content-type': 'text/html; charset=utf-8',
                     'Access-Control-Allow-Origin': '*'
