@@ -120,32 +120,13 @@ def main(context):
     context.log(f"Processing: {method} {path}")
 
     clean_path = path.strip('/')
-    # Route: GET / or GET /<tool-name> -> Render HTML Website UI INSTANTLY (< 50ms) without loading heavy python modules
-    if method == 'GET' and (path == '/' or path == '/index.html' or clean_path in TOOLS_LIST):
-        try:
-            html_path = os.path.join(CURRENT_DIR, 'templates', 'index.html')
-            if os.path.exists(html_path):
-                with open(html_path, 'r', encoding='utf-8') as f:
-                    html_content = f.read()
-                return res.text(html_content, 200, {
-                    'content-type': 'text/html; charset=utf-8',
-                    'Access-Control-Allow-Origin': '*'
-                })
-        except Exception as e:
-            context.error(f"Error reading index.html: {str(e)}")
-
-    # Route: GET /googleff8c761e6fbde718.html
-    if path == '/googleff8c761e6fbde718.html':
-        return res.text("google-site-verification: googleff8c761e6fbde718.html", 200, {
-            'content-type': 'text/html; charset=utf-8',
-            'Access-Control-Allow-Origin': '*'
-        })
-
     # Route: GET /robots.txt
     if path == '/robots.txt':
         robots_content = """User-agent: *
 Allow: /
 Allow: /sitemap.xml
+Allow: /llms.txt
+Allow: /llms-full.txt
 Allow: /merge-pdf
 Allow: /split-pdf
 Allow: /compress-pdf
@@ -200,6 +181,52 @@ Sitemap: https://officialali.dev/sitemap.xml
                 'content-type': 'text/markdown; charset=utf-8',
                 'Access-Control-Allow-Origin': '*'
             })
+
+    # Route: GET /sitemap.xml
+    if path == '/sitemap.xml':
+        base_url = "https://officialali.dev"
+        sitemap_routes = [''] + TOOLS_LIST
+        today_date = datetime.utcnow().strftime("%Y-%m-%d")
+        
+        urls_xml = ""
+        for tool_path in sitemap_routes:
+            if tool_path == '':
+                loc_url = f"{base_url}/"
+                priority = "1.0"
+            else:
+                loc_url = f"{base_url}/{tool_path}"
+                priority = "0.8"
+            urls_xml += f"  <url>\n    <loc>{loc_url}</loc>\n    <lastmod>{today_date}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>{priority}</priority>\n  </url>\n"
+
+        xml_content = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{urls_xml}</urlset>"""
+
+        return res.text(xml_content, 200, {
+            'content-type': 'application/xml; charset=utf-8',
+            'Access-Control-Allow-Origin': '*'
+        })
+
+    # Route: GET /googleff8c761e6fbde718.html
+    if path == '/googleff8c761e6fbde718.html':
+        return res.text("google-site-verification: googleff8c761e6fbde718.html", 200, {
+            'content-type': 'text/html; charset=utf-8',
+            'Access-Control-Allow-Origin': '*'
+        })
+
+    # Route: GET / or GET /<tool-name> -> Render HTML Website UI INSTANTLY (< 50ms) without loading heavy python modules
+    if method == 'GET' and (path == '/' or path == '/index.html' or clean_path in TOOLS_LIST):
+        try:
+            html_path = os.path.join(CURRENT_DIR, 'templates', 'index.html')
+            if os.path.exists(html_path):
+                with open(html_path, 'r', encoding='utf-8') as f:
+                    html_content = f.read()
+                return res.text(html_content, 200, {
+                    'content-type': 'text/html; charset=utf-8',
+                    'Access-Control-Allow-Origin': '*'
+                })
+        except Exception as e:
+            context.error(f"Error reading index.html: {str(e)}")
 
     # Route: GET /sitemap.xml
     if path == '/sitemap.xml':
