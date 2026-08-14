@@ -298,28 +298,41 @@ Sitemap: https://officialali.dev/sitemap.xml
                     info = TOOLS_SEO_DATA[clean_path]
                     target_url = f"https://officialali.dev/{clean_path}"
                     
-                    html_content = html_content.replace(
-                        'href="https://officialali.dev/"',
-                        f'href="{target_url}"'
-                    ).replace(
-                        'content="https://officialali.dev/"',
-                        f'content="{target_url}"'
+                    import re
+                    html_content = re.sub(
+                        r'<link rel="canonical" id="canonicalUrl"\s+href=".*?"\s*/>',
+                        f'<link rel="canonical" id="canonicalUrl" href="{target_url}" />',
+                        html_content
                     )
-                    
-                    if '<title id="pageTitle">' in html_content:
-                        import re
-                        html_content = re.sub(
-                            r'<title id="pageTitle">.*?</title>',
-                            f'<title id="pageTitle">{info["title"]}</title>',
-                            html_content,
-                            flags=re.DOTALL
-                        )
-                        html_content = re.sub(
-                            r'<meta name="description" id="metaDescription"\s+content=".*?"',
-                            f'<meta name="description" id="metaDescription" content="{info["desc"]}"',
-                            html_content,
-                            flags=re.DOTALL
-                        )
+                    html_content = re.sub(
+                        r'<meta property="og:url" id="ogUrl"\s+content=".*?"\s*>',
+                        f'<meta property="og:url" id="ogUrl" content="{target_url}">',
+                        html_content
+                    )
+                    html_content = re.sub(
+                        r'<title id="pageTitle">.*?</title>',
+                        f'<title id="pageTitle">{info["title"]}</title>',
+                        html_content,
+                        flags=re.DOTALL
+                    )
+                    html_content = re.sub(
+                        r'<meta name="description" id="metaDescription"\s+content=".*?"',
+                        f'<meta name="description" id="metaDescription" content="{info["desc"]}"',
+                        html_content,
+                        flags=re.DOTALL
+                    )
+                    html_content = re.sub(
+                        r'<meta property="og:title" id="ogTitle"\s+content=".*?"',
+                        f'<meta property="og:title" id="ogTitle" content="{info["title"]}"',
+                        html_content,
+                        flags=re.DOTALL
+                    )
+                    html_content = re.sub(
+                        r'<meta name="twitter:title" id="twitterTitle"\s+content=".*?"',
+                        f'<meta name="twitter:title" id="twitterTitle" content="{info["title"]}"',
+                        html_content,
+                        flags=re.DOTALL
+                    )
 
                 return res.text(html_content, 200, {
                     'content-type': 'text/html; charset=utf-8',
