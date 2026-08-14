@@ -181,11 +181,19 @@ def main(context):
     req = context.req
     res = context.res
 
-    path = getattr(req, 'path', '/') or '/'
+    headers = getattr(req, 'headers', {}) or {}
+    raw_path = (
+        headers.get('x-forwarded-uri') or 
+        headers.get('x-original-uri') or 
+        headers.get('x-rewrite-url') or 
+        headers.get('x-appwrite-path') or 
+        getattr(req, 'path', '/') or '/'
+    )
+    path = str(raw_path).split('?')[0]
     if not path.startswith('/'):
         path = '/' + path
+
     method = (getattr(req, 'method', 'GET') or 'GET').upper()
-    headers = getattr(req, 'headers', {}) or {}
     query = getattr(req, 'query', {}) or {}
     
     context.log(f"Processing: {method} {path}")
