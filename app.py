@@ -395,6 +395,7 @@ def upload_file():
                 font_size = req_form.get('font_size', '14')
                 font_color = req_form.get('font_color', '#000000')
                 rotation_angle = req_form.get('rotation_angle', '90')
+                visual_annotations = req_form.get('visual_annotations', None)
                 
                 out_name = f"{unique_batch_id}_{idx}_{original_name}_edited.pdf"
                 out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
@@ -408,7 +409,8 @@ def upload_file():
                     page_num=page_num,
                     font_size=font_size,
                     color=font_color,
-                    rotation_angle=rotation_angle
+                    rotation_angle=rotation_angle,
+                    visual_annotations=visual_annotations
                 )
                 if success: output_files.append((out_name, f"{original_name}_edited.pdf"))
                 

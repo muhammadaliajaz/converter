@@ -167,13 +167,14 @@ def compress_pdf(input_path, output_path, level='medium', target_kb=None):
     except Exception as e:
         return False, str(e)
 
-def edit_pdf(input_path, output_path, edit_type='add_text', text='', find_text='', replace_text='', page_num=0, font_size=14, color='#000000', rotation_angle=0):
+def edit_pdf(input_path, output_path, edit_type='add_text', text='', find_text='', replace_text='', page_num=0, font_size=14, color='#000000', rotation_angle=0, visual_annotations=None):
     """
     Comprehensive PDF Editing Engine.
     Supports:
-    1. 'add_text': Add custom text / annotations / watermark to PDF.
-    2. 'replace_text': Find and replace / overwrite text in PDF.
-    3. 'rotate': Rotate PDF pages (90°, 180°, 270°).
+    1. Visual Studio Annotations: Text placement, freehand overlay drawings, redact privacy boxes, page rotations.
+    2. 'add_text': Add custom text / annotations / watermark to PDF.
+    3. 'replace_text': Find and replace / overwrite text in PDF.
+    4. 'rotate': Rotate PDF pages (90°, 180°, 270°).
     """
     try:
         doc = fitz.open(input_path)
@@ -193,6 +194,63 @@ def edit_pdf(input_path, output_path, edit_type='add_text', text='', find_text='
         rgb_color = parse_color(color)
         page_idx_target = int(page_num) if page_num else 0
 
+        # Handle Visual Studio Annotations if provided
+        if visual_annotations and isinstance(visual_annotations, (dict, list)):
+            if isinstance(visual_annotations, list):
+                items = visual_annotations
+            else:
+                items = visual_annotations.get('items', [])
+                rotations = visual_annotations.get('rotations', {})
+                # Apply page rotations first
+                for p_str, ang in rotations.items():
+                    try:
+                        p_idx = int(p_str)
+                        if 0 <= p_idx < len(doc):
+                            page = doc[p_idx]
+                            page.set_rotation((page.rotation + int(ang)) % 360)
+                    except Exception:
+                        pass
+
+            import base64
+            for item in items:
+                try:
+                    p_idx = int(item.get('page', 0))
+                    if not (0 <= p_idx < len(doc)):
+                        continue
+                    page = doc[p_idx]
+                    rect = page.rect
+                    item_type = item.get('type')
+
+                    if item_type == 'text':
+                        txt = str(item.get('text', '')).strip()
+                        if txt:
+                            x_ratio = float(item.get('x_ratio', 0))
+                            y_ratio = float(item.get('y_ratio', 0))
+                            fs = float(item.get('font_size', font_size))
+                            col = parse_color(item.get('color', color))
+                            pt = fitz.Point(x_ratio * rect.width, y_ratio * rect.height + fs)
+                            page.insert_text(pt, txt, fontsize=fs, color=col)
+
+                    elif item_type == 'redact':
+                        xr = float(item.get('x_ratio', 0))
+                        yr = float(item.get('y_ratio', 0))
+                        wr = float(item.get('w_ratio', 0))
+                        hr = float(item.get('h_ratio', 0))
+                        fill_col = parse_color(item.get('fill_color', '#000000'))
+                        r_box = fitz.Rect(xr * rect.width, yr * rect.height, (xr + wr) * rect.width, (yr + hr) * rect.height)
+                        page.add_redact_annot(r_box, fill=fill_col)
+                        page.apply_redactions()
+
+                    elif item_type == 'overlay_image':
+                        b64_data = item.get('image_data', '')
+                        if ',' in b64_data:
+                            b64_data = b64_data.split(',', 1)[1]
+                        img_bytes = base64.b64decode(b64_data)
+                        page.insert_image(rect, stream=img_bytes)
+                except Exception as ex:
+                    print(f"Annotation item error: {ex}")
+
+        # Legacy / direct form options fallback
         if edit_type == 'add_text' and text.strip():
             target_pages = [page_idx_target - 1] if (1 <= page_idx_target <= len(doc)) else list(range(len(doc)))
             for p_idx in target_pages:
@@ -225,3 +283,4 @@ def edit_pdf(input_path, output_path, edit_type='add_text', text='', find_text='
         return True, output_path
     except Exception as e:
         return False, f"PDF Edit Error: {str(e)}"
+
