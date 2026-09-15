@@ -423,10 +423,11 @@ Sitemap: https://officialali.dev/sitemap.xml
             body_bytes=body_bytes
         )
 
+        # Preserve exact Content-Type header from Flask WSGI response
         if hasattr(res, 'binary') and callable(getattr(res, 'binary')):
             return res.binary(response_bytes, status_code, resp_headers)
-        elif hasattr(res, 'send'):
-            return res.send(response_bytes, status_code, resp_headers)
+        elif hasattr(res, 'bytes') and callable(getattr(res, 'bytes')):
+            return res.bytes(response_bytes, status_code, resp_headers)
         else:
             text_response = response_bytes.decode('utf-8', errors='replace')
             return res.text(text_response, status_code, resp_headers)
