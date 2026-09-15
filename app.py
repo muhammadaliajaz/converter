@@ -525,5 +525,46 @@ def serve_llms_full():
         return send_file(llms_full_file, mimetype='text/markdown; charset=utf-8')
     return "# Smart File Converter Full Documentation", 200, {'Content-Type': 'text/markdown; charset=utf-8'}
 
+@app.route('/parse-pdf-for-edit', methods=['POST'])
+@csrf.exempt
+def parse_pdf_for_edit():
+    """
+    Extracts PDF page backgrounds and structured text lines for the visual in-place PDF editor.
+    """
+    try:
+        data = request.get_json(silent=True, force=True) or {}
+        file_b64 = data.get('file_b64')
+        
+        input_path = None
+        if file_b64:
+            if ',' in file_b64:
+                file_b64 = file_b64.split(',', 1)[1]
+            import base64
+            raw_bytes = base64.b64decode(file_b64)
+            temp_name = f"temp_parse_{uuid.uuid4().hex}.pdf"
+            input_path = os.path.join(app.config['UPLOAD_FOLDER'], temp_name)
+            with open(input_path, 'wb') as f:
+                f.write(raw_bytes)
+        elif 'file' in request.files:
+            file = request.files['file']
+            temp_name = f"temp_parse_{uuid.uuid4().hex}.pdf"
+            input_path = os.path.join(app.config['UPLOAD_FOLDER'], temp_name)
+            file.save(input_path)
+            
+        if not input_path or not os.path.exists(input_path):
+            return jsonify({'error': 'No valid PDF file provided'}), 400
+            
+        success, res = pdf_manipulation.parse_pdf_for_visual_editor(input_path)
+        try: os.remove(input_path)
+        except: pass
+        
+        if success:
+            return jsonify({'success': True, 'data': res})
+        else:
+            return jsonify({'error': res}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+

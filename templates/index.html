@@ -539,37 +539,52 @@
                     </select>
                 </div>
 
-                <!-- Quill.js Document & PDF Editor Studio -->
+                <!-- Document & PDF Editor Studio -->
                 <div id="editPdfBlock" class="hidden mb-6 w-full">
                     <!-- Studio Header & Action Bar -->
                     <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-xl mb-4 text-white">
                         <div class="flex items-center space-x-3">
-                            <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 text-white font-black text-sm shadow-md">DOC</span>
+                            <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 text-white font-black text-sm shadow-md">PDF</span>
                             <div>
                                 <h3 class="font-bold text-lg text-white leading-tight">Document & PDF Editor Studio</h3>
-                                <p class="text-xs text-slate-400">Full MS Word-style Quill editor with direct text editing & PDF export</p>
+                                <p class="text-xs text-slate-400" id="editorSubtitle">Preserving 100% original layout, fonts, colors, and design</p>
                             </div>
                         </div>
                         
-                        <div class="flex items-center gap-2 sm:gap-3">
-                            <button type="button" onclick="document.getElementById('fileInput').click()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-700 shadow">
+                        <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+                            <button type="button" onclick="document.getElementById('fileInput').click()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-700 shadow">
                                 <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                Open Document / PDF
+                                📂 Open PDF File
                             </button>
-                            <button type="button" onclick="clearQuillContent()" class="px-3.5 py-2 bg-slate-800 hover:bg-rose-900/40 text-slate-300 hover:text-rose-300 rounded-xl text-xs font-bold transition flex items-center gap-1 border border-slate-700 shadow">
-                                Clear Text
+                            <button type="button" id="addNewTextBtn" onclick="addCustomTextNode()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold transition border border-slate-700 shadow">
+                                ➕ Add Text
                             </button>
-                            <button type="button" onclick="triggerQuillSubmit()" class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-black shadow-lg shadow-emerald-900/40 transition flex items-center gap-2">
+                            <button type="button" id="toggleEditorModeBtn" onclick="toggleEditorMode()" class="px-3 py-2 bg-indigo-950 hover:bg-indigo-900 text-indigo-300 rounded-xl text-xs font-bold transition border border-indigo-800 shadow">
+                                📝 Switch to Quill Mode
+                            </button>
+                            <button type="button" onclick="clearEditorContent()" class="px-3 py-2 bg-slate-800 hover:bg-rose-900/40 text-slate-300 hover:text-rose-300 rounded-xl text-xs font-bold transition border border-slate-700 shadow">
+                                🗑️ Clear
+                            </button>
+                            <button type="button" onclick="triggerEditorSubmit()" class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-black shadow-lg shadow-emerald-900/40 transition flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                Save & Download PDF
+                                💾 Save & Download PDF
                             </button>
                         </div>
                     </div>
 
-                    <!-- Quill Workspace Stage (MS Word Style Paper Page Workspace) -->
-                    <div id="quillStudioStage" class="w-full bg-slate-200 rounded-2xl p-4 sm:p-8 flex flex-col items-center justify-start border border-slate-300 shadow-inner overflow-x-auto min-h-[82vh]">
-                        <!-- White Centered A4 Paper Page Workspace -->
-                        <div id="quillPaperPage" class="w-full max-w-[850px]">
+                    <!-- Editor Stage -->
+                    <div id="pdfStudioStage" class="w-full bg-slate-900/80 rounded-2xl p-4 sm:p-8 flex flex-col items-center justify-start border border-slate-700 shadow-inner overflow-x-auto min-h-[82vh]">
+                        <!-- Original Layout Visual Page Container -->
+                        <div id="visualPdfStage" class="w-full flex flex-col items-center gap-8">
+                            <div class="text-center py-16 text-slate-400 bg-slate-800/50 rounded-2xl border border-dashed border-slate-700 w-full max-w-2xl cursor-pointer" onclick="document.getElementById('fileInput').click()">
+                                <div class="text-4xl mb-3">📄</div>
+                                <h4 class="text-lg font-bold text-slate-200 mb-1">Click to Open PDF Document</h4>
+                                <p class="text-xs text-slate-400">Opens with 100% exact original layout, design, graphics, colors, and font styles</p>
+                            </div>
+                        </div>
+
+                        <!-- Quill MS Word Style Paper Page Workspace (Hidden by Default) -->
+                        <div id="quillPaperPage" class="hidden w-full max-w-[850px]">
                             <div id="quillEditor"></div>
                         </div>
                     </div>
@@ -983,14 +998,52 @@
             }
         });
 
-        // Quill.js Editor Integration & Document PDF Engine
+        // Document & PDF Editor Engine (Original PDF Layout & Quill Rich Text Modes)
         let quill = null;
+        let currentEditorMode = 'visual'; // 'visual' (Original PDF Layout) or 'quill' (Rich Text)
+        let currentPdfPagesData = null;
+        let currentUploadedFileB64 = null;
+        let currentUploadedFileName = null;
+
+        function toggleEditorMode() {
+            const visualStage = document.getElementById('visualPdfStage');
+            const quillPage = document.getElementById('quillPaperPage');
+            const btn = document.getElementById('toggleEditorModeBtn');
+            const subtitle = document.getElementById('editorSubtitle');
+            const addTextBtn = document.getElementById('addNewTextBtn');
+
+            if (currentEditorMode === 'visual') {
+                currentEditorMode = 'quill';
+                visualStage.classList.add('hidden');
+                quillPage.classList.remove('hidden');
+                btn.innerText = '📄 Switch to Original Layout';
+                subtitle.innerText = 'Full MS Word-style Quill editor with free-form text & PDF export';
+                addTextBtn.classList.add('hidden');
+                initQuillEditor();
+            } else {
+                currentEditorMode = 'visual';
+                visualStage.classList.remove('hidden');
+                quillPage.classList.add('hidden');
+                btn.innerText = '📝 Switch to Quill Mode';
+                subtitle.innerText = 'Preserving 100% original layout, fonts, colors, and design';
+                addTextBtn.classList.remove('hidden');
+            }
+        }
+
+        function getMatchingFontFamily(fontName) {
+            if (!fontName) return 'sans-serif';
+            const f = fontName.toLowerCase();
+            if (f.includes('times') || f.includes('serif')) return "'Times New Roman', Times, serif";
+            if (f.includes('cour') || f.includes('mono')) return "'Courier New', Courier, monospace";
+            if (f.includes('arial')) return "Arial, sans-serif";
+            return "'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif";
+        }
 
         function initQuillEditor() {
             if (quill) return;
             quill = new Quill('#quillEditor', {
                 theme: 'snow',
-                placeholder: 'Type or paste document content here... Or click "Open Document / PDF" to load a file.',
+                placeholder: 'Type or paste document content here... Or click "Open PDF File" to load a document.',
                 modules: {
                     toolbar: [
                         [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
@@ -1019,10 +1072,6 @@
             
             if (fileName.endsWith('.pdf') && window.pdfjsLib) {
                 try {
-                    document.getElementById('statusText').innerText = 'Extracting PDF content into editor...';
-                    document.getElementById('statusText').classList.replace('text-red-600', 'text-indigo-600');
-                    document.getElementById('statusArea')?.classList.remove('hidden');
-                    
                     const arrayBuffer = await file.arrayBuffer();
                     const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                     let fullHtml = '';
@@ -1050,10 +1099,8 @@
                     }
                     
                     if (quill) quill.root.innerHTML = fullHtml || '<p>PDF Document Loaded</p>';
-                    document.getElementById('statusArea')?.classList.add('hidden');
                 } catch (err) {
                     console.error("Error reading PDF into Quill:", err);
-                    document.getElementById('statusArea')?.classList.add('hidden');
                 }
             } else {
                 const reader = new FileReader();
@@ -1061,6 +1108,138 @@
                     if (quill) quill.setText(e.target.result);
                 };
                 reader.readAsText(file);
+            }
+        }
+
+        async function loadDocIntoEditor(file) {
+            if (!file) return;
+            currentUploadedFileName = file.name;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                currentUploadedFileB64 = e.target.result;
+                
+                if (file.name.toLowerCase().endsWith('.pdf')) {
+                    document.getElementById('statusText').innerText = 'Opening PDF with 100% exact original layout & fonts...';
+                    document.getElementById('statusText').classList.replace('text-red-600', 'text-indigo-600');
+                    document.getElementById('statusArea')?.classList.remove('hidden');
+
+                    try {
+                        const res = await fetch('/parse-pdf-for-edit', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ file_b64: currentUploadedFileB64 })
+                        });
+
+                        const parsed = await res.json();
+                        document.getElementById('statusArea')?.classList.add('hidden');
+
+                        if (parsed.success && parsed.data && parsed.data.pages) {
+                            currentPdfPagesData = parsed.data.pages;
+                            renderVisualPdfPages(parsed.data.pages);
+                            if (window.pdfjsLib) {
+                                loadDocIntoQuill(file);
+                            }
+                        } else {
+                            alert('Could not parse PDF layout: ' + (parsed.error || 'Unknown error'));
+                        }
+                    } catch (err) {
+                        console.error("Parse PDF error:", err);
+                        document.getElementById('statusArea')?.classList.add('hidden');
+                    }
+                } else {
+                    toggleEditorMode();
+                    loadDocIntoQuill(file);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderVisualPdfPages(pages) {
+            const stage = document.getElementById('visualPdfStage');
+            stage.innerHTML = '';
+
+            pages.forEach((page, pageIdx) => {
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'pdf-page-card relative bg-white shadow-2xl rounded-sm border border-slate-300 overflow-hidden my-4';
+                pageDiv.style.width = '100%';
+                pageDiv.style.maxWidth = '800px';
+                pageDiv.style.aspectRatio = `${page.width} / ${page.height}`;
+
+                const bgImg = document.createElement('img');
+                bgImg.src = page.bg_b64;
+                bgImg.className = 'absolute inset-0 w-full h-full object-cover pointer-events-none select-none';
+                pageDiv.appendChild(bgImg);
+
+                const overlay = document.createElement('div');
+                overlay.className = 'pdf-text-layer absolute inset-0 w-full h-full';
+
+                page.lines.forEach((line) => {
+                    const lineDiv = document.createElement('div');
+                    lineDiv.className = 'pdf-line-node absolute outline-none rounded px-0.5 transition-all hover:ring-1 hover:ring-indigo-400 focus:ring-2 focus:ring-indigo-600 focus:bg-white focus:shadow-md cursor-text';
+                    lineDiv.contentEditable = "true";
+                    lineDiv.dataset.page = pageIdx;
+                    lineDiv.dataset.bbox = JSON.stringify(line.bbox);
+                    lineDiv.dataset.font = line.font;
+                    lineDiv.dataset.size = line.size;
+                    lineDiv.dataset.color = line.color;
+                    lineDiv.dataset.origText = line.text;
+
+                    const leftPct = (line.bbox[0] / page.width * 100).toFixed(3);
+                    const topPct = (line.bbox[1] / page.height * 100).toFixed(3);
+                    
+                    lineDiv.style.left = `${leftPct}%`;
+                    lineDiv.style.top = `${topPct}%`;
+                    lineDiv.style.fontSize = `clamp(9px, ${(line.size / page.width * 800).toFixed(1)}px, 48px)`;
+                    lineDiv.style.color = line.color;
+                    lineDiv.style.fontFamily = getMatchingFontFamily(line.font);
+                    lineDiv.style.lineHeight = '1.1';
+                    lineDiv.style.whiteSpace = 'nowrap';
+                    lineDiv.innerText = line.text;
+
+                    overlay.appendChild(lineDiv);
+                });
+
+                pageDiv.appendChild(overlay);
+                stage.appendChild(pageDiv);
+            });
+        }
+
+        function addCustomTextNode() {
+            const stage = document.getElementById('visualPdfStage');
+            const firstPage = stage.querySelector('.pdf-page-card');
+            if (!firstPage) {
+                alert('Please open a PDF document first.');
+                return;
+            }
+            const overlay = firstPage.querySelector('.pdf-text-layer');
+            const lineDiv = document.createElement('div');
+            lineDiv.className = 'pdf-line-node absolute outline-none rounded px-1.5 py-0.5 ring-2 ring-indigo-500 bg-white shadow-md cursor-text';
+            lineDiv.contentEditable = "true";
+            lineDiv.dataset.page = 0;
+            lineDiv.dataset.bbox = JSON.stringify([50, 100, 250, 120]);
+            lineDiv.dataset.font = 'Helvetica';
+            lineDiv.dataset.size = 14;
+            lineDiv.dataset.color = '#000000';
+            lineDiv.dataset.origText = '';
+
+            lineDiv.style.left = '10%';
+            lineDiv.style.top = '15%';
+            lineDiv.style.fontSize = '18px';
+            lineDiv.style.color = '#000000';
+            lineDiv.style.fontFamily = 'sans-serif';
+            lineDiv.innerText = 'New Text Added';
+
+            overlay.appendChild(lineDiv);
+            lineDiv.focus();
+        }
+
+        function clearEditorContent() {
+            if (currentEditorMode === 'quill') {
+                clearQuillContent();
+            } else {
+                const stage = document.getElementById('visualPdfStage');
+                stage.querySelectorAll('.pdf-line-node').forEach(node => node.remove());
             }
         }
 
@@ -1097,11 +1276,7 @@
 
                 const responseText = await res.text();
                 let json = {};
-                try {
-                    json = JSON.parse(responseText);
-                } catch (err) {
-                    throw new Error(responseText.substring(0, 150) || 'Server returned invalid response.');
-                }
+                try { json = JSON.parse(responseText); } catch (err) { throw new Error(responseText.substring(0, 150)); }
 
                 clearInterval(pt);
                 pb.style.width = '100%';
@@ -1120,6 +1295,104 @@
                     }
                 } else {
                     throw new Error(json.error || 'Conversion failed.');
+                }
+            } catch (err) {
+                clearInterval(pt);
+                pb.style.width = '0%';
+                document.getElementById('statusText').innerText = err.message;
+                document.getElementById('statusText').classList.replace('text-indigo-600', 'text-red-600');
+            } finally {
+                document.getElementById('convertBtn').disabled = false;
+            }
+        }
+
+        async function triggerEditorSubmit() {
+            if (currentEditorMode === 'quill') {
+                triggerQuillSubmit();
+                return;
+            }
+
+            const stage = document.getElementById('visualPdfStage');
+            const lineNodes = stage.querySelectorAll('.pdf-line-node');
+
+            if (!lineNodes.length && !currentUploadedFileB64) {
+                alert('Please open a PDF file or add text before saving.');
+                return;
+            }
+
+            const annotations = [];
+
+            lineNodes.forEach(node => {
+                const pageIdx = parseInt(node.dataset.page || '0');
+                const origText = node.dataset.origText || '';
+                const currentText = node.innerText || '';
+
+                if (currentText !== origText) {
+                    let bbox = [50, 100, 200, 120];
+                    try { bbox = JSON.parse(node.dataset.bbox); } catch(e){}
+
+                    const pageData = currentPdfPagesData && currentPdfPagesData[pageIdx] ? currentPdfPagesData[pageIdx] : { width: 595, height: 842 };
+                    const pageWidth = pageData.width;
+                    const pageHeight = pageData.height;
+
+                    annotations.push({
+                        page: pageIdx,
+                        type: 'inline_text_edit',
+                        x0_ratio: bbox[0] / pageWidth,
+                        y0_ratio: bbox[1] / pageHeight,
+                        w_ratio: (bbox[2] - bbox[0]) / pageWidth,
+                        h_ratio: (bbox[3] - bbox[1]) / pageHeight,
+                        new_text: currentText,
+                        font_size: parseFloat(node.dataset.size || '12'),
+                        color: node.dataset.color || '#000000'
+                    });
+                }
+            });
+
+            document.getElementById('convertBtn').disabled = true;
+            document.getElementById('statusArea').classList.remove('hidden');
+            document.getElementById('statusText').classList.replace('text-red-600', 'text-indigo-600');
+            document.getElementById('statusText').innerText = 'Applying edits & compiling PDF with exact original layout...';
+            document.getElementById('resultArea').classList.add('hidden');
+
+            let progress = 0;
+            const pb = document.getElementById('progressBar');
+            const pt = setInterval(() => { progress += Math.random() * 10; if (progress > 90) progress = 90; pb.style.width = progress + '%'; }, 200);
+
+            try {
+                const payload = {
+                    conversion_type: 'edit-pdf',
+                    visual_annotations: JSON.stringify(annotations),
+                    files: [{ name: currentUploadedFileName || 'edited_document.pdf', data: currentUploadedFileB64 || '' }]
+                };
+
+                const res = await fetch('/upload', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const responseText = await res.text();
+                let json = {};
+                try { json = JSON.parse(responseText); } catch(e){ throw new Error(responseText.substring(0, 150)); }
+
+                clearInterval(pt);
+                pb.style.width = '100%';
+
+                if (res.ok && json.success) {
+                    document.getElementById('statusArea').classList.add('hidden');
+                    document.getElementById('resultArea').classList.remove('hidden');
+                    const dlLink = document.getElementById('downloadLink');
+                    dlLink.href = json.download_url;
+                    if (json.download_url && json.download_url.includes('name=')) {
+                        try {
+                            const params = new URLSearchParams(json.download_url.split('?')[1]);
+                            const cleanName = params.get('name');
+                            if (cleanName) dlLink.setAttribute('download', cleanName);
+                        } catch(e){}
+                    }
+                } else {
+                    throw new Error(json.error || 'PDF saving failed.');
                 }
             } catch (err) {
                 clearInterval(pt);
@@ -1164,7 +1437,6 @@
                 document.getElementById('editPdfBlock').classList.remove('hidden');
                 document.getElementById('dropZone')?.classList.add('hidden');
                 document.getElementById('convertBtn')?.classList.add('hidden');
-                initQuillEditor();
                 showSettings = true;
             } else {
                 workspaceContainer.classList.remove('max-w-5xl');
@@ -1245,7 +1517,7 @@
                 fileInfo.innerText = e.dataTransfer.files.length + " files ready";
                 fileInfo.classList.remove('hidden');
                 if (document.getElementById('conversionType').value === 'edit-pdf' && e.dataTransfer.files[0]) {
-                    loadDocIntoQuill(e.dataTransfer.files[0]);
+                    loadDocIntoEditor(e.dataTransfer.files[0]);
                 }
             }
         });
@@ -1255,7 +1527,7 @@
                 fileInfo.innerText = fileInput.files.length + " files ready";
                 fileInfo.classList.remove('hidden');
                 if (document.getElementById('conversionType').value === 'edit-pdf' && fileInput.files[0]) {
-                    loadDocIntoQuill(fileInput.files[0]);
+                    loadDocIntoEditor(fileInput.files[0]);
                 }
             }
         });
@@ -1263,7 +1535,7 @@
         uploadForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (document.getElementById('conversionType').value === 'edit-pdf') {
-                triggerQuillSubmit();
+                triggerEditorSubmit();
                 return;
             }
             if (!fileInput.files.length) return alert('Select files first');

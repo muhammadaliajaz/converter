@@ -195,7 +195,14 @@ def edit_pdf(input_path, output_path, edit_type='add_text', text='', find_text='
         page_idx_target = int(page_num) if page_num else 0
 
         # Handle Visual Studio Annotations if provided
-        if visual_annotations and isinstance(visual_annotations, (dict, list)):
+        if visual_annotations:
+            if isinstance(visual_annotations, str):
+                try:
+                    import json
+                    visual_annotations = json.loads(visual_annotations)
+                except Exception:
+                    visual_annotations = []
+                    
             if isinstance(visual_annotations, list):
                 items = visual_annotations
             else:
@@ -306,6 +313,84 @@ def edit_pdf(input_path, output_path, edit_type='add_text', text='', find_text='
     except Exception as e:
         return False, f"PDF Edit Error: {str(e)}"
 
+import base64
+
+def hex_to_rgb(hex_str):
+    try:
+        hex_str = str(hex_str).lstrip('#')
+        if len(hex_str) == 6:
+            r = int(hex_str[0:2], 16) / 255.0
+            g = int(hex_str[2:4], 16) / 255.0
+            b = int(hex_str[4:6], 16) / 255.0
+            return (r, g, b)
+    except Exception:
+        pass
+    return (0, 0, 0)
+
+def parse_pdf_for_visual_editor(pdf_path):
+    """
+    Parses PDF pages into high-res background images and structured text lines with exact 
+    coordinates, font families, font sizes, colors, and bounding boxes for 100% original layout preservation.
+    """
+    try:
+        doc = fitz.open(pdf_path)
+        result = {'pages': []}
+        
+        for page_num in range(len(doc)):
+            page = doc[page_num]
+            rect = page.rect
+            
+            # High-resolution background image (dpi=150)
+            pix = page.get_pixmap(dpi=150)
+            img_bytes = pix.tobytes("png")
+            bg_b64 = "data:image/png;base64," + base64.b64encode(img_bytes).decode("utf-8")
+            
+            page_dict = page.get_text("dict")
+            lines_data = []
+            line_counter = 0
+            
+            for block in page_dict.get("blocks", []):
+                if "lines" in block:
+                    for line in block["lines"]:
+                        spans = line.get("spans", [])
+                        if not spans:
+                            continue
+                        combined_text = "".join([s["text"] for s in spans])
+                        if not combined_text.strip():
+                            continue
+                            
+                        bbox = [line["bbox"][0], line["bbox"][1], line["bbox"][2], line["bbox"][3]]
+                        primary = spans[0]
+                        c = primary.get("color", 0)
+                        r = (c >> 16) & 255
+                        g = (c >> 8) & 255
+                        b = c & 255
+                        hex_color = f"#{r:02x}{g:02x}{b:02x}"
+                        
+                        lines_data.append({
+                            "id": f"p{page_num}_l{line_counter}",
+                            "text": combined_text,
+                            "bbox": [round(x, 2) for x in bbox],
+                            "font": primary.get("font", "Helvetica"),
+                            "size": round(primary.get("size", 12), 1),
+                            "color": hex_color,
+                            "flags": primary.get("flags", 0)
+                        })
+                        line_counter += 1
+                        
+            result["pages"].append({
+                "page_num": page_num + 1,
+                "width": round(rect.width, 2),
+                "height": round(rect.height, 2),
+                "bg_b64": bg_b64,
+                "lines": lines_data
+            })
+            
+        doc.close()
+        return True, result
+    except Exception as e:
+        return False, str(e)
+
 def convert_quill_html_to_pdf(quill_html, output_path):
     """
     Converts Quill.js HTML rich text into a clean, high-quality PDF document using PyMuPDF fitz.Story.
@@ -377,5 +462,6 @@ def convert_quill_html_to_pdf(quill_html, output_path):
         return False, "HTML to PDF rendering failed."
     except Exception as e:
         return False, f"Quill HTML to PDF Error: {str(e)}"
+
 
 
