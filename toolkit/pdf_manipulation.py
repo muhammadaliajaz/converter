@@ -306,3 +306,76 @@ def edit_pdf(input_path, output_path, edit_type='add_text', text='', find_text='
     except Exception as e:
         return False, f"PDF Edit Error: {str(e)}"
 
+def convert_quill_html_to_pdf(quill_html, output_path):
+    """
+    Converts Quill.js HTML rich text into a clean, high-quality PDF document using PyMuPDF fitz.Story.
+    """
+    try:
+        if not quill_html or not quill_html.strip():
+            quill_html = "<p>Empty document content.</p>"
+            
+        full_html = f"""<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+    @page {{ size: A4; margin: 20mm; }}
+    body {{
+        font-family: sans-serif;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #1e293b;
+        margin: 30px;
+    }}
+    h1 {{ font-size: 24px; color: #0f172a; margin-top: 15px; margin-bottom: 10px; font-weight: bold; }}
+    h2 {{ font-size: 20px; color: #1e293b; margin-top: 12px; margin-bottom: 8px; font-weight: bold; }}
+    h3 {{ font-size: 16px; color: #334155; margin-top: 10px; margin-bottom: 6px; font-weight: bold; }}
+    p {{ margin-bottom: 10px; margin-top: 0; }}
+    ul, ol {{ margin-top: 0; margin-bottom: 10px; padding-left: 20px; }}
+    li {{ margin-bottom: 4px; }}
+    blockquote {{
+        border-left: 4px solid #6366f1;
+        margin: 10px 0;
+        padding-left: 14px;
+        color: #475569;
+        font-style: italic;
+    }}
+    pre, code {{
+        background-color: #f1f5f9;
+        font-family: monospace;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+    }}
+    img {{ max-width: 100%; height: auto; display: block; margin: 10px 0; }}
+    strong, b {{ font-weight: bold; }}
+    em, i {{ font-style: italic; }}
+    u {{ text-decoration: underline; }}
+    s, strike {{ text-decoration: line-through; }}
+</style>
+</head>
+<body>
+    {quill_html}
+</body>
+</html>"""
+
+        story = fitz.Story(full_html)
+        writer = fitz.DocumentWriter(output_path)
+        rect = fitz.paper_rect("a4") if hasattr(fitz, 'paper_rect') else fitz.Rect(0, 0, 595.28, 841.89)
+        mediabox = fitz.Rect(0, 0, rect.width, rect.height)
+
+        more = True
+        while more:
+            device = writer.begin_page(mediabox)
+            more, _ = story.place(mediabox)
+            story.draw(device, fitz.Matrix(1, 1))
+            writer.end_page()
+        writer.close()
+
+        if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
+            return True, output_path
+        return False, "HTML to PDF rendering failed."
+    except Exception as e:
+        return False, f"Quill HTML to PDF Error: {str(e)}"
+
+

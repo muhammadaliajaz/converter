@@ -387,32 +387,40 @@ def upload_file():
                 if success: output_files.append((out_name, f"{original_name}_translated_{lang}.txt"))
 
             elif conversion_type == 'edit-pdf':
-                edit_action = req_form.get('edit_action', 'add_text')
-                text_input = req_form.get('text_input', '')
-                find_text = req_form.get('find_text', '')
-                replace_text = req_form.get('replace_text', '')
-                page_num = req_form.get('page_num', '0')
-                font_size = req_form.get('font_size', '14')
-                font_color = req_form.get('font_color', '#000000')
-                rotation_angle = req_form.get('rotation_angle', '90')
-                visual_annotations = req_form.get('visual_annotations', None)
-                
-                out_name = f"{unique_batch_id}_{idx}_{original_name}_edited.pdf"
-                out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
-                success, res = pdf_manipulation.edit_pdf(
-                    input_path=input_path,
-                    output_path=out_path,
-                    edit_type=edit_action,
-                    text=text_input,
-                    find_text=find_text,
-                    replace_text=replace_text,
-                    page_num=page_num,
-                    font_size=font_size,
-                    color=font_color,
-                    rotation_angle=rotation_angle,
-                    visual_annotations=visual_annotations
-                )
-                if success: output_files.append((out_name, f"{original_name}_edited.pdf"))
+                quill_html = req_form.get('quill_html')
+                if quill_html and quill_html.strip():
+                    out_name = f"{unique_batch_id}_{idx}_{original_name}_edited.pdf"
+                    out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
+                    success, res = pdf_manipulation.convert_quill_html_to_pdf(quill_html, out_path)
+                    if success: output_files.append((out_name, f"{original_name}_edited.pdf"))
+                else:
+                    edit_action = req_form.get('edit_action', 'add_text')
+                    text_input = req_form.get('text_input', '')
+                    find_text = req_form.get('find_text', '')
+                    replace_text = req_form.get('replace_text', '')
+                    page_num = req_form.get('page_num', '0')
+                    font_size = req_form.get('font_size', '14')
+                    font_color = req_form.get('font_color', '#000000')
+                    rotation_angle = req_form.get('rotation_angle', '90')
+                    visual_annotations = req_form.get('visual_annotations', None)
+                    
+                    out_name = f"{unique_batch_id}_{idx}_{original_name}_edited.pdf"
+                    out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
+                    success, res = pdf_manipulation.edit_pdf(
+                        input_path=input_path,
+                        output_path=out_path,
+                        edit_type=edit_action,
+                        text=text_input,
+                        find_text=find_text,
+                        replace_text=replace_text,
+                        page_num=page_num,
+                        font_size=font_size,
+                        color=font_color,
+                        rotation_angle=rotation_angle,
+                        visual_annotations=visual_annotations
+                    )
+                    if success: output_files.append((out_name, f"{original_name}_edited.pdf"))
+
                 
             else:
                 return jsonify({'error': 'Invalid conversion type'}), 400

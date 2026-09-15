@@ -35,6 +35,9 @@
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         }
     </script>
+    <!-- Quill.js Rich Text Editor for Document & PDF Studio -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
     <!-- Open Graph / Facebook Meta Tags -->
     <meta property="og:type" content="website">
@@ -212,6 +215,42 @@
 
         .hidden {
             display: none !important;
+        }
+
+        /* Quill MS Word Style Paper Canvas */
+        .ql-toolbar.ql-snow {
+            background: #1e293b !important;
+            border: 1px solid #334155 !important;
+            border-top-left-radius: 12px !important;
+            border-top-right-radius: 12px !important;
+            padding: 10px 14px !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+        .ql-toolbar .ql-stroke { stroke: #cbd5e1 !important; }
+        .ql-toolbar .ql-fill { fill: #cbd5e1 !important; }
+        .ql-toolbar .ql-picker { color: #f8fafc !important; }
+        .ql-toolbar button:hover .ql-stroke,
+        .ql-toolbar button.ql-active .ql-stroke { stroke: #818cf8 !important; }
+        .ql-toolbar button:hover .ql-fill,
+        .ql-toolbar button.ql-active .ql-fill { fill: #818cf8 !important; }
+        .ql-toolbar button:hover,
+        .ql-toolbar button.ql-active { background-color: #334155 !important; border-radius: 6px !important; }
+        .ql-container.ql-snow { border: none !important; }
+        #quillPaperPage {
+            min-height: 1050px;
+            background: #ffffff;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            padding: 2.5rem 3.5rem;
+        }
+        #quillPaperPage .ql-editor {
+            min-height: 950px;
+            font-size: 15px;
+            line-height: 1.7;
+            color: #1e293b;
+            font-family: 'Inter', sans-serif;
+            outline: none !important;
         }
     </style>
 </head>
@@ -500,117 +539,38 @@
                     </select>
                 </div>
 
-                <!-- Interactive Visual PDF Studio -->
-                <div id="editPdfBlock" class="hidden mb-6 bg-slate-900 border border-slate-800 rounded-2xl p-4 md:p-6 shadow-2xl text-white w-full">
-                    <!-- Studio Header & Toolbar -->
-                    <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
+                <!-- Quill.js Document & PDF Editor Studio -->
+                <div id="editPdfBlock" class="hidden mb-6 w-full">
+                    <!-- Studio Header & Action Bar -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-xl mb-4 text-white">
                         <div class="flex items-center space-x-3">
-                            <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-600 text-white font-black text-sm shadow-md">PDF</span>
+                            <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 text-white font-black text-sm shadow-md">DOC</span>
                             <div>
-                                <h3 class="font-bold text-lg text-white leading-tight">Visual PDF Studio & Canvas Editor</h3>
-                                <p class="text-xs text-slate-400">Click anywhere on document to add text, draw annotations, or redact</p>
+                                <h3 class="font-bold text-lg text-white leading-tight">Document & PDF Editor Studio</h3>
+                                <p class="text-xs text-slate-400">Full MS Word-style Quill editor with direct text editing & PDF export</p>
                             </div>
                         </div>
                         
-                        <!-- Actions & Mode Tabs -->
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2 sm:gap-3">
                             <button type="button" onclick="document.getElementById('fileInput').click()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-700 shadow">
                                 <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                Open PDF File
+                                Open Document / PDF
                             </button>
-                            <button type="button" onclick="triggerStudioDownload()" class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-black shadow-lg shadow-emerald-900/40 transition flex items-center gap-2">
+                            <button type="button" onclick="clearQuillContent()" class="px-3.5 py-2 bg-slate-800 hover:bg-rose-900/40 text-slate-300 hover:text-rose-300 rounded-xl text-xs font-bold transition flex items-center gap-1 border border-slate-700 shadow">
+                                Clear Text
+                            </button>
+                            <button type="button" onclick="triggerQuillSubmit()" class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-black shadow-lg shadow-emerald-900/40 transition flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                                 Save & Download PDF
                             </button>
                         </div>
                     </div>
 
-                    <!-- Visual Editor Section -->
-                    <div id="visualStudioSection" class="mt-4">
-                        <!-- Interactive Studio Toolbar -->
-                        <div class="flex flex-wrap items-center justify-between bg-slate-800/90 p-3 rounded-xl gap-3 mb-4 border border-slate-700/80 shadow-md">
-                            <!-- Tool Selectors with Clear Labels -->
-                            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
-                                <button type="button" id="toolBtnSelect" onclick="setStudioTool('select')" class="studio-tool-btn px-3 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition text-xs font-semibold flex items-center gap-1.5 shadow" title="Select & Move Items">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5"></path></svg>
-                                    Move
-                                </button>
-                                <button type="button" id="toolBtnText" onclick="setStudioTool('text')" class="studio-tool-btn px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition text-xs font-semibold flex items-center gap-1.5" title="Click to Add Text">
-                                    <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                    Add Text
-                                </button>
-                                <button type="button" id="toolBtnPen" onclick="setStudioTool('pen')" class="studio-tool-btn px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition text-xs font-semibold flex items-center gap-1.5" title="Freehand Pen / Draw">
-                                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
-                                    Pen
-                                </button>
-                                <button type="button" id="toolBtnHighlight" onclick="setStudioTool('highlight')" class="studio-tool-btn px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition text-xs font-semibold flex items-center gap-1.5" title="Highlighter Brush">
-                                    <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10M12 3v14m0 0l-3-3m3 3l3-3"></path></svg>
-                                    Highlight
-                                </button>
-                                <button type="button" id="toolBtnRedact" onclick="setStudioTool('redact')" class="studio-tool-btn px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition text-xs font-semibold flex items-center gap-1.5" title="Redact / Privacy Box">
-                                    <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v18H3V3z"></path></svg>
-                                    Redact
-                                </button>
-                                <button type="button" onclick="rotateCurrentStudioPage()" class="px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition text-xs font-semibold flex items-center gap-1.5" title="Rotate Page 90°">
-                                    <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                                    Rotate
-                                </button>
-                                <button type="button" onclick="clearStudioPageAnnotations()" class="px-3 py-2 rounded-lg text-rose-400 hover:bg-rose-900/40 hover:text-rose-300 transition text-xs font-semibold flex items-center gap-1.5" title="Clear Page Edits">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                    Clear
-                                </button>
-                            </div>
-
-                            <!-- Formatting Controls (Color Swatches & Size) -->
-                            <div class="flex items-center gap-3">
-                                <div class="flex items-center gap-1 bg-slate-900/90 p-1.5 rounded-lg border border-slate-700">
-                                    <input type="color" id="studioColorPicker" value="#000000" onchange="updateStudioStyle()" class="w-6 h-6 rounded border-0 cursor-pointer bg-transparent" title="Custom Color Picker">
-                                    <button type="button" onclick="setStudioColor('#000000')" class="w-4 h-4 rounded-full bg-black border border-slate-500 hover:scale-110 transition" title="Black"></button>
-                                    <button type="button" onclick="setStudioColor('#EF4444')" class="w-4 h-4 rounded-full bg-red-500 hover:scale-110 transition" title="Red"></button>
-                                    <button type="button" onclick="setStudioColor('#10B981')" class="w-4 h-4 rounded-full bg-emerald-500 hover:scale-110 transition" title="Green"></button>
-                                    <button type="button" onclick="setStudioColor('#3B82F6')" class="w-4 h-4 rounded-full bg-blue-500 hover:scale-110 transition" title="Blue"></button>
-                                    <button type="button" onclick="setStudioColor('#FFFFFF')" class="w-4 h-4 rounded-full bg-white border border-slate-500 hover:scale-110 transition" title="White"></button>
-                                </div>
-
-                                <div class="flex items-center gap-1.5 bg-slate-900/90 px-2.5 py-1.5 rounded-lg border border-slate-700">
-                                    <span class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Size</span>
-                                    <input type="number" id="studioFontSize" value="16" min="8" max="72" onchange="updateStudioStyle()" class="w-12 p-0.5 text-center text-xs font-bold text-white bg-slate-800 border border-slate-700 rounded outline-none focus:ring-1 focus:ring-indigo-500">
-                                </div>
-                            </div>
-
-                            <!-- Page Navigation & Zoom Controls -->
-                            <div class="flex items-center gap-2 text-xs font-semibold">
-                                <div class="flex items-center bg-slate-900/90 rounded-lg p-1 border border-slate-700">
-                                    <button type="button" onclick="prevStudioPage()" class="p-1.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
-                                    <span id="studioPageIndicator" class="px-3 text-slate-200 font-bold min-w-[80px] text-center">Page 1 / 1</span>
-                                    <button type="button" onclick="nextStudioPage()" class="p-1.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
-                                </div>
-                                <div class="flex items-center bg-slate-900/90 rounded-lg p-1 border border-slate-700">
-                                    <button type="button" onclick="zoomStudio(-0.15)" class="p-1.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg></button>
-                                    <span id="studioZoomIndicator" class="px-2.5 text-slate-200 font-bold min-w-[50px] text-center">125%</span>
-                                    <button type="button" onclick="zoomStudio(0.15)" class="p-1.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Canvas Workspace Stage (Full Width & Height MS Word Style Paper Page) -->
-                        <div id="pdfStudioStage" class="relative w-full overflow-auto min-h-[750px] max-h-[88vh] bg-slate-200 rounded-2xl flex flex-col items-center justify-start p-4 md:p-10 border border-slate-300 shadow-inner">
-                            <!-- Empty In-Studio File Drop Target -->
-                            <div id="studioEmptyMsg" onclick="document.getElementById('fileInput').click()" class="text-center p-10 md:p-16 cursor-pointer hover:bg-slate-300/60 bg-white rounded-3xl transition border-2 border-dashed border-indigo-400 my-auto max-w-lg w-full group shadow-xl">
-                                <div class="w-20 h-20 mx-auto bg-indigo-50 rounded-3xl flex items-center justify-center mb-4 group-hover:scale-110 transition border border-indigo-200 shadow-inner">
-                                    <svg class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                </div>
-                                <h4 class="font-black text-slate-800 text-xl">Open PDF Document to Edit</h4>
-                                <p class="text-sm text-slate-500 mt-1 mb-6">Click to browse or drag & drop PDF file directly here</p>
-                                <span class="px-6 py-3 bg-indigo-600 group-hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-300 transition inline-block">Choose PDF File</span>
-                            </div>
-
-                            <!-- Canvas Wrapper (Centered Paper Page) -->
-                            <div id="studioCanvasWrapper" class="relative hidden shadow-2xl rounded bg-white my-6 border border-slate-300">
-                                <canvas id="pdfCanvas" class="block rounded"></canvas>
-                                <canvas id="overlayCanvas" class="absolute top-0 left-0 cursor-crosshair rounded z-10"></canvas>
-                                <div id="textOverlayLayer" class="absolute top-0 left-0 w-full h-full pointer-events-none z-20"></div>
-                            </div>
+                    <!-- Quill Workspace Stage (MS Word Style Paper Page Workspace) -->
+                    <div id="quillStudioStage" class="w-full bg-slate-200 rounded-2xl p-4 sm:p-8 flex flex-col items-center justify-start border border-slate-300 shadow-inner overflow-x-auto min-h-[82vh]">
+                        <!-- White Centered A4 Paper Page Workspace -->
+                        <div id="quillPaperPage" class="w-full max-w-[850px]">
+                            <div id="quillEditor"></div>
                         </div>
                     </div>
                 </div>
@@ -1023,423 +983,239 @@
             }
         });
 
-        // Visual PDF Studio State & Interactive Canvas Engine
-        let studioPdfDoc = null;
-        let currentStudioPageNum = 1;
-        let studioZoomScale = 1.25;
-        let activeStudioTool = 'select'; // 'select', 'text', 'pen', 'highlight', 'redact'
-        let studioColor = '#000000';
-        let studioFontSize = 16;
-        let isStudioDrawing = false;
-        let studioRedactStart = null;
-        let currentPathPoints = [];
+        // Quill.js Editor Integration & Document PDF Engine
+        let quill = null;
 
-        // Per-page annotation records: { pIdx: { items: [], rotation: 0 } }
-        let studioPageAnnotations = {};
+        function initQuillEditor() {
+            if (quill) return;
+            quill = new Quill('#quillEditor', {
+                theme: 'snow',
+                placeholder: 'Type or paste document content here... Or click "Open Document / PDF" to load a file.',
+                modules: {
+                    toolbar: [
+                        [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'header': [1, 2, 3, false] }],
+                        [{ 'align': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link', 'image'],
+                        ['clean']
+                    ]
+                }
+            });
+        }
 
-        function triggerStudioDownload() {
-            const form = document.getElementById('uploadForm');
-            if (!fileInput.files.length) {
-                document.getElementById('fileInput').click();
+        function clearQuillContent() {
+            if (quill) {
+                quill.setText('');
+            }
+        }
+
+        async function loadDocIntoQuill(file) {
+            if (!file) return;
+            initQuillEditor();
+            const fileName = file.name.toLowerCase();
+            
+            if (fileName.endsWith('.pdf') && window.pdfjsLib) {
+                try {
+                    document.getElementById('statusText').innerText = 'Extracting PDF content into editor...';
+                    document.getElementById('statusText').classList.replace('text-red-600', 'text-indigo-600');
+                    document.getElementById('statusArea')?.classList.remove('hidden');
+                    
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    let fullHtml = '';
+                    
+                    for (let i = 1; i <= pdfDoc.numPages; i++) {
+                        const page = await pdfDoc.getPage(i);
+                        const textContent = await page.getTextContent();
+                        let lastY = null;
+                        let pageHtml = '<p>';
+                        
+                        textContent.items.forEach(item => {
+                            if (!item.str || !item.str.trim()) return;
+                            const y = item.transform[5];
+                            if (lastY !== null && Math.abs(y - lastY) > 12) {
+                                pageHtml += '</p><p>';
+                            } else if (lastY !== null) {
+                                pageHtml += ' ';
+                            }
+                            pageHtml += item.str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                            lastY = y;
+                        });
+                        pageHtml += '</p>';
+                        fullHtml += pageHtml;
+                        if (i < pdfDoc.numPages) fullHtml += '<hr><br>';
+                    }
+                    
+                    if (quill) quill.root.innerHTML = fullHtml || '<p>PDF Document Loaded</p>';
+                    document.getElementById('statusArea')?.classList.add('hidden');
+                } catch (err) {
+                    console.error("Error reading PDF into Quill:", err);
+                    document.getElementById('statusArea')?.classList.add('hidden');
+                }
+            } else {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (quill) quill.setText(e.target.result);
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        async function triggerQuillSubmit() {
+            if (!quill) return;
+            const htmlContent = quill.root.innerHTML;
+            if (!htmlContent || htmlContent.trim() === '<p><br></p>') {
+                alert('Please enter or edit document text before saving.');
                 return;
             }
-            if (typeof form.requestSubmit === 'function') {
-                form.requestSubmit();
-            } else {
-                form.dispatchEvent(new Event('submit', { cancelable: true }));
-            }
-        }
 
-        function getPageAnnots(pIdx) {
-            if (!studioPageAnnotations[pIdx]) {
-                studioPageAnnotations[pIdx] = { items: [], rotation: 0 };
-            }
-            return studioPageAnnotations[pIdx];
-        }
+            document.getElementById('convertBtn').disabled = true;
+            document.getElementById('statusArea').classList.remove('hidden');
+            document.getElementById('statusText').classList.replace('text-red-600', 'text-indigo-600');
+            document.getElementById('statusText').innerText = 'Converting document to PDF...';
+            document.getElementById('resultArea').classList.add('hidden');
 
-        function switchEditPdfTab(mode) {
-            const vSec = document.getElementById('visualStudioSection');
-            const bSec = document.getElementById('batchStudioSection');
-            const vBtn = document.getElementById('tabVisualModeBtn');
-            const bBtn = document.getElementById('tabBatchModeBtn');
+            let progress = 0;
+            const pb = document.getElementById('progressBar');
+            const pt = setInterval(() => { progress += Math.random() * 10; if (progress > 90) progress = 90; pb.style.width = progress + '%'; }, 200);
 
-            if (mode === 'visual') {
-                vSec?.classList.remove('hidden');
-                bSec?.classList.add('hidden');
-                if (vBtn) vBtn.className = 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow';
-                if (bBtn) bBtn.className = 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white';
-            } else {
-                vSec?.classList.add('hidden');
-                bSec?.classList.remove('hidden');
-                if (bBtn) bBtn.className = 'px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow';
-                if (vBtn) vBtn.className = 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white';
-            }
-        }
-
-        function setStudioTool(tool) {
-            activeStudioTool = tool;
-            document.querySelectorAll('.studio-tool-btn').forEach(btn => {
-                btn.className = 'studio-tool-btn px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition text-xs font-semibold flex items-center gap-1.5';
-            });
-            const toolCap = tool.charAt(0).toUpperCase() + tool.slice(1);
-            const activeBtn = document.getElementById('toolBtn' + toolCap);
-            if (activeBtn) {
-                activeBtn.className = 'studio-tool-btn px-3 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition text-xs font-semibold flex items-center gap-1.5 shadow';
-            }
-
-            const overlayCanvas = document.getElementById('overlayCanvas');
-            if (overlayCanvas) {
-                if (tool === 'text') overlayCanvas.style.cursor = 'text';
-                else if (tool === 'select') overlayCanvas.style.cursor = 'default';
-                else overlayCanvas.style.cursor = 'crosshair';
-            }
-        }
-
-        function setStudioColor(hex) {
-            studioColor = hex;
-            const picker = document.getElementById('studioColorPicker');
-            if (picker) picker.value = hex;
-            updateStudioStyle();
-        }
-
-        function updateStudioStyle() {
-            const picker = document.getElementById('studioColorPicker');
-            if (picker) studioColor = picker.value;
-            const sizeInput = document.getElementById('studioFontSize');
-            if (sizeInput) studioFontSize = parseInt(sizeInput.value) || 16;
-        }
-
-        async function loadPdfIntoStudio(file) {
-            if (!file || !window.pdfjsLib) return;
             try {
-                const arrayBuffer = await file.arrayBuffer();
-                studioPdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                currentStudioPageNum = 1;
-                studioPageAnnotations = {};
+                const payload = {
+                    conversion_type: 'edit-pdf',
+                    quill_html: htmlContent,
+                    files: fileInput.files.length ? [{ name: fileInput.files[0].name, data: '' }] : [{ name: 'edited_document.pdf', data: '' }]
+                };
 
-                document.getElementById('studioEmptyMsg')?.classList.add('hidden');
-                document.getElementById('studioCanvasWrapper')?.classList.remove('hidden');
+                const res = await fetch('/upload', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
 
-                await renderStudioCurrentPage();
-                initStudioCanvasListeners();
-            } catch (err) {
-                console.error('Failed loading PDF into Studio:', err);
-            }
-        }
-
-        async function renderStudioCurrentPage() {
-            if (!studioPdfDoc) return;
-            const pIdx = currentStudioPageNum - 1;
-            const page = await studioPdfDoc.getPage(currentStudioPageNum);
-
-            const pageAnnots = getPageAnnots(pIdx);
-            const totalRotation = (page.rotate + pageAnnots.rotation) % 360;
-
-            const viewport = page.getViewport({ scale: studioZoomScale, rotation: totalRotation });
-
-            const pdfCanvas = document.getElementById('pdfCanvas');
-            const overlayCanvas = document.getElementById('overlayCanvas');
-            const wrapper = document.getElementById('studioCanvasWrapper');
-            const textLayer = document.getElementById('textOverlayLayer');
-
-            if (pdfCanvas && overlayCanvas && wrapper && textLayer) {
-                pdfCanvas.width = viewport.width;
-                pdfCanvas.height = viewport.height;
-                overlayCanvas.width = viewport.width;
-                overlayCanvas.height = viewport.height;
-
-                wrapper.style.width = viewport.width + 'px';
-                wrapper.style.height = viewport.height + 'px';
-
-                const ctx = pdfCanvas.getContext('2d');
-                await page.render({ canvasContext: ctx, viewport: viewport }).promise;
-
-                const pageInd = document.getElementById('studioPageIndicator');
-                if (pageInd) pageInd.innerText = `Page ${currentStudioPageNum} / ${studioPdfDoc.numPages}`;
-                const zoomInd = document.getElementById('studioZoomIndicator');
-                if (zoomInd) zoomInd.innerText = `${Math.round(studioZoomScale * 100)}%`;
-
-                // Render PDF.js Text Content as Native MS Word-Style Inline Editable Spans
-                textLayer.innerHTML = '';
+                const responseText = await res.text();
+                let json = {};
                 try {
-                    const textContent = await page.getTextContent();
-                    textContent.items.forEach((item, tIdx) => {
-                        if (!item.str || !item.str.trim()) return;
-                        const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
-                        const fontSizePx = Math.sqrt(tx[0] * tx[0] + tx[1] * tx[1]);
-                        const leftPx = tx[4];
-                        const topPx = tx[5] - fontSizePx;
-
-                        const textSpan = document.createElement('span');
-                        textSpan.className = 'pdf-inline-editable absolute pointer-events-auto cursor-text select-text focus:outline-none focus:bg-indigo-100/60 focus:ring-1 focus:ring-indigo-500 rounded px-0.5 transition font-sans text-black leading-none';
-                        textSpan.contentEditable = true;
-                        textSpan.innerText = item.str;
-                        textSpan.style.left = (leftPx / viewport.width * 100) + '%';
-                        textSpan.style.top = (topPx / viewport.height * 100) + '%';
-                        textSpan.style.fontSize = fontSizePx + 'px';
-                        textSpan.style.lineHeight = '1.0';
-                        textSpan.style.whiteSpace = 'pre';
-
-                        const origStr = item.str;
-                        const x0_ratio = leftPx / viewport.width;
-                        const y0_ratio = topPx / viewport.height;
-                        const w_ratio = (item.width * studioZoomScale) / viewport.width;
-                        const h_ratio = fontSizePx / viewport.height;
-                        const fontSizePt = Math.round(fontSizePx / studioZoomScale);
-
-                        textSpan.addEventListener('focus', () => {
-                            const sizeInput = document.getElementById('studioFontSize');
-                            if (sizeInput) sizeInput.value = fontSizePt;
-                        });
-
-                        textSpan.addEventListener('input', () => {
-                            const newTxt = textSpan.innerText;
-                            let existingEdit = pageAnnots.items.find(i => i.type === 'inline_text_edit' && i.item_idx === tIdx);
-                            if (!existingEdit) {
-                                existingEdit = {
-                                    type: 'inline_text_edit',
-                                    page: pIdx,
-                                    item_idx: tIdx,
-                                    x0_ratio: x0_ratio,
-                                    y0_ratio: y0_ratio,
-                                    w_ratio: Math.max(0.02, w_ratio),
-                                    h_ratio: Math.max(0.015, h_ratio),
-                                    font_size: fontSizePt,
-                                    color: studioColor || '#000000',
-                                    orig_text: origStr,
-                                    new_text: newTxt
-                                };
-                                pageAnnots.items.push(existingEdit);
-                            } else {
-                                existingEdit.new_text = newTxt;
-                                existingEdit.color = studioColor || '#000000';
-                                existingEdit.font_size = parseInt(document.getElementById('studioFontSize')?.value) || fontSizePt;
-                            }
-                        });
-
-                        textLayer.appendChild(textSpan);
-                    });
-                } catch (tErr) {
-                    console.error('Text extraction error:', tErr);
+                    json = JSON.parse(responseText);
+                } catch (err) {
+                    throw new Error(responseText.substring(0, 150) || 'Server returned invalid response.');
                 }
 
-                redrawStudioOverlay();
-            }
-        }
+                clearInterval(pt);
+                pb.style.width = '100%';
 
-        function redrawStudioOverlay() {
-            const overlayCanvas = document.getElementById('overlayCanvas');
-            if (!overlayCanvas) return;
-
-            const ctx = overlayCanvas.getContext('2d');
-            ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-
-            const pIdx = currentStudioPageNum - 1;
-            const pageAnnots = getPageAnnots(pIdx);
-
-            pageAnnots.items.forEach((item) => {
-                if (item.type === 'pen' || item.type === 'highlight') {
-                    if (!item.points || item.points.length < 2) return;
-                    ctx.beginPath();
-                    ctx.strokeStyle = item.color;
-                    ctx.lineWidth = item.width || (item.type === 'highlight' ? 14 : 3);
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-                    ctx.globalAlpha = item.type === 'highlight' ? 0.4 : 1.0;
-
-                    ctx.moveTo(item.points[0].x * overlayCanvas.width, item.points[0].y * overlayCanvas.height);
-                    for (let i = 1; i < item.points.length; i++) {
-                        ctx.lineTo(item.points[i].x * overlayCanvas.width, item.points[i].y * overlayCanvas.height);
+                if (res.ok && json.success) {
+                    document.getElementById('statusArea').classList.add('hidden');
+                    document.getElementById('resultArea').classList.remove('hidden');
+                    const dlLink = document.getElementById('downloadLink');
+                    dlLink.href = json.download_url;
+                    if (json.download_url && json.download_url.includes('name=')) {
+                        try {
+                            const params = new URLSearchParams(json.download_url.split('?')[1]);
+                            const cleanName = params.get('name');
+                            if (cleanName) dlLink.setAttribute('download', cleanName);
+                        } catch (e) { }
                     }
-                    ctx.stroke();
-                    ctx.globalAlpha = 1.0;
-                } else if (item.type === 'redact') {
-                    ctx.fillStyle = item.fill_color || '#000000';
-                    ctx.fillRect(
-                        item.x_ratio * overlayCanvas.width,
-                        item.y_ratio * overlayCanvas.height,
-                        item.w_ratio * overlayCanvas.width,
-                        item.h_ratio * overlayCanvas.height
-                    );
+                } else {
+                    throw new Error(json.error || 'Conversion failed.');
                 }
-            });
+            } catch (err) {
+                clearInterval(pt);
+                pb.style.width = '0%';
+                document.getElementById('statusText').innerText = err.message;
+                document.getElementById('statusText').classList.replace('text-indigo-600', 'text-red-600');
+            } finally {
+                document.getElementById('convertBtn').disabled = false;
+            }
         }
 
-        let isStudioCanvasInit = false;
-        function initStudioCanvasListeners() {
-            if (isStudioCanvasInit) return;
-            const overlayCanvas = document.getElementById('overlayCanvas');
-            if (!overlayCanvas) return;
-            isStudioCanvasInit = true;
+        // Workspace router & File upload handlers
+        function openWorkspaceById(toolId) {
+            const tool = toolsData[toolId] || { name: toolId, icon: '📄' };
+            gridContainer.classList.add('hidden');
+            workspaceContainer.classList.remove('hidden');
+            toolIcon.innerText = tool.icon;
+            toolTitle.innerText = tool.name;
+            conversionTypeHidden.value = toolId;
 
-            function getRelativeCoords(e) {
-                const rect = overlayCanvas.getBoundingClientRect();
-                const x = (e.clientX - rect.left) / rect.width;
-                const y = (e.clientY - rect.top) / rect.height;
-                return { x: Math.max(0, Math.min(1, x)), y: Math.max(0, Math.min(1, y)) };
-            }
+            updatePageMetadata(toolId);
 
-            overlayCanvas.addEventListener('mousedown', (e) => {
-                const pt = getRelativeCoords(e);
-                const pIdx = currentStudioPageNum - 1;
-                const pageAnnots = getPageAnnots(pIdx);
+            document.getElementById('uploadForm').reset();
+            document.getElementById('fileInfo').classList.add('hidden');
+            document.getElementById('resultArea').classList.add('hidden');
+            document.getElementById('statusArea').classList.add('hidden');
+            document.getElementById('convertBtn').disabled = false;
 
-                if (activeStudioTool === 'text') {
-                    const textLayer = document.getElementById('textOverlayLayer');
-                    if (!textLayer) return;
-
-                    const textSpan = document.createElement('span');
-                    textSpan.className = 'pdf-inline-editable absolute pointer-events-auto cursor-text select-text focus:outline-none focus:bg-indigo-100/60 focus:ring-1 focus:ring-indigo-500 rounded px-0.5 font-sans text-black leading-none min-w-[20px]';
-                    textSpan.contentEditable = true;
-                    textSpan.style.left = (pt.x * 100) + '%';
-                    textSpan.style.top = (pt.y * 100) + '%';
-                    textSpan.style.fontSize = studioFontSize + 'px';
-                    textSpan.style.color = studioColor || '#000000';
-
-                    const textItem = {
-                        type: 'text',
-                        page: pIdx,
-                        x_ratio: pt.x,
-                        y_ratio: pt.y,
-                        text: '',
-                        font_size: studioFontSize,
-                        color: studioColor || '#000000'
-                    };
-
-                    textSpan.addEventListener('input', () => {
-                        textItem.text = textSpan.innerText;
-                    });
-                    textSpan.addEventListener('blur', () => {
-                        textItem.text = textSpan.innerText.trim();
-                        if (!textItem.text) {
-                            textSpan.remove();
-                        } else {
-                            pageAnnots.items.push(textItem);
-                        }
-                    });
-
-                    textLayer.appendChild(textSpan);
-                    setTimeout(() => textSpan.focus(), 20);
-                    return;
-                }
-
-                if (activeStudioTool === 'pen' || activeStudioTool === 'highlight') {
-                    isStudioDrawing = true;
-                    currentPathPoints = [pt];
-                } else if (activeStudioTool === 'redact') {
-                    studioRedactStart = pt;
-                }
+            ['passwordBlock', 'languageBlock', 'compressPdfBlock', 'compressImgBlock', 'imgFormatBlock', 'editPdfBlock'].forEach(id => {
+                document.getElementById(id)?.classList.add('hidden');
             });
 
-            overlayCanvas.addEventListener('mousemove', (e) => {
-                const pt = getRelativeCoords(e);
-                const ctx = overlayCanvas.getContext('2d');
+            let showSettings = false;
+            if (toolId === 'unlock-pdf' || toolId === 'protect-pdf') { document.getElementById('passwordBlock').classList.remove('hidden'); showSettings = true; }
+            if (toolId === 'translate-pdf') { document.getElementById('languageBlock').classList.remove('hidden'); showSettings = true; }
+            if (toolId === 'compress-pdf') { document.getElementById('compressPdfBlock').classList.remove('hidden'); showSettings = true; }
+            if (toolId === 'compress-image') { document.getElementById('compressImgBlock').classList.remove('hidden'); showSettings = true; }
+            if (toolId === 'convert-image-format') { document.getElementById('imgFormatBlock').classList.remove('hidden'); showSettings = true; }
+            if (toolId === 'edit-pdf') {
+                workspaceContainer.classList.remove('max-w-2xl');
+                workspaceContainer.classList.add('max-w-5xl');
+                document.getElementById('editPdfBlock').classList.remove('hidden');
+                document.getElementById('dropZone')?.classList.add('hidden');
+                document.getElementById('convertBtn')?.classList.add('hidden');
+                initQuillEditor();
+                showSettings = true;
+            } else {
+                workspaceContainer.classList.remove('max-w-5xl');
+                workspaceContainer.classList.add('max-w-2xl');
+                document.getElementById('dropZone')?.classList.remove('hidden');
+                document.getElementById('convertBtn')?.classList.remove('hidden');
+            }
 
-                if (isStudioDrawing && (activeStudioTool === 'pen' || activeStudioTool === 'highlight')) {
-                    currentPathPoints.push(pt);
-                    redrawStudioOverlay();
+            if (showSettings) dynamicSettings.classList.remove('hidden');
+            else dynamicSettings.classList.add('hidden');
 
-                    ctx.beginPath();
-                    ctx.strokeStyle = studioColor;
-                    ctx.lineWidth = activeStudioTool === 'highlight' ? 14 : 3;
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-                    ctx.globalAlpha = activeStudioTool === 'highlight' ? 0.4 : 1.0;
-
-                    ctx.moveTo(currentPathPoints[0].x * overlayCanvas.width, currentPathPoints[0].y * overlayCanvas.height);
-                    for (let i = 1; i < currentPathPoints.length; i++) {
-                        ctx.lineTo(currentPathPoints[i].x * overlayCanvas.width, currentPathPoints[i].y * overlayCanvas.height);
-                    }
-                    ctx.stroke();
-                    ctx.globalAlpha = 1.0;
-                } else if (studioRedactStart && activeStudioTool === 'redact') {
-                    redrawStudioOverlay();
-                    const rx = Math.min(studioRedactStart.x, pt.x) * overlayCanvas.width;
-                    const ry = Math.min(studioRedactStart.y, pt.y) * overlayCanvas.height;
-                    const rw = Math.abs(pt.x - studioRedactStart.x) * overlayCanvas.width;
-                    const rh = Math.abs(pt.y - studioRedactStart.y) * overlayCanvas.height;
-                    ctx.fillStyle = studioColor;
-                    ctx.fillRect(rx, ry, rw, rh);
+            if (window.history && window.history.pushState) {
+                const currentPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
+                if (currentPath !== toolId) {
+                    window.history.pushState(null, null, '/' + toolId);
                 }
-            });
+            }
 
-            const stopDrawing = (e) => {
-                const pIdx = currentStudioPageNum - 1;
-                const pageAnnots = getPageAnnots(pIdx);
-
-                if (isStudioDrawing && (activeStudioTool === 'pen' || activeStudioTool === 'highlight')) {
-                    isStudioDrawing = false;
-                    if (currentPathPoints.length > 1) {
-                        pageAnnots.items.push({
-                            type: activeStudioTool,
-                            page: pIdx,
-                            points: [...currentPathPoints],
-                            color: studioColor,
-                            width: activeStudioTool === 'highlight' ? 14 : 3
-                        });
-                    }
-                    currentPathPoints = [];
-                    redrawStudioOverlay();
-                } else if (studioRedactStart && activeStudioTool === 'redact') {
-                    if (e) {
-                        const pt = getRelativeCoords(e);
-                        const rx = Math.min(studioRedactStart.x, pt.x);
-                        const ry = Math.min(studioRedactStart.y, pt.y);
-                        const rw = Math.abs(pt.x - studioRedactStart.x);
-                        const rh = Math.abs(pt.y - studioRedactStart.y);
-
-                        if (rw > 0.01 && rh > 0.01) {
-                            pageAnnots.items.push({
-                                type: 'redact',
-                                page: pIdx,
-                                x_ratio: rx,
-                                y_ratio: ry,
-                                w_ratio: rw,
-                                h_ratio: rh,
-                                fill_color: studioColor
-                            });
-                        }
-                    }
-                    studioRedactStart = null;
-                    redrawStudioOverlay();
-                }
-            };
-
-            overlayCanvas.addEventListener('mouseup', stopDrawing);
-            overlayCanvas.addEventListener('mouseleave', stopDrawing);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function prevStudioPage() {
-            if (currentStudioPageNum > 1) {
-                currentStudioPageNum--;
-                renderStudioCurrentPage();
+        function closeWorkspace() {
+            gridContainer.classList.remove('hidden');
+            workspaceContainer.classList.add('hidden');
+            updatePageMetadata(null);
+            if (window.history && window.history.pushState) {
+                window.history.pushState(null, null, '/');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function handleInitialRoute() {
+            const rawPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
+            const rawHash = window.location.hash.replace(/^#+/, '');
+            const toolId = rawPath || rawHash;
+            if (toolId && toolsData[toolId]) {
+                openWorkspaceById(toolId);
             }
         }
 
-        function nextStudioPage() {
-            if (studioPdfDoc && currentStudioPageNum < studioPdfDoc.numPages) {
-                currentStudioPageNum++;
-                renderStudioCurrentPage();
+        window.addEventListener('popstate', () => {
+            const rawPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
+            const rawHash = window.location.hash.replace(/^#+/, '');
+            const toolId = rawPath || rawHash;
+            if (toolId && toolsData[toolId]) {
+                openWorkspaceById(toolId);
+            } else {
+                gridContainer.classList.remove('hidden');
+                workspaceContainer.classList.add('hidden');
             }
-        }
-
-        function zoomStudio(delta) {
-            studioZoomScale = Math.min(Math.max(0.5, studioZoomScale + delta), 2.5);
-            renderStudioCurrentPage();
-        }
-
-        function rotateCurrentStudioPage() {
-            const pIdx = currentStudioPageNum - 1;
-            const pageAnnots = getPageAnnots(pIdx);
-            pageAnnots.rotation = (pageAnnots.rotation + 90) % 360;
-            renderStudioCurrentPage();
-        }
-
-        function clearStudioPageAnnotations() {
-            const pIdx = currentStudioPageNum - 1;
-            studioPageAnnotations[pIdx] = { items: [], rotation: 0 };
-            redrawStudioOverlay();
-        }
+        });
 
         document.addEventListener('DOMContentLoaded', handleInitialRoute);
 
@@ -1469,7 +1245,7 @@
                 fileInfo.innerText = e.dataTransfer.files.length + " files ready";
                 fileInfo.classList.remove('hidden');
                 if (document.getElementById('conversionType').value === 'edit-pdf' && e.dataTransfer.files[0]) {
-                    loadPdfIntoStudio(e.dataTransfer.files[0]);
+                    loadDocIntoQuill(e.dataTransfer.files[0]);
                 }
             }
         });
@@ -1479,13 +1255,17 @@
                 fileInfo.innerText = fileInput.files.length + " files ready";
                 fileInfo.classList.remove('hidden');
                 if (document.getElementById('conversionType').value === 'edit-pdf' && fileInput.files[0]) {
-                    loadPdfIntoStudio(fileInput.files[0]);
+                    loadDocIntoQuill(fileInput.files[0]);
                 }
             }
         });
 
         uploadForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            if (document.getElementById('conversionType').value === 'edit-pdf') {
+                triggerQuillSubmit();
+                return;
+            }
             if (!fileInput.files.length) return alert('Select files first');
 
             document.getElementById('convertBtn').disabled = true;
@@ -1507,108 +1287,14 @@
 
                 const filesData = await Promise.all(filePromises);
 
-                // Export Visual Studio Annotations if active tool is edit-pdf
-                let visualAnnotPayload = null;
-                const activeTool = document.getElementById('conversionType').value;
-                if (activeTool === 'edit-pdf' && Object.keys(studioPageAnnotations).length > 0) {
-                    const allItems = [];
-                    const allRotations = {};
-
-                    Object.keys(studioPageAnnotations).forEach(pStr => {
-                        const pIdx = parseInt(pStr);
-                        const pageData = studioPageAnnotations[pStr];
-                        if (pageData.rotation) allRotations[pIdx] = pageData.rotation;
-
-                        pageData.items.forEach(item => {
-                            if (item.type === 'text' && item.text.trim()) {
-                                allItems.push({
-                                    type: 'text',
-                                    page: pIdx,
-                                    x_ratio: item.x_ratio,
-                                    y_ratio: item.y_ratio,
-                                    text: item.text.trim(),
-                                    font_size: item.font_size,
-                                    color: item.color
-                                });
-                            } else if (item.type === 'redact') {
-                                allItems.push({
-                                    type: 'redact',
-                                    page: pIdx,
-                                    x_ratio: item.x_ratio,
-                                    y_ratio: item.y_ratio,
-                                    w_ratio: item.w_ratio,
-                                    h_ratio: item.h_ratio,
-                                    fill_color: item.fill_color
-                                });
-                            } else if (item.type === 'inline_text_edit') {
-                                allItems.push({
-                                    type: 'inline_text_edit',
-                                    page: pIdx,
-                                    x0_ratio: item.x0_ratio,
-                                    y0_ratio: item.y0_ratio,
-                                    w_ratio: item.w_ratio,
-                                    h_ratio: item.h_ratio,
-                                    font_size: item.font_size,
-                                    color: item.color,
-                                    orig_text: item.orig_text,
-                                    new_text: item.new_text
-                                });
-                            }
-                        });
-
-                        // Render drawings (pen & highlight) to a transparent PNG overlay image for pixel perfection
-                        const penOrHighlightItems = pageData.items.filter(i => i.type === 'pen' || i.type === 'highlight');
-                        if (penOrHighlightItems.length > 0) {
-                            const offscreen = document.createElement('canvas');
-                            offscreen.width = 1200;
-                            offscreen.height = 1600;
-                            const oCtx = offscreen.getContext('2d');
-
-                            penOrHighlightItems.forEach(item => {
-                                if (!item.points || item.points.length < 2) return;
-                                oCtx.beginPath();
-                                oCtx.strokeStyle = item.color;
-                                oCtx.lineWidth = item.type === 'highlight' ? (item.width * 2) : (item.width * 1.5);
-                                oCtx.lineCap = 'round';
-                                oCtx.lineJoin = 'round';
-                                oCtx.globalAlpha = item.type === 'highlight' ? 0.4 : 1.0;
-
-                                oCtx.moveTo(item.points[0].x * offscreen.width, item.points[0].y * offscreen.height);
-                                for (let i = 1; i < item.points.length; i++) {
-                                    oCtx.lineTo(item.points[i].x * offscreen.width, item.points[i].y * offscreen.height);
-                                }
-                                oCtx.stroke();
-                                oCtx.globalAlpha = 1.0;
-                            });
-
-                            allItems.push({
-                                type: 'overlay_image',
-                                page: pIdx,
-                                image_data: offscreen.toDataURL('image/png')
-                            });
-                        }
-                    });
-
-                    visualAnnotPayload = {
-                        items: allItems,
-                        rotations: allRotations
-                    };
-                }
-
                 const payload = {
-                    conversion_type: activeTool,
+                    conversion_type: document.getElementById('conversionType').value,
                     password: document.getElementById('passwordInput')?.value || '',
                     target_lang: document.getElementById('targetLangSelect')?.value || '',
                     compression_level: document.getElementById('pdfCompressLevelSelect')?.value || 'medium',
                     pdf_target_kb: document.getElementById('pdfCompressKbInput')?.value || '',
                     target_kb: document.getElementById('imgCompressKbInput')?.value || '500',
                     target_format: document.getElementById('imgFormatSelect')?.value || 'JPG',
-                    find_text: document.getElementById('findTextInput')?.value || '',
-                    replace_text: document.getElementById('replaceTextInput')?.value || '',
-                    page_num: document.getElementById('pageNumInput')?.value || '0',
-                    font_size: document.getElementById('fontSizeInput')?.value || '14',
-                    font_color: studioColor || '#000000',
-                    visual_annotations: visualAnnotPayload,
                     files: filesData
                 };
 
