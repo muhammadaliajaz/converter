@@ -174,6 +174,7 @@ def dispatch_wsgi(flask_app, path, method, headers, query, body_bytes):
     
     resp_headers = {k: v for k, v in headers_box if k.lower() != 'content-length'}
     resp_headers['Access-Control-Allow-Origin'] = '*'
+    resp_headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains; preload'
 
     return status_code_box[0], resp_headers, response_bytes
 
