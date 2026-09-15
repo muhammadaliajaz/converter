@@ -182,14 +182,14 @@ def main(context):
     res = context.res
 
     headers = getattr(req, 'headers', {}) or {}
-    raw_path = (
-        headers.get('x-forwarded-uri') or 
-        headers.get('x-original-uri') or 
-        headers.get('x-rewrite-url') or 
-        headers.get('x-appwrite-path') or 
-        getattr(req, 'path', '/') or '/'
-    )
-    path = str(raw_path).split('?')[0]
+    req_path = getattr(req, 'path', '/') or '/'
+    if req_path and req_path != '/':
+        path = req_path
+    else:
+        fwd = headers.get('x-forwarded-uri') or headers.get('x-original-uri') or headers.get('x-rewrite-url') or headers.get('x-appwrite-path')
+        path = fwd if fwd else req_path
+    
+    path = str(path).split('?')[0]
     if not path.startswith('/'):
         path = '/' + path
 
