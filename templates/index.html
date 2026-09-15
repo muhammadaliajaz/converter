@@ -501,125 +501,115 @@
                 </div>
 
                 <!-- Interactive Visual PDF Studio -->
-                <div id="editPdfBlock" class="hidden mb-6 bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-2xl text-white">
-                    <!-- Studio Header & Action Switcher -->
-                    <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
-                        <div class="flex items-center space-x-2">
-                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-600 text-white font-bold text-xs">PDF</span>
+                <div id="editPdfBlock" class="hidden mb-6 bg-slate-900 border border-slate-800 rounded-2xl p-4 md:p-6 shadow-2xl text-white w-full">
+                    <!-- Studio Header & Toolbar -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
+                        <div class="flex items-center space-x-3">
+                            <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-600 text-white font-black text-sm shadow-md">PDF</span>
                             <div>
-                                <h3 class="font-bold text-sm text-white">Visual PDF Studio & Canvas Editor</h3>
-                                <p class="text-[11px] text-slate-400">Click & edit PDF visually on screen</p>
+                                <h3 class="font-bold text-lg text-white leading-tight">Visual PDF Studio & Canvas Editor</h3>
+                                <p class="text-xs text-slate-400">Click anywhere on document to add text, draw annotations, or redact</p>
                             </div>
                         </div>
                         
-                        <!-- Mode Tabs -->
-                        <div class="flex bg-slate-800 p-1 rounded-xl text-xs font-semibold">
-                            <button type="button" id="tabVisualModeBtn" onclick="switchEditPdfTab('visual')" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white shadow">Visual Studio</button>
-                            <button type="button" id="tabBatchModeBtn" onclick="switchEditPdfTab('batch')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white">Batch Replace</button>
+                        <!-- Actions & Mode Tabs -->
+                        <div class="flex items-center gap-3">
+                            <button type="button" onclick="document.getElementById('fileInput').click()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-700 shadow">
+                                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                Open PDF File
+                            </button>
+                            <button type="button" onclick="triggerStudioDownload()" class="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-black shadow-lg shadow-emerald-900/40 transition flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Save & Download PDF
+                            </button>
                         </div>
                     </div>
 
                     <!-- Visual Editor Section -->
-                    <div id="visualStudioSection" class="mt-3">
-                        <!-- Interactive Toolbar -->
-                        <div class="flex flex-wrap items-center justify-between bg-slate-800/90 p-2 rounded-xl gap-2 mb-3 border border-slate-700/60">
-                            <!-- Tool Selectors -->
-                            <div class="flex items-center gap-1">
-                                <button type="button" id="toolBtnSelect" onclick="setStudioTool('select')" class="studio-tool-btn p-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition" title="Select / Move">
+                    <div id="visualStudioSection" class="mt-4">
+                        <!-- Interactive Studio Toolbar -->
+                        <div class="flex flex-wrap items-center justify-between bg-slate-800/90 p-3 rounded-xl gap-3 mb-4 border border-slate-700/80 shadow-md">
+                            <!-- Tool Selectors with Clear Labels -->
+                            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
+                                <button type="button" id="toolBtnSelect" onclick="setStudioTool('select')" class="studio-tool-btn px-3 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition text-xs font-semibold flex items-center gap-1.5 shadow" title="Select & Move Items">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5"></path></svg>
+                                    Move
                                 </button>
-                                <button type="button" id="toolBtnText" onclick="setStudioTool('text')" class="studio-tool-btn p-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition" title="Click anywhere to Add Text">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                <button type="button" id="toolBtnText" onclick="setStudioTool('text')" class="studio-tool-btn px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition text-xs font-semibold flex items-center gap-1.5" title="Click to Add Text">
+                                    <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                    Add Text
                                 </button>
-                                <button type="button" id="toolBtnPen" onclick="setStudioTool('pen')" class="studio-tool-btn p-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition" title="Freehand Pen / Draw">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                <button type="button" id="toolBtnPen" onclick="setStudioTool('pen')" class="studio-tool-btn px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition text-xs font-semibold flex items-center gap-1.5" title="Freehand Pen / Draw">
+                                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                    Pen
                                 </button>
-                                <button type="button" id="toolBtnHighlight" onclick="setStudioTool('highlight')" class="studio-tool-btn p-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition" title="Highlighter Brush">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10M12 3v14m0 0l-3-3m3 3l3-3"></path></svg>
+                                <button type="button" id="toolBtnHighlight" onclick="setStudioTool('highlight')" class="studio-tool-btn px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition text-xs font-semibold flex items-center gap-1.5" title="Highlighter Brush">
+                                    <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10M12 3v14m0 0l-3-3m3 3l3-3"></path></svg>
+                                    Highlight
                                 </button>
-                                <button type="button" id="toolBtnRedact" onclick="setStudioTool('redact')" class="studio-tool-btn p-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition" title="Redact / Whiteout Privacy Box">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v18H3V3z"></path></svg>
+                                <button type="button" id="toolBtnRedact" onclick="setStudioTool('redact')" class="studio-tool-btn px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition text-xs font-semibold flex items-center gap-1.5" title="Redact / Privacy Box">
+                                    <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v18H3V3z"></path></svg>
+                                    Redact
                                 </button>
-                                <button type="button" onclick="rotateCurrentStudioPage()" class="p-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition" title="Rotate Page 90°">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                <button type="button" onclick="rotateCurrentStudioPage()" class="px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition text-xs font-semibold flex items-center gap-1.5" title="Rotate Page 90°">
+                                    <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                    Rotate
                                 </button>
-                                <button type="button" onclick="clearStudioPageAnnotations()" class="p-2 rounded-lg text-rose-400 hover:bg-rose-900/40 hover:text-rose-300 transition" title="Clear Page Edits">
+                                <button type="button" onclick="clearStudioPageAnnotations()" class="px-3 py-2 rounded-lg text-rose-400 hover:bg-rose-900/40 hover:text-rose-300 transition text-xs font-semibold flex items-center gap-1.5" title="Clear Page Edits">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    Clear
                                 </button>
                             </div>
 
-                            <!-- Formatting Controls (Color & Size) -->
-                            <div class="flex items-center gap-2">
-                                <div class="flex items-center gap-1 bg-slate-900/90 p-1 rounded-lg">
-                                    <input type="color" id="studioColorPicker" value="#000000" onchange="updateStudioStyle()" class="w-6 h-6 rounded border-0 cursor-pointer bg-transparent" title="Color Picker">
-                                    <button type="button" onclick="setStudioColor('#000000')" class="w-4 h-4 rounded-full bg-black border border-slate-600 hover:scale-110 transition"></button>
-                                    <button type="button" onclick="setStudioColor('#EF4444')" class="w-4 h-4 rounded-full bg-red-500 hover:scale-110 transition"></button>
-                                    <button type="button" onclick="setStudioColor('#10B981')" class="w-4 h-4 rounded-full bg-emerald-500 hover:scale-110 transition"></button>
-                                    <button type="button" onclick="setStudioColor('#3B82F6')" class="w-4 h-4 rounded-full bg-blue-500 hover:scale-110 transition"></button>
-                                    <button type="button" onclick="setStudioColor('#FFFFFF')" class="w-4 h-4 rounded-full bg-white hover:scale-110 transition"></button>
+                            <!-- Formatting Controls (Color Swatches & Size) -->
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-1 bg-slate-900/90 p-1.5 rounded-lg border border-slate-700">
+                                    <input type="color" id="studioColorPicker" value="#000000" onchange="updateStudioStyle()" class="w-6 h-6 rounded border-0 cursor-pointer bg-transparent" title="Custom Color Picker">
+                                    <button type="button" onclick="setStudioColor('#000000')" class="w-4 h-4 rounded-full bg-black border border-slate-500 hover:scale-110 transition" title="Black"></button>
+                                    <button type="button" onclick="setStudioColor('#EF4444')" class="w-4 h-4 rounded-full bg-red-500 hover:scale-110 transition" title="Red"></button>
+                                    <button type="button" onclick="setStudioColor('#10B981')" class="w-4 h-4 rounded-full bg-emerald-500 hover:scale-110 transition" title="Green"></button>
+                                    <button type="button" onclick="setStudioColor('#3B82F6')" class="w-4 h-4 rounded-full bg-blue-500 hover:scale-110 transition" title="Blue"></button>
+                                    <button type="button" onclick="setStudioColor('#FFFFFF')" class="w-4 h-4 rounded-full bg-white border border-slate-500 hover:scale-110 transition" title="White"></button>
                                 </div>
 
-                                <div class="flex items-center gap-1 bg-slate-900/90 px-2 py-1 rounded-lg">
-                                    <span class="text-[10px] text-slate-400 font-medium">Size</span>
-                                    <input type="number" id="studioFontSize" value="16" min="8" max="72" onchange="updateStudioStyle()" class="w-10 p-0.5 text-center text-xs font-bold text-white bg-slate-800 border border-slate-700 rounded outline-none">
+                                <div class="flex items-center gap-1.5 bg-slate-900/90 px-2.5 py-1.5 rounded-lg border border-slate-700">
+                                    <span class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Size</span>
+                                    <input type="number" id="studioFontSize" value="16" min="8" max="72" onchange="updateStudioStyle()" class="w-12 p-0.5 text-center text-xs font-bold text-white bg-slate-800 border border-slate-700 rounded outline-none focus:ring-1 focus:ring-indigo-500">
                                 </div>
                             </div>
 
-                            <!-- Page Nav & Zoom -->
-                            <div class="flex items-center gap-2 text-xs font-medium">
-                                <div class="flex items-center bg-slate-900/90 rounded-lg p-1">
-                                    <button type="button" onclick="prevStudioPage()" class="p-1 text-slate-300 hover:text-white"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
-                                    <span id="studioPageIndicator" class="px-2 text-slate-200">Page 1 / 1</span>
-                                    <button type="button" onclick="nextStudioPage()" class="p-1 text-slate-300 hover:text-white"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+                            <!-- Page Navigation & Zoom Controls -->
+                            <div class="flex items-center gap-2 text-xs font-semibold">
+                                <div class="flex items-center bg-slate-900/90 rounded-lg p-1 border border-slate-700">
+                                    <button type="button" onclick="prevStudioPage()" class="p-1.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                                    <span id="studioPageIndicator" class="px-3 text-slate-200 font-bold min-w-[80px] text-center">Page 1 / 1</span>
+                                    <button type="button" onclick="nextStudioPage()" class="p-1.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
                                 </div>
-                                <div class="flex items-center bg-slate-900/90 rounded-lg p-1">
-                                    <button type="button" onclick="zoomStudio(-0.15)" class="p-1 text-slate-300 hover:text-white"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg></button>
-                                    <span id="studioZoomIndicator" class="px-2 text-slate-200">100%</span>
-                                    <button type="button" onclick="zoomStudio(0.15)" class="p-1 text-slate-300 hover:text-white"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>
+                                <div class="flex items-center bg-slate-900/90 rounded-lg p-1 border border-slate-700">
+                                    <button type="button" onclick="zoomStudio(-0.15)" class="p-1.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg></button>
+                                    <span id="studioZoomIndicator" class="px-2.5 text-slate-200 font-bold min-w-[50px] text-center">125%</span>
+                                    <button type="button" onclick="zoomStudio(0.15)" class="p-1.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg></button>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Canvas Workspace Container -->
-                        <div id="pdfStudioStage" class="relative w-full overflow-auto max-h-[600px] min-h-[350px] bg-slate-950 rounded-xl flex items-center justify-center p-4 border border-slate-800">
-                            <!-- Empty Placeholder state when no PDF selected yet -->
-                            <div id="studioEmptyMsg" class="text-center p-8 text-slate-500">
-                                <svg class="w-12 h-12 mx-auto text-slate-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                <p class="font-semibold text-slate-300 text-base">Select a PDF file below to start editing visually</p>
-                                <p class="text-xs text-slate-500 mt-1">PDF pages render interactively here on canvas</p>
+                        <!-- Canvas Workspace Stage (Spacious Full Width Container) -->
+                        <div id="pdfStudioStage" class="relative w-full overflow-auto min-h-[680px] max-h-[85vh] bg-slate-950 rounded-2xl flex items-center justify-center p-4 md:p-8 border border-slate-800 shadow-inner">
+                            <!-- Empty In-Studio File Drop Target -->
+                            <div id="studioEmptyMsg" onclick="document.getElementById('fileInput').click()" class="text-center p-10 md:p-16 cursor-pointer hover:bg-slate-900/80 rounded-2xl transition border-2 border-dashed border-slate-700/80 my-8 max-w-lg w-full group">
+                                <div class="w-20 h-20 mx-auto bg-indigo-900/40 rounded-3xl flex items-center justify-center mb-4 group-hover:scale-110 transition border border-indigo-700/50">
+                                    <svg class="w-10 h-10 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                </div>
+                                <h4 class="font-bold text-white text-xl">Open PDF Document to Edit</h4>
+                                <p class="text-sm text-slate-400 mt-1 mb-6">Click to browse or drag & drop PDF file directly here</p>
+                                <span class="px-6 py-3 bg-indigo-600 group-hover:bg-indigo-500 text-white font-bold text-sm rounded-xl shadow-lg transition inline-block">Choose PDF File</span>
                             </div>
 
-                            <!-- Canvas Container -->
-                            <div id="studioCanvasWrapper" class="relative hidden shadow-2xl rounded bg-white">
-                                <canvas id="pdfCanvas" class="block rounded"></canvas>
-                                <canvas id="overlayCanvas" class="absolute top-0 left-0 cursor-crosshair rounded z-10"></canvas>
+                            <!-- Canvas Wrapper -->
+                            <div id="studioCanvasWrapper" class="relative hidden shadow-2xl rounded-lg bg-white my-auto border border-slate-300">
+                                <canvas id="pdfCanvas" class="block rounded-lg"></canvas>
+                                <canvas id="overlayCanvas" class="absolute top-0 left-0 cursor-crosshair rounded-lg z-10"></canvas>
                                 <div id="textOverlayLayer" class="absolute top-0 left-0 w-full h-full pointer-events-none z-20"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Batch Mode Section (Find & Replace) -->
-                    <div id="batchStudioSection" class="hidden mt-3 space-y-3 bg-slate-800/60 p-4 rounded-xl border border-slate-700/60">
-                        <div>
-                            <label for="findTextInput" class="font-semibold text-slate-300 text-xs block mb-1">Find Text</label>
-                            <input type="text" id="findTextInput" name="find_text" placeholder="Word or phrase to find in PDF"
-                                class="w-full p-2.5 border border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-white bg-slate-900 text-sm">
-                        </div>
-                        <div>
-                            <label for="replaceTextInput" class="font-semibold text-slate-300 text-xs block mb-1">Replace With</label>
-                            <input type="text" id="replaceTextInput" name="replace_text" placeholder="New replacement text"
-                                class="w-full p-2.5 border border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-white bg-slate-900 text-sm">
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label for="pageNumInput" class="font-semibold text-slate-300 text-xs block mb-1">Page Number (0 = All)</label>
-                                <input type="number" id="pageNumInput" name="page_num" value="0" min="0"
-                                    class="w-full p-2.5 border border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-white bg-slate-900 text-sm">
-                            </div>
-                            <div>
-                                <label for="fontSizeInput" class="font-semibold text-slate-300 text-xs block mb-1">Font Size (pt)</label>
-                                <input type="number" id="fontSizeInput" name="font_size" value="14" min="8" max="72"
-                                    class="w-full p-2.5 border border-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-white bg-slate-900 text-sm">
                             </div>
                         </div>
                     </div>
@@ -969,7 +959,15 @@
             if (toolId === 'compress-pdf') { document.getElementById('compressPdfBlock').classList.remove('hidden'); showSettings = true; }
             if (toolId === 'compress-image') { document.getElementById('compressImgBlock').classList.remove('hidden'); showSettings = true; }
             if (toolId === 'convert-image-format') { document.getElementById('imgFormatBlock').classList.remove('hidden'); showSettings = true; }
-            if (toolId === 'edit-pdf') { document.getElementById('editPdfBlock').classList.remove('hidden'); showSettings = true; }
+            if (toolId === 'edit-pdf') {
+                document.getElementById('editPdfBlock').classList.remove('hidden');
+                document.getElementById('dropZone')?.classList.add('hidden');
+                document.getElementById('convertBtn')?.classList.add('hidden');
+                showSettings = true;
+            } else {
+                document.getElementById('dropZone')?.classList.remove('hidden');
+                document.getElementById('convertBtn')?.classList.remove('hidden');
+            }
 
             if (showSettings) dynamicSettings.classList.remove('hidden');
             else dynamicSettings.classList.add('hidden');
@@ -1028,7 +1026,7 @@
         // Visual PDF Studio State & Interactive Canvas Engine
         let studioPdfDoc = null;
         let currentStudioPageNum = 1;
-        let studioZoomScale = 1.0;
+        let studioZoomScale = 1.25;
         let activeStudioTool = 'select'; // 'select', 'text', 'pen', 'highlight', 'redact'
         let studioColor = '#000000';
         let studioFontSize = 16;
@@ -1038,6 +1036,19 @@
 
         // Per-page annotation records: { pIdx: { items: [], rotation: 0 } }
         let studioPageAnnotations = {};
+
+        function triggerStudioDownload() {
+            const form = document.getElementById('uploadForm');
+            if (!fileInput.files.length) {
+                document.getElementById('fileInput').click();
+                return;
+            }
+            if (typeof form.requestSubmit === 'function') {
+                form.requestSubmit();
+            } else {
+                form.dispatchEvent(new Event('submit', { cancelable: true }));
+            }
+        }
 
         function getPageAnnots(pIdx) {
             if (!studioPageAnnotations[pIdx]) {
@@ -1068,12 +1079,12 @@
         function setStudioTool(tool) {
             activeStudioTool = tool;
             document.querySelectorAll('.studio-tool-btn').forEach(btn => {
-                btn.className = 'studio-tool-btn p-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition';
+                btn.className = 'studio-tool-btn px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition text-xs font-semibold flex items-center gap-1.5';
             });
             const toolCap = tool.charAt(0).toUpperCase() + tool.slice(1);
             const activeBtn = document.getElementById('toolBtn' + toolCap);
             if (activeBtn) {
-                activeBtn.className = 'studio-tool-btn p-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition shadow';
+                activeBtn.className = 'studio-tool-btn px-3 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition text-xs font-semibold flex items-center gap-1.5 shadow';
             }
 
             const overlayCanvas = document.getElementById('overlayCanvas');
@@ -1188,23 +1199,72 @@
                         item.h_ratio * overlayCanvas.height
                     );
                 } else if (item.type === 'text') {
-                    const textEl = document.createElement('div');
-                    textEl.className = 'absolute pointer-events-auto cursor-move font-sans select-none focus:outline-none p-1 rounded border border-dashed border-indigo-400/80 bg-white/90 shadow text-black';
-                    textEl.style.left = (item.x_ratio * 100) + '%';
-                    textEl.style.top = (item.y_ratio * 100) + '%';
-                    textEl.style.fontSize = Math.round(item.font_size * studioZoomScale) + 'px';
-                    textEl.style.color = item.color;
-                    textEl.innerText = item.text;
-                    textEl.contentEditable = true;
+                    const textContainer = document.createElement('div');
+                    textContainer.className = 'absolute pointer-events-auto cursor-move font-sans select-none focus:outline-none p-1 rounded-lg border-2 border-dashed border-indigo-500 bg-white/95 shadow-xl text-black group flex items-center gap-1 min-w-[50px]';
+                    textContainer.style.left = (item.x_ratio * 100) + '%';
+                    textContainer.style.top = (item.y_ratio * 100) + '%';
+                    textContainer.style.fontSize = Math.round(item.font_size * studioZoomScale) + 'px';
+                    textContainer.style.color = item.color;
 
-                    textEl.addEventListener('blur', () => {
-                        item.text = textEl.innerText;
-                        if (!item.text.trim()) {
+                    const textSpan = document.createElement('span');
+                    textSpan.contentEditable = true;
+                    textSpan.className = 'outline-none cursor-text px-1 font-semibold';
+                    textSpan.innerText = item.text;
+
+                    textSpan.addEventListener('input', () => { item.text = textSpan.innerText; });
+                    textSpan.addEventListener('blur', () => {
+                        item.text = textSpan.innerText.trim();
+                        if (!item.text) {
                             pageAnnots.items.splice(idx, 1);
                             redrawStudioOverlay();
                         }
                     });
-                    textLayer.appendChild(textEl);
+
+                    const delBtn = document.createElement('button');
+                    delBtn.type = 'button';
+                    delBtn.className = 'opacity-0 group-hover:opacity-100 text-rose-600 hover:text-rose-800 hover:bg-rose-100 p-1 rounded-full transition text-xs font-bold leading-none ml-1';
+                    delBtn.innerText = '✕';
+                    delBtn.title = 'Delete Text Box';
+                    delBtn.addEventListener('click', (ev) => {
+                        ev.stopPropagation();
+                        pageAnnots.items.splice(idx, 1);
+                        redrawStudioOverlay();
+                    });
+
+                    textContainer.appendChild(textSpan);
+                    textContainer.appendChild(delBtn);
+
+                    // Smooth Mouse Drag repositioning
+                    textContainer.addEventListener('mousedown', (e) => {
+                        if (e.target === textSpan || e.target === delBtn) return;
+                        e.preventDefault();
+                        const wrapper = document.getElementById('studioCanvasWrapper');
+                        if (!wrapper) return;
+                        const wrapRect = wrapper.getBoundingClientRect();
+                        const startX = e.clientX;
+                        const startY = e.clientY;
+                        const initialXRatio = item.x_ratio;
+                        const initialYRatio = item.y_ratio;
+
+                        function onMouseMove(me) {
+                            const deltaX = (me.clientX - startX) / wrapRect.width;
+                            const deltaY = (me.clientY - startY) / wrapRect.height;
+                            item.x_ratio = Math.max(0, Math.min(0.92, initialXRatio + deltaX));
+                            item.y_ratio = Math.max(0, Math.min(0.92, initialYRatio + deltaY));
+                            textContainer.style.left = (item.x_ratio * 100) + '%';
+                            textContainer.style.top = (item.y_ratio * 100) + '%';
+                        }
+
+                        function onMouseUp() {
+                            window.removeEventListener('mousemove', onMouseMove);
+                            window.removeEventListener('mouseup', onMouseUp);
+                        }
+
+                        window.addEventListener('mousemove', onMouseMove);
+                        window.addEventListener('mouseup', onMouseUp);
+                    });
+
+                    textLayer.appendChild(textContainer);
                 }
             });
         }
