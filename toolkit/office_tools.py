@@ -62,7 +62,8 @@ def pdf_to_docx(input_path, output_path):
             blocks_sorted = sorted(blocks, key=lambda b: b.get("bbox", [0, 0, 0, 0])[1])
 
             for b in blocks_sorted:
-                if b.get("type") == 0 and "lines" in b:  # Text block
+                # 1. Text Block
+                if b.get("type") == 0 and "lines" in b:
                     has_content = True
                     for line in b["lines"]:
                         p = doc.add_paragraph()
@@ -112,6 +113,38 @@ def pdf_to_docx(input_path, output_path):
                                 b_val = c & 0xFF
                                 run.font.color.rgb = RGBColor(r, g, b_val)
 
+                # 2. Embedded Image / Photo Block Preservation
+                elif b.get("type") == 1 and "image" in b:
+                    has_content = True
+                    try:
+                        img_bytes = b["image"]
+                        img_ext = b.get("ext", "png")
+                        img_temp_path = f"{output_path}_img_{page_idx}_{b.get('number', 0)}.{img_ext}"
+                        
+                        with open(img_temp_path, "wb") as f_img:
+                            f_img.write(img_bytes)
+
+                        bbox = b.get("bbox", [0, 0, 100, 100])
+                        img_w_pt = bbox[2] - bbox[0]
+                        img_w_in = min(img_w_pt / 72.0, page_w_in - 1.0)
+                        img_w_in = max(img_w_in, 0.5)
+
+                        p_img = doc.add_paragraph()
+                        p_img.paragraph_format.space_before = Pt(2)
+                        p_img.paragraph_format.space_after = Pt(2)
+
+                        if img_w_in > (page_w_in * 0.4):
+                            p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                        else:
+                            p_img.alignment = WD_ALIGN_PARAGRAPH.LEFT
+
+                        p_img.add_run().add_picture(img_temp_path, width=Inches(img_w_in))
+
+                        try: os.remove(img_temp_path)
+                        except: pass
+                    except Exception:
+                        pass
+
             # High-fidelity Table Preservation
             if tables and len(tables.tables) > 0:
                 for tab in tables.tables:
@@ -131,8 +164,25 @@ def pdf_to_docx(input_path, output_path):
                                         paragraph.paragraph_format.space_before = Pt(0)
                                         paragraph.paragraph_format.space_after = Pt(0)
 
-            # Scanned Page Fallback or Embedded Image Preservation
-            if not has_content and len(img_list) == 0:
+            # Scanned Page Fallback or Image Fallback
+            if not has_content and len(img_list) > 0:
+                for img_info in img_list:
+                    try:
+                        xref = img_info[0]
+                        base_image = pdf.extract_image(xref)
+                        if base_image:
+                            image_bytes = base_image["image"]
+                            image_ext = base_image["ext"]
+                            img_temp_path = f"{output_path}_xref_{xref}.{image_ext}"
+                            with open(img_temp_path, "wb") as f_img:
+                                f_img.write(image_bytes)
+                            doc.add_picture(img_temp_path, width=Inches(page_w_in - 1.0))
+                            try: os.remove(img_temp_path)
+                            except: pass
+                    except Exception:
+                        pass
+
+            elif not has_content and len(img_list) == 0:
                 pix = page.get_pixmap(dpi=150)
                 img_temp = f"{output_path}_page_{page.number}.png"
                 pix.save(img_temp)
