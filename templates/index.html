@@ -1140,8 +1140,9 @@
             const pdfCanvas = document.getElementById('pdfCanvas');
             const overlayCanvas = document.getElementById('overlayCanvas');
             const wrapper = document.getElementById('studioCanvasWrapper');
+            const textLayer = document.getElementById('textOverlayLayer');
 
-            if (pdfCanvas && overlayCanvas && wrapper) {
+            if (pdfCanvas && overlayCanvas && wrapper && textLayer) {
                 pdfCanvas.width = viewport.width;
                 pdfCanvas.height = viewport.height;
                 overlayCanvas.width = viewport.width;
@@ -1157,6 +1158,70 @@
                 if (pageInd) pageInd.innerText = `Page ${currentStudioPageNum} / ${studioPdfDoc.numPages}`;
                 const zoomInd = document.getElementById('studioZoomIndicator');
                 if (zoomInd) zoomInd.innerText = `${Math.round(studioZoomScale * 100)}%`;
+
+                // Render PDF.js Text Content as Native MS Word-Style Inline Editable Spans
+                textLayer.innerHTML = '';
+                try {
+                    const textContent = await page.getTextContent();
+                    textContent.items.forEach((item, tIdx) => {
+                        if (!item.str || !item.str.trim()) return;
+                        const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
+                        const fontSizePx = Math.sqrt(tx[0] * tx[0] + tx[1] * tx[1]);
+                        const leftPx = tx[4];
+                        const topPx = tx[5] - fontSizePx;
+
+                        const textSpan = document.createElement('span');
+                        textSpan.className = 'pdf-inline-editable absolute pointer-events-auto cursor-text select-text focus:outline-none focus:bg-indigo-100/60 focus:ring-1 focus:ring-indigo-500 rounded px-0.5 transition font-sans text-black leading-none';
+                        textSpan.contentEditable = true;
+                        textSpan.innerText = item.str;
+                        textSpan.style.left = (leftPx / viewport.width * 100) + '%';
+                        textSpan.style.top = (topPx / viewport.height * 100) + '%';
+                        textSpan.style.fontSize = fontSizePx + 'px';
+                        textSpan.style.lineHeight = '1.0';
+                        textSpan.style.whiteSpace = 'pre';
+
+                        const origStr = item.str;
+                        const x0_ratio = leftPx / viewport.width;
+                        const y0_ratio = topPx / viewport.height;
+                        const w_ratio = (item.width * studioZoomScale) / viewport.width;
+                        const h_ratio = fontSizePx / viewport.height;
+                        const fontSizePt = Math.round(fontSizePx / studioZoomScale);
+
+                        textSpan.addEventListener('focus', () => {
+                            const sizeInput = document.getElementById('studioFontSize');
+                            if (sizeInput) sizeInput.value = fontSizePt;
+                        });
+
+                        textSpan.addEventListener('input', () => {
+                            const newTxt = textSpan.innerText;
+                            let existingEdit = pageAnnots.items.find(i => i.type === 'inline_text_edit' && i.item_idx === tIdx);
+                            if (!existingEdit) {
+                                existingEdit = {
+                                    type: 'inline_text_edit',
+                                    page: pIdx,
+                                    item_idx: tIdx,
+                                    x0_ratio: x0_ratio,
+                                    y0_ratio: y0_ratio,
+                                    w_ratio: Math.max(0.02, w_ratio),
+                                    h_ratio: Math.max(0.015, h_ratio),
+                                    font_size: fontSizePt,
+                                    color: studioColor || '#000000',
+                                    orig_text: origStr,
+                                    new_text: newTxt
+                                };
+                                pageAnnots.items.push(existingEdit);
+                            } else {
+                                existingEdit.new_text = newTxt;
+                                existingEdit.color = studioColor || '#000000';
+                                existingEdit.font_size = parseInt(document.getElementById('studioFontSize')?.value) || fontSizePt;
+                            }
+                        });
+
+                        textLayer.appendChild(textSpan);
+                    });
+                } catch (tErr) {
+                    console.error('Text extraction error:', tErr);
+                }
 
                 redrawStudioOverlay();
             }
@@ -1530,6 +1595,19 @@
                                     w_ratio: item.w_ratio,
                                     h_ratio: item.h_ratio,
                                     fill_color: item.fill_color
+                                });
+                            } else if (item.type === 'inline_text_edit') {
+                                allItems.push({
+                                    type: 'inline_text_edit',
+                                    page: pIdx,
+                                    x0_ratio: item.x0_ratio,
+                                    y0_ratio: item.y0_ratio,
+                                    w_ratio: item.w_ratio,
+                                    h_ratio: item.h_ratio,
+                                    font_size: item.font_size,
+                                    color: item.color,
+                                    orig_text: item.orig_text,
+                                    new_text: item.new_text
                                 });
                             }
                         });

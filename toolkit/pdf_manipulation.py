@@ -241,6 +241,28 @@ def edit_pdf(input_path, output_path, edit_type='add_text', text='', find_text='
                         page.add_redact_annot(r_box, fill=fill_col)
                         page.apply_redactions()
 
+                    elif item_type == 'inline_text_edit':
+                        x0_r = float(item.get('x0_ratio', 0))
+                        y0_r = float(item.get('y0_ratio', 0))
+                        w_r = float(item.get('w_ratio', 0))
+                        h_r = float(item.get('h_ratio', 0))
+                        new_txt = str(item.get('new_text', ''))
+                        fs = float(item.get('font_size', font_size))
+                        col = parse_color(item.get('color', color))
+                        
+                        r_box = fitz.Rect(
+                            x0_r * rect.width - 1,
+                            y0_r * rect.height - 1,
+                            (x0_r + w_r) * rect.width + 2,
+                            (y0_r + h_r) * rect.height + 2
+                        )
+                        page.add_redact_annot(r_box, fill=(1, 1, 1))
+                        page.apply_redactions()
+                        
+                        if new_txt.strip():
+                            pt = fitz.Point(x0_r * rect.width, y0_r * rect.height + fs * 0.85)
+                            page.insert_text(pt, new_txt, fontsize=fs, color=col)
+
                     elif item_type == 'overlay_image':
                         b64_data = item.get('image_data', '')
                         if ',' in b64_data:
