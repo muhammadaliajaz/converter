@@ -45,7 +45,7 @@ csp = {
 }
 # Safe extension initialization for serverless execution
 try:
-    Talisman(app, content_security_policy=csp, force_https=False)
+    Talisman(app, content_security_policy=None, force_https=False, strict_transport_security=False, session_cookie_secure=False)
 except Exception:
     pass
 
