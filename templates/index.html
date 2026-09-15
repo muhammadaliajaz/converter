@@ -387,6 +387,14 @@
             <p class="text-sm text-slate-500 font-normal">Change format (PNG, JPG, WEBP).</p>
         </div>
 
+        <div id="tool-card-edit-pdf" role="button" tabindex="0"
+            aria-label="Edit PDF - Add text, replace text, or rotate PDF."
+            onclick="openWorkspaceById('edit-pdf')" class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">✏️</div>
+            <h2 id="tool-title-edit-pdf" class="text-lg font-bold text-slate-800 mb-1.5">Edit PDF</h2>
+            <p class="text-sm text-slate-500 font-normal">Add text, replace text, or rotate PDF.</p>
+        </div>
+
     </main>
 
     <!-- WORKSPACE VIEW -->
@@ -484,6 +492,78 @@
                         <option value="WEBP">WEBP</option>
                         <option value="BMP">BMP</option>
                     </select>
+                </div>
+
+                <!-- Edit PDF Settings -->
+                <div id="editPdfBlock" class="hidden space-y-4">
+                    <div>
+                        <label for="editActionSelect" class="font-semibold text-slate-700 text-sm block mb-1">Edit Action</label>
+                        <select id="editActionSelect" name="edit_action" onchange="toggleEditPdfFields(this.value)"
+                            class="w-full p-2.5 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-slate-900 bg-white"
+                            aria-label="PDF Edit Action">
+                            <option value="add_text">Add Text / Annotation</option>
+                            <option value="replace_text">Find & Replace Text</option>
+                            <option value="rotate">Rotate PDF Pages</option>
+                        </select>
+                    </div>
+
+                    <!-- Field: Add Text -->
+                    <div id="addTextField">
+                        <label for="textInput" class="font-semibold text-slate-700 text-sm block mb-1">Text to Add</label>
+                        <input type="text" id="textInput" name="text_input" placeholder="e.g. Confidential, Approved, Sample Text"
+                            class="w-full p-2.5 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-slate-900 bg-white"
+                            aria-label="Text to Add">
+                    </div>
+
+                    <!-- Fields: Find & Replace -->
+                    <div id="replaceTextField" class="hidden space-y-3">
+                        <div>
+                            <label for="findTextInput" class="font-semibold text-slate-700 text-sm block mb-1">Find Text</label>
+                            <input type="text" id="findTextInput" name="find_text" placeholder="Word or phrase to find"
+                                class="w-full p-2.5 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-slate-900 bg-white"
+                                aria-label="Find Text">
+                        </div>
+                        <div>
+                            <label for="replaceTextInput" class="font-semibold text-slate-700 text-sm block mb-1">Replace With</label>
+                            <input type="text" id="replaceTextInput" name="replace_text" placeholder="New text to insert"
+                                class="w-full p-2.5 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-slate-900 bg-white"
+                                aria-label="Replace With">
+                        </div>
+                    </div>
+
+                    <!-- Fields: Rotate Pages -->
+                    <div id="rotateField" class="hidden">
+                        <label for="rotationAngleSelect" class="font-semibold text-slate-700 text-sm block mb-1">Rotation Angle</label>
+                        <select id="rotationAngleSelect" name="rotation_angle"
+                            class="w-full p-2.5 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-slate-900 bg-white"
+                            aria-label="Rotation Angle">
+                            <option value="90">90° Clockwise</option>
+                            <option value="180">180° Turn Upside Down</option>
+                            <option value="270">270° Counter-Clockwise</option>
+                        </select>
+                    </div>
+
+                    <!-- Page Selection, Font Size & Color -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label for="pageNumInput" class="font-semibold text-slate-700 text-sm block mb-1">Page Number (0 = All)</label>
+                            <input type="number" id="pageNumInput" name="page_num" value="0" min="0"
+                                class="w-full p-2.5 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-slate-900 bg-white"
+                                aria-label="Target Page Number">
+                        </div>
+                        <div>
+                            <label for="fontSizeInput" class="font-semibold text-slate-700 text-sm block mb-1">Font Size (pt)</label>
+                            <input type="number" id="fontSizeInput" name="font_size" value="14" min="8" max="72"
+                                class="w-full p-2.5 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-slate-900 bg-white"
+                                aria-label="Font Size in Points">
+                        </div>
+                        <div>
+                            <label for="fontColorInput" class="font-semibold text-slate-700 text-sm block mb-1">Font Color</label>
+                            <input type="color" id="fontColorInput" name="font_color" value="#000000"
+                                class="w-full h-11 p-1 border border-slate-200 rounded-lg outline-none cursor-pointer bg-white"
+                                aria-label="Font Color Picker">
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -737,7 +817,8 @@
             'page-numbers': { name: 'Page Numbers', icon: '🔢' },
             'translate-pdf': { name: 'Translate PDF', icon: '🌍' },
             'compress-image': { name: 'Compress Image', icon: '🗜️' },
-            'convert-image-format': { name: 'Convert Image', icon: '🎨' }
+            'convert-image-format': { name: 'Convert Image', icon: '🎨' },
+            'edit-pdf': { name: 'Edit PDF', icon: '✏️' }
         };
 
         const gridContainer = document.getElementById('gridContainer');
@@ -764,8 +845,18 @@
             'page-numbers': { title: 'Add Page Numbers to PDF - Stamp PDF Pages Free | Smart File Converter', desc: 'Add page numbers to your PDF documents easily online for free. Choose position, font style, and number formatting.' },
             'translate-pdf': { title: 'Translate PDF Online - Free PDF Document Translator | Smart File Converter', desc: 'Translate PDF document text into English, Spanish, French, German, Chinese, Arabic, or Hindi online for free.' },
             'compress-image': { title: 'Compress Image Online - Reduce JPG & PNG Size Free | Smart File Converter', desc: 'Compress JPG, PNG, and WEBP images online to target KB size for free. Optimize images for faster web page loading.' },
-            'convert-image-format': { title: 'Convert Image Format - JPG, PNG, WEBP Converter Free | Smart File Converter', desc: 'Convert image files between JPG, PNG, WEBP, and BMP formats online for free. Fast batch image format converter.' }
+            'convert-image-format': { title: 'Convert Image Format - JPG, PNG, WEBP Converter Free | Smart File Converter', desc: 'Convert image files between JPG, PNG, WEBP, and BMP formats online for free. Fast batch image format converter.' },
+            'edit-pdf': { title: 'Edit PDF Online - Free PDF Editor & Text Modifier | Smart File Converter', desc: 'Edit PDF text, add text annotations, find and replace text, or rotate PDF pages online for free. 100% free online PDF editor.' }
         };
+
+        function toggleEditPdfFields(val) {
+            document.getElementById('addTextField')?.classList.add('hidden');
+            document.getElementById('replaceTextField')?.classList.add('hidden');
+            document.getElementById('rotateField')?.classList.add('hidden');
+            if (val === 'add_text') document.getElementById('addTextField')?.classList.remove('hidden');
+            if (val === 'replace_text') document.getElementById('replaceTextField')?.classList.remove('hidden');
+            if (val === 'rotate') document.getElementById('rotateField')?.classList.remove('hidden');
+        }
 
         function updatePageMetadata(toolId) {
             const baseUrl = 'https://officialali.dev/';
@@ -809,8 +900,8 @@
             document.getElementById('statusArea').classList.add('hidden');
             document.getElementById('convertBtn').disabled = false;
 
-            ['passwordBlock', 'languageBlock', 'compressPdfBlock', 'compressImgBlock', 'imgFormatBlock'].forEach(id => {
-                document.getElementById(id).classList.add('hidden');
+            ['passwordBlock', 'languageBlock', 'compressPdfBlock', 'compressImgBlock', 'imgFormatBlock', 'editPdfBlock'].forEach(id => {
+                document.getElementById(id)?.classList.add('hidden');
             });
 
             let showSettings = false;
@@ -819,6 +910,7 @@
             if (toolId === 'compress-pdf') { document.getElementById('compressPdfBlock').classList.remove('hidden'); showSettings = true; }
             if (toolId === 'compress-image') { document.getElementById('compressImgBlock').classList.remove('hidden'); showSettings = true; }
             if (toolId === 'convert-image-format') { document.getElementById('imgFormatBlock').classList.remove('hidden'); showSettings = true; }
+            if (toolId === 'edit-pdf') { document.getElementById('editPdfBlock').classList.remove('hidden'); showSettings = true; }
 
             if (showSettings) dynamicSettings.classList.remove('hidden');
             else dynamicSettings.classList.add('hidden');
@@ -935,6 +1027,14 @@
                     pdf_target_kb: document.getElementById('pdfCompressKbInput')?.value || '',
                     target_kb: document.getElementById('imgCompressKbInput')?.value || '500',
                     target_format: document.getElementById('imgFormatSelect')?.value || 'JPG',
+                    edit_action: document.getElementById('editActionSelect')?.value || 'add_text',
+                    text_input: document.getElementById('textInput')?.value || '',
+                    find_text: document.getElementById('findTextInput')?.value || '',
+                    replace_text: document.getElementById('replaceTextInput')?.value || '',
+                    page_num: document.getElementById('pageNumInput')?.value || '0',
+                    font_size: document.getElementById('fontSizeInput')?.value || '14',
+                    font_color: document.getElementById('fontColorInput')?.value || '#000000',
+                    rotation_angle: document.getElementById('rotationAngleSelect')?.value || '90',
                     files: filesData
                 };
 

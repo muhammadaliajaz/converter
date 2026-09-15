@@ -20,6 +20,7 @@ Allow: /page-numbers
 Allow: /translate-pdf
 Allow: /compress-image
 Allow: /convert-image-format
+Allow: /edit-pdf
 Disallow: /download/
 Disallow: /upload
 

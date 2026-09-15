@@ -17,7 +17,7 @@ TOOLS_LIST = [
     'pdf-to-ppt', 'pdf-to-excel', 'word-to-pdf', 'ppt-to-pdf',
     'excel-to-pdf', 'pdf-to-jpg', 'jpg-to-pdf', 'unlock-pdf',
     'protect-pdf', 'page-numbers', 'translate-pdf', 'compress-image',
-    'convert-image-format'
+    'convert-image-format', 'edit-pdf'
 ]
 
 TOOLS_SEO_DATA = {
@@ -88,6 +88,10 @@ TOOLS_SEO_DATA = {
     'convert-image-format': {
         'title': 'Convert Image Format - JPG, PNG, WEBP Converter Free | Smart File Converter',
         'desc': 'Convert image files between JPG, PNG, WEBP, and BMP formats online for free. Fast batch image format converter.'
+    },
+    'edit-pdf': {
+        'title': 'Edit PDF Online - Free PDF Editor & Text Modifier | Smart File Converter',
+        'desc': 'Edit PDF text, add text annotations, find and replace text, or rotate PDF pages online for free. 100% free online PDF editor.'
     }
 }
 
@@ -234,6 +238,7 @@ Allow: /page-numbers
 Allow: /translate-pdf
 Allow: /compress-image
 Allow: /convert-image-format
+Allow: /edit-pdf
 Disallow: /download/
 Disallow: /upload
 

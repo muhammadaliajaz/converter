@@ -166,3 +166,62 @@ def compress_pdf(input_path, output_path, level='medium', target_kb=None):
         return False, "Compression failed"
     except Exception as e:
         return False, str(e)
+
+def edit_pdf(input_path, output_path, edit_type='add_text', text='', find_text='', replace_text='', page_num=0, font_size=14, color='#000000', rotation_angle=0):
+    """
+    Comprehensive PDF Editing Engine.
+    Supports:
+    1. 'add_text': Add custom text / annotations / watermark to PDF.
+    2. 'replace_text': Find and replace / overwrite text in PDF.
+    3. 'rotate': Rotate PDF pages (90°, 180°, 270°).
+    """
+    try:
+        doc = fitz.open(input_path)
+        
+        def parse_color(c_str):
+            try:
+                c_str = str(c_str).lstrip('#')
+                if len(c_str) == 6:
+                    r = int(c_str[0:2], 16) / 255.0
+                    g = int(c_str[2:4], 16) / 255.0
+                    b = int(c_str[4:6], 16) / 255.0
+                    return (r, g, b)
+            except Exception:
+                pass
+            return (0, 0, 0)
+
+        rgb_color = parse_color(color)
+        page_idx_target = int(page_num) if page_num else 0
+
+        if edit_type == 'add_text' and text.strip():
+            target_pages = [page_idx_target - 1] if (1 <= page_idx_target <= len(doc)) else list(range(len(doc)))
+            for p_idx in target_pages:
+                page = doc[p_idx]
+                rect = page.rect
+                point = fitz.Point(50, rect.height - 50)
+                page.insert_text(point, text.strip(), fontsize=float(font_size), color=rgb_color)
+
+        elif edit_type == 'replace_text' and find_text.strip():
+            target_pages = [page_idx_target - 1] if (1 <= page_idx_target <= len(doc)) else list(range(len(doc)))
+            for p_idx in target_pages:
+                page = doc[p_idx]
+                areas = page.search_for(find_text.strip())
+                for r in areas:
+                    page.add_redact_annot(r, fill=(1, 1, 1))
+                page.apply_redactions()
+                
+                for r in areas:
+                    page.insert_textbox(r, replace_text.strip(), fontsize=float(font_size), color=rgb_color)
+
+        elif edit_type == 'rotate':
+            angle = int(rotation_angle) % 360
+            target_pages = [page_idx_target - 1] if (1 <= page_idx_target <= len(doc)) else list(range(len(doc)))
+            for p_idx in target_pages:
+                page = doc[p_idx]
+                page.set_rotation((page.rotation + angle) % 360)
+
+        doc.save(output_path, garbage=4, deflate=True)
+        doc.close()
+        return True, output_path
+    except Exception as e:
+        return False, f"PDF Edit Error: {str(e)}"
