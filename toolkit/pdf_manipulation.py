@@ -329,8 +329,8 @@ def hex_to_rgb(hex_str):
 
 def parse_pdf_for_visual_editor(pdf_path):
     """
-    Parses PDF pages into high-res background images and structured text lines with exact 
-    coordinates, font families, font sizes, colors, and bounding boxes for 100% original layout preservation.
+    Parses PDF pages into high-res clean background images (with original text suppressed to eliminate overlap)
+    and structured text lines with exact coordinates, font families, font sizes, colors, and bounding boxes.
     """
     try:
         doc = fitz.open(pdf_path)
@@ -339,11 +339,6 @@ def parse_pdf_for_visual_editor(pdf_path):
         for page_num in range(len(doc)):
             page = doc[page_num]
             rect = page.rect
-            
-            # High-resolution background image (dpi=150)
-            pix = page.get_pixmap(dpi=150)
-            img_bytes = pix.tobytes("png")
-            bg_b64 = "data:image/png;base64," + base64.b64encode(img_bytes).decode("utf-8")
             
             page_dict = page.get_text("dict")
             lines_data = []
@@ -378,6 +373,25 @@ def parse_pdf_for_visual_editor(pdf_path):
                         })
                         line_counter += 1
                         
+            # Render a clean background pixmap by redacting text areas on a temporary page copy
+            doc_temp = fitz.open(pdf_path)
+            page_temp = doc_temp[page_num]
+            
+            for l in lines_data:
+                r = fitz.Rect(l["bbox"])
+                # Expand by 0.5pt to cleanly remove anti-aliased text pixels
+                r.x0 -= 0.5
+                r.y0 -= 0.5
+                r.x1 += 0.5
+                r.y1 += 0.5
+                page_temp.add_redact_annot(r, fill=(1, 1, 1))
+                
+            page_temp.apply_redactions()
+            pix = page_temp.get_pixmap(dpi=150)
+            img_bytes = pix.tobytes("png")
+            bg_b64 = "data:image/png;base64," + base64.b64encode(img_bytes).decode("utf-8")
+            doc_temp.close()
+            
             result["pages"].append({
                 "page_num": page_num + 1,
                 "width": round(rect.width, 2),

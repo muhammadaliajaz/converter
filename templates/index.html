@@ -1163,8 +1163,9 @@
                 const pageDiv = document.createElement('div');
                 pageDiv.className = 'pdf-page-card relative bg-white shadow-2xl rounded-sm border border-slate-300 overflow-hidden my-4';
                 pageDiv.style.width = '100%';
-                pageDiv.style.maxWidth = '800px';
+                pageDiv.style.maxWidth = '850px';
                 pageDiv.style.aspectRatio = `${page.width} / ${page.height}`;
+                pageDiv.style.containerType = 'inline-size';
 
                 const bgImg = document.createElement('img');
                 bgImg.src = page.bg_b64;
@@ -1190,10 +1191,10 @@
                     
                     lineDiv.style.left = `${leftPct}%`;
                     lineDiv.style.top = `${topPct}%`;
-                    lineDiv.style.fontSize = `clamp(9px, ${(line.size / page.width * 800).toFixed(1)}px, 48px)`;
+                    lineDiv.style.fontSize = `calc(${line.size} * (100cqw / ${page.width}))`;
                     lineDiv.style.color = line.color;
                     lineDiv.style.fontFamily = getMatchingFontFamily(line.font);
-                    lineDiv.style.lineHeight = '1.1';
+                    lineDiv.style.lineHeight = '1.0';
                     lineDiv.style.whiteSpace = 'nowrap';
                     lineDiv.innerText = line.text;
 
