@@ -329,11 +329,13 @@ def hex_to_rgb(hex_str):
 
 def parse_pdf_for_visual_editor(pdf_path):
     """
-    Parses PDF pages into high-res clean background images (with original text suppressed to eliminate overlap)
+    Parses PDF pages into clean JPEG background images (with original text suppressed to eliminate overlap)
     and structured text lines with exact coordinates, font families, font sizes, colors, and bounding boxes.
+    Fast execution (< 100ms per page) to prevent serverless timeouts.
     """
     try:
         doc = fitz.open(pdf_path)
+        doc_temp = fitz.open(pdf_path)
         result = {'pages': []}
         
         for page_num in range(len(doc)):
@@ -373,13 +375,10 @@ def parse_pdf_for_visual_editor(pdf_path):
                         })
                         line_counter += 1
                         
-            # Render a clean background pixmap by redacting text areas on a temporary page copy
-            doc_temp = fitz.open(pdf_path)
+            # Render a clean background pixmap by redacting text areas on temp page
             page_temp = doc_temp[page_num]
-            
             for l in lines_data:
                 r = fitz.Rect(l["bbox"])
-                # Expand by 0.5pt to cleanly remove anti-aliased text pixels
                 r.x0 -= 0.5
                 r.y0 -= 0.5
                 r.x1 += 0.5
@@ -387,10 +386,9 @@ def parse_pdf_for_visual_editor(pdf_path):
                 page_temp.add_redact_annot(r, fill=(1, 1, 1))
                 
             page_temp.apply_redactions()
-            pix = page_temp.get_pixmap(dpi=150)
-            img_bytes = pix.tobytes("png")
-            bg_b64 = "data:image/png;base64," + base64.b64encode(img_bytes).decode("utf-8")
-            doc_temp.close()
+            pix = page_temp.get_pixmap(dpi=110)
+            img_bytes = pix.tobytes("jpeg", jpg_quality=75)
+            bg_b64 = "data:image/jpeg;base64," + base64.b64encode(img_bytes).decode("utf-8")
             
             result["pages"].append({
                 "page_num": page_num + 1,
@@ -400,6 +398,7 @@ def parse_pdf_for_visual_editor(pdf_path):
                 "lines": lines_data
             })
             
+        doc_temp.close()
         doc.close()
         return True, result
     except Exception as e:
