@@ -418,22 +418,38 @@ Sitemap: https://officialali.dev/sitemap.xml
     try:
         flask_app = get_flask_app()
 
-        body_data = getattr(req, 'body_raw', None)
+        body_data = None
+        try:
+            body_data = getattr(req, 'body_raw', None)
+        except Exception:
+            body_data = None
+
         if not body_data:
-            body_data = getattr(req, 'body_text', None)
+            try:
+                body_data = getattr(req, 'body_binary', None)
+            except Exception:
+                body_data = None
+
         if not body_data:
-            body_data = getattr(req, 'body_binary', None)
+            try:
+                body_data = getattr(req, 'body_text', None)
+            except Exception:
+                body_data = None
+
         if not body_data:
-            body_data = getattr(req, 'body', '')
+            try:
+                body_data = getattr(req, 'body', '')
+            except Exception:
+                body_data = ''
 
         if isinstance(body_data, dict):
             body_bytes = json.dumps(body_data).encode('utf-8')
         elif isinstance(body_data, str):
-            body_bytes = body_data.encode('utf-8')
+            body_bytes = body_data.encode('utf-8', errors='ignore')
         elif isinstance(body_data, bytes):
             body_bytes = body_data
         else:
-            body_bytes = str(body_data).encode('utf-8')
+            body_bytes = str(body_data).encode('utf-8', errors='ignore')
 
         status_code, resp_headers, response_bytes = dispatch_wsgi(
             flask_app=flask_app,
