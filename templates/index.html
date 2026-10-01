@@ -827,24 +827,24 @@
         };
 
         const toolsData = {
-            'merge-pdf': { name: 'Merge PDF' },
-            'split-pdf': { name: 'Split PDF' },
-            'compress-pdf': { name: 'Compress PDF' },
-            'pdf-to-word': { name: 'PDF to Word' },
-            'pdf-to-ppt': { name: 'PDF to PPT' },
-            'pdf-to-excel': { name: 'PDF to Excel' },
-            'word-to-pdf': { name: 'Word to PDF' },
-            'ppt-to-pdf': { name: 'PPT to PDF' },
-            'excel-to-pdf': { name: 'Excel to PDF' },
-            'pdf-to-jpg': { name: 'PDF to JPG' },
-            'jpg-to-pdf': { name: 'JPG to PDF' },
-            'unlock-pdf': { name: 'Unlock PDF' },
-            'protect-pdf': { name: 'Protect PDF' },
-            'page-numbers': { name: 'Page Numbers' },
-            'translate-pdf': { name: 'Translate PDF' },
-            'compress-image': { name: 'Compress Image' },
-            'convert-image-format': { name: 'Convert Image' },
-            'edit-pdf': { name: 'Edit PDF Studio' }
+            'merge-pdf': { name: 'Merge PDF', icon: svgIcons['merge-pdf'] },
+            'split-pdf': { name: 'Split PDF', icon: svgIcons['split-pdf'] },
+            'compress-pdf': { name: 'Compress PDF', icon: svgIcons['compress-pdf'] },
+            'pdf-to-word': { name: 'PDF to Word', icon: svgIcons['pdf-to-word'] },
+            'pdf-to-ppt': { name: 'PDF to PPT', icon: svgIcons['pdf-to-ppt'] },
+            'pdf-to-excel': { name: 'PDF to Excel', icon: svgIcons['pdf-to-excel'] },
+            'word-to-pdf': { name: 'Word to PDF', icon: svgIcons['word-to-pdf'] },
+            'ppt-to-pdf': { name: 'PPT to PDF', icon: svgIcons['ppt-to-pdf'] },
+            'excel-to-pdf': { name: 'Excel to PDF', icon: svgIcons['excel-to-pdf'] },
+            'pdf-to-jpg': { name: 'PDF to JPG', icon: svgIcons['pdf-to-jpg'] },
+            'jpg-to-pdf': { name: 'JPG to PDF', icon: svgIcons['jpg-to-pdf'] },
+            'unlock-pdf': { name: 'Unlock PDF', icon: svgIcons['unlock-pdf'] },
+            'protect-pdf': { name: 'Protect PDF', icon: svgIcons['protect-pdf'] },
+            'page-numbers': { name: 'Page Numbers', icon: svgIcons['page-numbers'] },
+            'translate-pdf': { name: 'Translate PDF', icon: svgIcons['translate-pdf'] },
+            'compress-image': { name: 'Compress Image', icon: svgIcons['compress-image'] },
+            'convert-image-format': { name: 'Convert Image', icon: svgIcons['convert-image-format'] },
+            'edit-pdf': { name: 'Edit PDF Studio', icon: svgIcons['edit-pdf'] }
         };
 
         const gridContainer = document.getElementById('gridContainer');
@@ -911,11 +911,11 @@
         }
 
         function openWorkspaceById(toolId) {
-            const tool = toolsData[toolId] || { name: toolId, icon: '📄' };
+            const tool = toolsData[toolId] || { name: toolId, icon: '' };
             gridContainer.classList.add('hidden');
             workspaceContainer.classList.remove('hidden');
-            toolIcon.innerHTML = svgIcons[toolId] || '';
-            toolTitle.innerText = tool.name;
+            toolIcon.innerHTML = svgIcons[toolId] || tool.icon || '';
+            toolTitle.innerText = tool.name || toolId;
             conversionTypeHidden.value = toolId;
 
             updatePageMetadata(toolId);
