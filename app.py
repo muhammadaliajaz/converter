@@ -155,6 +155,7 @@ def upload_file():
     saved_inputs = []
 
     ip_addr = request.remote_addr or '127.0.0.1'
+    user = None
     try:
         user = User.query.filter_by(ip_address=ip_addr).first()
         if not user:
@@ -162,7 +163,11 @@ def upload_file():
             db.session.add(user)
             db.session.commit()
     except Exception:
-        pass
+        try:
+            db.session.rollback()
+        except Exception:
+            pass
+        user = None
 
     # Support JSON Base64 payload for Serverless / Appwrite UTF-8 safety
     data = None
@@ -427,11 +432,20 @@ def upload_file():
 
             if not success:
                 error_msgs.append(f"{orig_filename}: {res}")
-            else:
-                log = ConversionLog(user_id=user.id, file_type=ext.replace('.', ''), conversion_type=conversion_type)
-                db.session.add(log)
+            elif user and hasattr(user, 'id') and user.id:
+                try:
+                    log = ConversionLog(user_id=user.id, file_type=ext.replace('.', ''), conversion_type=conversion_type)
+                    db.session.add(log)
+                    db.session.commit()
+                except Exception:
+                    try: db.session.rollback()
+                    except Exception: pass
                 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception:
+        try: db.session.rollback()
+        except Exception: pass
     
     if not output_files:
         return jsonify({'error': f'Conversion failed for all files: {" | ".join(error_msgs)}'}), 500

@@ -313,6 +313,10 @@ Sitemap: https://officialali.dev/sitemap.xml
     # Route: GET / or GET /<tool-name> -> Render HTML Website UI INSTANTLY (< 50ms) without loading heavy python modules
     if method == 'GET' and (path == '/' or path == '/index.html' or clean_path in TOOLS_LIST):
         try:
+            # Pre-warm Flask app asynchronously in background for 0-latency first upload
+            import threading
+            threading.Thread(target=get_flask_app, daemon=True).start()
+
             html_path = os.path.join(CURRENT_DIR, 'templates', 'index.html')
             if os.path.exists(html_path):
                 with open(html_path, 'r', encoding='utf-8') as f:
