@@ -95,21 +95,32 @@ TOOLS_SEO_DATA = {
     }
 }
 
-# Global Flask App cache for lazy loading
+import threading
+
+# Global Flask App cache for lazy loading & container warming
 _FLASK_APP = None
+_FLASK_APP_LOCK = threading.Lock()
 
 def get_flask_app():
     """
-    Lazy load Flask app ONLY when API requests (e.g. upload/download) arrive.
-    This makes GET / website loading INSTANT (< 50ms).
+    Thread-safe lazy load of Flask app.
+    Ensures container warm-up is 100% safe across threads.
     """
     global _FLASK_APP
     if _FLASK_APP is None:
-        from app import app as flask_app
-        flask_app.config['TESTING'] = True
-        flask_app.config['WTF_CSRF_ENABLED'] = False
-        _FLASK_APP = flask_app
+        with _FLASK_APP_LOCK:
+            if _FLASK_APP is None:
+                from app import app as flask_app
+                flask_app.config['TESTING'] = True
+                flask_app.config['WTF_CSRF_ENABLED'] = False
+                _FLASK_APP = flask_app
     return _FLASK_APP
+
+# Pre-warm Flask app at module import time (Appwrite container boot)
+try:
+    threading.Thread(target=get_flask_app, daemon=True).start()
+except Exception:
+    pass
 
 def dispatch_wsgi(flask_app, path, method, headers, query, body_bytes):
     """
