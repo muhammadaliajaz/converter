@@ -1003,6 +1003,13 @@
             }
         });
 
+        // Initialize route on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', handleInitialRoute);
+        } else {
+            handleInitialRoute();
+        }
+
         // Document & PDF Editor Engine (Original PDF Layout & Quill Rich Text Modes)
         let quill = null;
         let currentEditorMode = 'visual'; // 'visual' (Original PDF Layout) or 'quill' (Rich Text)
