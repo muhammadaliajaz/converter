@@ -3,6 +3,7 @@ import io
 import uuid
 import datetime
 import zipfile
+import threading
 from flask import Flask, render_template, request, jsonify, send_file
 from werkzeug.utils import secure_filename
 from database import db
@@ -147,27 +148,17 @@ def sitemap():
 @app.route('/upload', methods=['POST'])
 @csrf.exempt
 def upload_file():
-    cleanup_old_files()
+    # Asynchronously cleanup old files to eliminate disk I/O latency from request thread
+    if random.random() < 0.02:
+        try:
+            threading.Thread(target=cleanup_old_files, daemon=True).start()
+        except Exception:
+            pass
     
     unique_batch_id = str(uuid.uuid4())
     output_files = [] # list of tuples: (actual_filename_on_disk, clean_filename_for_zip)
     error_msgs = []
     saved_inputs = []
-
-    ip_addr = request.remote_addr or '127.0.0.1'
-    user = None
-    try:
-        user = User.query.filter_by(ip_address=ip_addr).first()
-        if not user:
-            user = User(ip_address=ip_addr)
-            db.session.add(user)
-            db.session.commit()
-    except Exception:
-        try:
-            db.session.rollback()
-        except Exception:
-            pass
-        user = None
 
     # Support JSON Base64 payload for Serverless / Appwrite UTF-8 safety
     data = None

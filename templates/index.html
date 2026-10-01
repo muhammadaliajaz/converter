@@ -1498,50 +1498,42 @@
             document.getElementById('convertBtn').disabled = true;
             document.getElementById('statusArea').classList.remove('hidden');
             document.getElementById('resultArea').classList.add('hidden');
-            let progress = 0;
+            let progress = 5;
             const pb = document.getElementById('progressBar');
-            const pt = setInterval(() => { progress += Math.random() * 5; if (progress > 90) progress = 90; pb.style.width = progress + '%'; }, 300);
+            pb.style.width = '5%';
+            const pt = setInterval(() => { 
+                progress += (95 - progress) * 0.18;
+                pb.style.width = Math.min(progress, 95) + '%'; 
+            }, 100);
 
             try {
-                const filePromises = Array.from(fileInput.files).map(file => {
-                    return new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve({ name: file.name, data: reader.result });
-                        reader.onerror = reject;
-                        reader.readAsDataURL(file);
-                    });
+                const formData = new FormData();
+                formData.append('conversion_type', document.getElementById('conversionType').value);
+                if (document.getElementById('passwordInput')?.value) formData.append('password', document.getElementById('passwordInput').value);
+                if (document.getElementById('targetLangSelect')?.value) formData.append('target_lang', document.getElementById('targetLangSelect').value);
+                if (document.getElementById('pdfCompressLevelSelect')?.value) formData.append('compression_level', document.getElementById('pdfCompressLevelSelect').value);
+                if (document.getElementById('pdfCompressKbInput')?.value) formData.append('pdf_target_kb', document.getElementById('pdfCompressKbInput').value);
+                if (document.getElementById('imgCompressKbInput')?.value) formData.append('target_kb', document.getElementById('imgCompressKbInput').value);
+                if (document.getElementById('imgFormatSelect')?.value) formData.append('target_format', document.getElementById('imgFormatSelect').value);
+
+                Array.from(fileInput.files).forEach(file => {
+                    formData.append('files[]', file);
                 });
 
-                const filesData = await Promise.all(filePromises);
-
-                const payload = {
-                    conversion_type: document.getElementById('conversionType').value,
-                    password: document.getElementById('passwordInput')?.value || '',
-                    target_lang: document.getElementById('targetLangSelect')?.value || '',
-                    compression_level: document.getElementById('pdfCompressLevelSelect')?.value || 'medium',
-                    pdf_target_kb: document.getElementById('pdfCompressKbInput')?.value || '',
-                    target_kb: document.getElementById('imgCompressKbInput')?.value || '500',
-                    target_format: document.getElementById('imgFormatSelect')?.value || 'JPG',
-                    files: filesData
-                };
-
                 let res, responseText, json = {};
-                const bodyStr = JSON.stringify(payload);
                 try {
                     res = await fetch('/upload', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: bodyStr
+                        body: formData
                     });
                     responseText = await res.text();
                     json = JSON.parse(responseText);
                 } catch (firstErr) {
                     // Cold-start automatic retry fallback
-                    await new Promise(r => setTimeout(r, 600));
+                    await new Promise(r => setTimeout(r, 400));
                     res = await fetch('/upload', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: bodyStr
+                        body: formData
                     });
                     responseText = await res.text();
                     try {
