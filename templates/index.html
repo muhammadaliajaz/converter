@@ -940,11 +940,15 @@
             if (toolId === 'compress-image') { document.getElementById('compressImgBlock').classList.remove('hidden'); showSettings = true; }
             if (toolId === 'convert-image-format') { document.getElementById('imgFormatBlock').classList.remove('hidden'); showSettings = true; }
             if (toolId === 'edit-pdf') {
+                workspaceContainer.classList.remove('max-w-2xl');
+                workspaceContainer.classList.add('max-w-5xl');
                 document.getElementById('editPdfBlock').classList.remove('hidden');
                 document.getElementById('dropZone')?.classList.add('hidden');
                 document.getElementById('convertBtn')?.classList.add('hidden');
                 showSettings = true;
             } else {
+                workspaceContainer.classList.remove('max-w-5xl');
+                workspaceContainer.classList.add('max-w-2xl');
                 document.getElementById('dropZone')?.classList.remove('hidden');
                 document.getElementById('convertBtn')?.classList.remove('hidden');
             }
@@ -1417,69 +1421,7 @@
             }
         }
 
-        // Workspace router & File upload handlers
-        function openWorkspaceById(toolId) {
-            const tool = toolsData[toolId] || { name: toolId, icon: '📄' };
-            gridContainer.classList.add('hidden');
-            workspaceContainer.classList.remove('hidden');
-            toolIcon.innerText = tool.icon;
-            toolTitle.innerText = tool.name;
-            conversionTypeHidden.value = toolId;
-
-            updatePageMetadata(toolId);
-
-            document.getElementById('uploadForm').reset();
-            document.getElementById('fileInfo').classList.add('hidden');
-            document.getElementById('resultArea').classList.add('hidden');
-            document.getElementById('statusArea').classList.add('hidden');
-            document.getElementById('convertBtn').disabled = false;
-
-            ['passwordBlock', 'languageBlock', 'compressPdfBlock', 'compressImgBlock', 'imgFormatBlock', 'editPdfBlock'].forEach(id => {
-                document.getElementById(id)?.classList.add('hidden');
-            });
-
-            let showSettings = false;
-            if (toolId === 'unlock-pdf' || toolId === 'protect-pdf') { document.getElementById('passwordBlock').classList.remove('hidden'); showSettings = true; }
-            if (toolId === 'translate-pdf') { document.getElementById('languageBlock').classList.remove('hidden'); showSettings = true; }
-            if (toolId === 'compress-pdf') { document.getElementById('compressPdfBlock').classList.remove('hidden'); showSettings = true; }
-            if (toolId === 'compress-image') { document.getElementById('compressImgBlock').classList.remove('hidden'); showSettings = true; }
-            if (toolId === 'convert-image-format') { document.getElementById('imgFormatBlock').classList.remove('hidden'); showSettings = true; }
-            if (toolId === 'edit-pdf') {
-                workspaceContainer.classList.remove('max-w-2xl');
-                workspaceContainer.classList.add('max-w-5xl');
-                document.getElementById('editPdfBlock').classList.remove('hidden');
-                document.getElementById('dropZone')?.classList.add('hidden');
-                document.getElementById('convertBtn')?.classList.add('hidden');
-                showSettings = true;
-            } else {
-                workspaceContainer.classList.remove('max-w-5xl');
-                workspaceContainer.classList.add('max-w-2xl');
-                document.getElementById('dropZone')?.classList.remove('hidden');
-                document.getElementById('convertBtn')?.classList.remove('hidden');
-            }
-
-            if (showSettings) dynamicSettings.classList.remove('hidden');
-            else dynamicSettings.classList.add('hidden');
-
-            if (window.history && window.history.pushState) {
-                const currentPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
-                if (currentPath !== toolId) {
-                    window.history.pushState(null, null, '/' + toolId);
-                }
-            }
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function closeWorkspace() {
-            gridContainer.classList.remove('hidden');
-            workspaceContainer.classList.add('hidden');
-            updatePageMetadata(null);
-            if (window.history && window.history.pushState) {
-                window.history.pushState(null, null, '/');
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        // File upload event handlers
 
         function handleInitialRoute() {
             const rawPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
