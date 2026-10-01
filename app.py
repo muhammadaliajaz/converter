@@ -159,6 +159,7 @@ def upload_file():
     output_files = [] # list of tuples: (actual_filename_on_disk, clean_filename_for_zip)
     error_msgs = []
     saved_inputs = []
+    user = None
 
     # Support JSON Base64 payload for Serverless / Appwrite UTF-8 safety
     data = None
