@@ -22,75 +22,75 @@ TOOLS_LIST = [
 
 TOOLS_SEO_DATA = {
     'merge-pdf': {
-        'title': 'Merge PDF Online Free - Combine PDF Files | Smart File Converter',
+        'title': 'Merge PDF Online Free | Smart File Converter',
         'desc': 'Merge multiple PDF files into one clean document online for free. Easily arrange page order and combine files with total privacy.'
     },
     'split-pdf': {
-        'title': 'Split PDF Online Free - Extract PDF Pages | Smart File Converter',
+        'title': 'Split PDF Online Free | Smart File Converter',
         'desc': 'Split PDF pages or extract specific page ranges online for free. Separate large PDF documents into individual files in seconds.'
     },
     'compress-pdf': {
-        'title': 'Compress PDF Online Free - Reduce PDF File Size | Smart File Converter',
+        'title': 'Compress PDF Online Free | Smart File Converter',
         'desc': 'Compress PDF file size online for free while keeping your text and graphics sharp. Choose custom target KB size or compression level.'
     },
     'pdf-to-word': {
-        'title': 'PDF to Word Converter Free Online - Convert PDF to DOCX | Smart File Converter',
+        'title': 'PDF to Word Converter Free Online | Smart File Converter',
         'desc': 'Convert PDF to editable Word (DOCX) free online. Retain original layout, fonts, formatting, tables, and images without software installation.'
     },
     'pdf-to-ppt': {
-        'title': 'PDF to PowerPoint Free Online - Convert PDF to PPTX | Smart File Converter',
+        'title': 'PDF to PPT Converter Free | Smart File Converter',
         'desc': 'Convert PDF documents into editable Microsoft PowerPoint (PPTX) presentation slides free online.'
     },
     'pdf-to-excel': {
-        'title': 'PDF to Excel Converter Free Online - Extract Tables to XLSX | Smart File Converter',
+        'title': 'PDF to Excel Converter Free | Smart File Converter',
         'desc': 'Convert PDF files to editable Excel (XLSX) spreadsheets free online. Extract tables and data cleanly into spreadsheet cells.'
     },
     'word-to-pdf': {
-        'title': 'Word to PDF Converter Online Free - 100% Free DOCX to PDF | Smart File Converter',
+        'title': 'Word to PDF Converter Free Online | Smart File Converter',
         'desc': 'Convert Word documents (DOCX & DOC) to PDF online for free. Instant 100% free conversion with perfect layout retention.'
     },
     'ppt-to-pdf': {
-        'title': 'PowerPoint to PDF Free Online - Convert PPTX to PDF | Smart File Converter',
+        'title': 'PowerPoint to PDF Free Online | Smart File Converter',
         'desc': 'Convert PowerPoint presentations (PPTX & PPT) to PDF online for free. Keep your slide deck presentation-ready on any device.'
     },
     'excel-to-pdf': {
-        'title': 'Excel to PDF Converter Online Free - Convert XLSX to PDF | Smart File Converter',
+        'title': 'Excel to PDF Converter Free | Smart File Converter',
         'desc': 'Convert Excel spreadsheets (XLSX & XLS) to clean PDF tables online for free.'
     },
     'pdf-to-jpg': {
-        'title': 'PDF to JPG Converter Free Online - Convert PDF Pages to Images | Smart File Converter',
+        'title': 'PDF to JPG Converter Free | Smart File Converter',
         'desc': 'Convert PDF pages into high-quality JPG image files online for free.'
     },
     'jpg-to-pdf': {
-        'title': 'JPG to PDF Converter Free Online - Convert Images to PDF | Smart File Converter',
+        'title': 'JPG to PDF Converter Free | Smart File Converter',
         'desc': 'Combine JPG, PNG, WEBP, and BMP images into a single PDF file online for free.'
     },
     'unlock-pdf': {
-        'title': 'Unlock PDF Online Free - Remove PDF Password & Restrictions | Smart File Converter',
+        'title': 'Unlock PDF Online Free | Smart File Converter',
         'desc': 'Remove passwords and permissions from your protected PDF files online for free.'
     },
     'protect-pdf': {
-        'title': 'Protect PDF Online Free - Encrypt PDF with Password | Smart File Converter',
+        'title': 'Protect PDF Online Free | Smart File Converter',
         'desc': 'Secure your PDF files with strong password encryption online for free.'
     },
     'page-numbers': {
-        'title': 'Add Page Numbers to PDF Free - Stamp PDF Pages | Smart File Converter',
+        'title': 'Add Page Numbers to PDF Free | Smart File Converter',
         'desc': 'Add customized page numbers to PDF documents online for free.'
     },
     'translate-pdf': {
-        'title': 'Translate PDF Online Free - PDF Document Translator | Smart File Converter',
+        'title': 'Translate PDF Online Free | Smart File Converter',
         'desc': 'Translate PDF document text into English, Spanish, French, German, Chinese, Arabic, or Hindi online for free.'
     },
     'compress-image': {
-        'title': 'Compress Image Online Free - Reduce JPG, PNG & WEBP Size | Smart File Converter',
+        'title': 'Compress Image Online Free | Smart File Converter',
         'desc': 'Compress JPG, PNG, and WEBP images online to target KB size for free without losing image quality.'
     },
     'convert-image-format': {
-        'title': 'Convert Image Format Online Free - JPG, PNG, WEBP | Smart File Converter',
+        'title': 'Convert Image Format Online | Smart File Converter',
         'desc': 'Convert images between JPG, PNG, WEBP, and BMP formats online for free.'
     },
     'edit-pdf': {
-        'title': 'Edit PDF Online Free - Text Editor & PDF Studio | Smart File Converter',
+        'title': 'Edit PDF Online Free | Smart File Converter',
         'desc': 'Edit PDF text directly, replace text, add text annotations, or rotate PDF pages online for free with exact layout retention.'
     }
 }
