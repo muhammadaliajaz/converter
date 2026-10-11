@@ -396,6 +396,33 @@ Sitemap: https://officialali.dev/sitemap.xml
             "version": "1.0.0"
         })
 
+    # Route: GET/HEAD /favicon.ico -> Instant response (< 1ms) to eliminate background browser cold-start jams
+    if path == '/favicon.ico':
+        return res.text('', 204, {
+            'content-type': 'image/x-icon',
+            'cache-control': 'public, max-age=604800',
+            'Access-Control-Allow-Origin': '*'
+        })
+
+    # Route: Browser Apple Touch Icons & Common Static Probes
+    if path in ('/apple-touch-icon.png', '/apple-touch-icon-precomposed.png', '/og-image.png'):
+        return res.text('', 204, {
+            'content-type': 'image/png',
+            'cache-control': 'public, max-age=604800',
+            'Access-Control-Allow-Origin': '*'
+        })
+
+    # Strictly protect heavy Flask WSGI: Only route actual file upload/download/parse API requests
+    is_api_route = (
+        path == '/upload' or 
+        path.startswith('/download/') or 
+        path == '/parse-pdf-for-edit'
+    )
+    if not is_api_route:
+        if method in ('GET', 'HEAD'):
+            return res.redirect('https://officialali.dev/', 302)
+        return res.json({"error": "Endpoint not found"}, 404)
+
     # Forward API requests (/upload, /download, etc.) to Flask App via native WSGI
     try:
         flask_app = get_flask_app()
