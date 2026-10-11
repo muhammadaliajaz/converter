@@ -1,6 +1,8 @@
 uploads/
 outputs/
+scratch/
 instance/
+*.db
 __pycache__/
 *.pyc
 .env

@@ -88,9 +88,6 @@ except Exception as e:
 import random
 
 def cleanup_old_files():
-    # Only run file cleanup on 10% of requests to eliminate disk I/O latency
-    if random.random() > 0.1:
-        return
     try:
         now = datetime.datetime.now().timestamp()
         for folder in [UPLOAD_FOLDER, OUTPUT_FOLDER]:
@@ -112,17 +109,13 @@ TOOLS_LIST = [
     'pdf-to-ppt', 'pdf-to-excel', 'word-to-pdf', 'ppt-to-pdf',
     'excel-to-pdf', 'pdf-to-jpg', 'jpg-to-pdf', 'unlock-pdf',
     'protect-pdf', 'page-numbers', 'translate-pdf', 'compress-image',
-    'convert-image-format'
+    'convert-image-format', 'edit-pdf'
 ]
 
 @app.route('/')
 @app.route('/<tool_id>')
 def index(tool_id=None):
     return render_template('index.html')
-
-@app.route('/robots.txt')
-def robots():
-    return "User-agent: *\nAllow: /\nSitemap: https://officialali.dev/sitemap.xml\n", 200, {'Content-Type': 'text/plain'}
 
 @app.route('/sitemap.xml')
 def sitemap():

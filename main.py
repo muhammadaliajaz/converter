@@ -1,7 +1,9 @@
 import os
 import sys
 import io
+import re
 import json
+import threading
 import traceback
 
 # Ensure current working directory is in sys.path
@@ -95,8 +97,6 @@ TOOLS_SEO_DATA = {
     }
 }
 
-import threading
-
 # In-memory HTML page cache for instant (< 1ms) page delivery
 _CACHED_HTML_PAGES = {}
 
@@ -118,7 +118,6 @@ def get_html_page(clean_path):
     
     info = TOOLS_SEO_DATA[clean_path]
     target_url = f"https://officialali.dev/{clean_path}"
-    import re
     html = re.sub(
         r'<link rel="canonical" id="canonicalUrl"\s+href=".*?"\s*/>',
         f'<link rel="canonical" id="canonicalUrl" href="{target_url}" />',

@@ -13,6 +13,7 @@ uploads/*
 !uploads/.gitkeep
 outputs/*
 !outputs/.gitkeep
+scratch/
 
 # SQLite database
 instance/
