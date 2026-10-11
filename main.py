@@ -97,6 +97,65 @@ TOOLS_SEO_DATA = {
 
 import threading
 
+# In-memory HTML page cache for instant (< 1ms) page delivery
+_CACHED_HTML_PAGES = {}
+
+def get_html_page(clean_path):
+    global _CACHED_HTML_PAGES
+    if clean_path in _CACHED_HTML_PAGES:
+        return _CACHED_HTML_PAGES[clean_path]
+    
+    html_path = os.path.join(CURRENT_DIR, 'templates', 'index.html')
+    if not os.path.exists(html_path):
+        return ""
+    
+    with open(html_path, 'r', encoding='utf-8') as f:
+        base_html = f.read()
+    
+    if not clean_path or clean_path not in TOOLS_SEO_DATA:
+        _CACHED_HTML_PAGES[''] = base_html
+        return base_html
+    
+    info = TOOLS_SEO_DATA[clean_path]
+    target_url = f"https://officialali.dev/{clean_path}"
+    import re
+    html = re.sub(
+        r'<link rel="canonical" id="canonicalUrl"\s+href=".*?"\s*/>',
+        f'<link rel="canonical" id="canonicalUrl" href="{target_url}" />',
+        base_html
+    )
+    html = re.sub(
+        r'<meta property="og:url" id="ogUrl"\s+content=".*?"\s*>',
+        f'<meta property="og:url" id="ogUrl" content="{target_url}">',
+        html
+    )
+    html = re.sub(
+        r'<title id="pageTitle">.*?</title>',
+        f'<title id="pageTitle">{info["title"]}</title>',
+        html,
+        flags=re.DOTALL
+    )
+    html = re.sub(
+        r'<meta name="description" id="metaDescription"\s+content=".*?"',
+        f'<meta name="description" id="metaDescription" content="{info["desc"]}"',
+        html,
+        flags=re.DOTALL
+    )
+    html = re.sub(
+        r'<meta property="og:title" id="ogTitle"\s+content=".*?"',
+        f'<meta property="og:title" id="ogTitle" content="{info["title"]}"',
+        html,
+        flags=re.DOTALL
+    )
+    html = re.sub(
+        r'<meta name="twitter:title" id="twitterTitle"\s+content=".*?"',
+        f'<meta name="twitter:title" id="twitterTitle" content="{info["title"]}"',
+        html,
+        flags=re.DOTALL
+    )
+    _CACHED_HTML_PAGES[clean_path] = html
+    return html
+
 # Global Flask App cache for lazy loading & container warming
 _FLASK_APP = None
 _FLASK_APP_LOCK = threading.Lock()
@@ -115,12 +174,6 @@ def get_flask_app():
                 flask_app.config['WTF_CSRF_ENABLED'] = False
                 _FLASK_APP = flask_app
     return _FLASK_APP
-
-# Pre-warm Flask app at module import time (Appwrite container boot)
-try:
-    threading.Thread(target=get_flask_app, daemon=True).start()
-except Exception:
-    pass
 
 def dispatch_wsgi(flask_app, path, method, headers, query, body_bytes):
     """
@@ -321,65 +374,19 @@ Sitemap: https://officialali.dev/sitemap.xml
             'Access-Control-Allow-Origin': '*'
         })
 
-    # Route: GET / or GET /<tool-name> -> Render HTML Website UI INSTANTLY (< 50ms) without loading heavy python modules
+    # Route: GET / or GET /<tool-name> -> Render HTML Website UI INSTANTLY (< 1ms) from RAM cache
     if method == 'GET' and (path == '/' or path == '/index.html' or clean_path in TOOLS_LIST):
         try:
-            # Pre-warm Flask app asynchronously in background for 0-latency first upload
-            import threading
-            threading.Thread(target=get_flask_app, daemon=True).start()
-
-            html_path = os.path.join(CURRENT_DIR, 'templates', 'index.html')
-            if os.path.exists(html_path):
-                with open(html_path, 'r', encoding='utf-8') as f:
-                    html_content = f.read()
-
-                # Dynamic Canonical, OG URL & Title Injection for 100% Indexable Pages
-                if clean_path and clean_path in TOOLS_SEO_DATA:
-                    info = TOOLS_SEO_DATA[clean_path]
-                    target_url = f"https://officialali.dev/{clean_path}"
-                    
-                    import re
-                    html_content = re.sub(
-                        r'<link rel="canonical" id="canonicalUrl"\s+href=".*?"\s*/>',
-                        f'<link rel="canonical" id="canonicalUrl" href="{target_url}" />',
-                        html_content
-                    )
-                    html_content = re.sub(
-                        r'<meta property="og:url" id="ogUrl"\s+content=".*?"\s*>',
-                        f'<meta property="og:url" id="ogUrl" content="{target_url}">',
-                        html_content
-                    )
-                    html_content = re.sub(
-                        r'<title id="pageTitle">.*?</title>',
-                        f'<title id="pageTitle">{info["title"]}</title>',
-                        html_content,
-                        flags=re.DOTALL
-                    )
-                    html_content = re.sub(
-                        r'<meta name="description" id="metaDescription"\s+content=".*?"',
-                        f'<meta name="description" id="metaDescription" content="{info["desc"]}"',
-                        html_content,
-                        flags=re.DOTALL
-                    )
-                    html_content = re.sub(
-                        r'<meta property="og:title" id="ogTitle"\s+content=".*?"',
-                        f'<meta property="og:title" id="ogTitle" content="{info["title"]}"',
-                        html_content,
-                        flags=re.DOTALL
-                    )
-                    html_content = re.sub(
-                        r'<meta name="twitter:title" id="twitterTitle"\s+content=".*?"',
-                        f'<meta name="twitter:title" id="twitterTitle" content="{info["title"]}"',
-                        html_content,
-                        flags=re.DOTALL
-                    )
-
+            lookup_key = clean_path if clean_path in TOOLS_LIST else ''
+            html_content = get_html_page(lookup_key)
+            if html_content:
                 return res.text(html_content, 200, {
                     'content-type': 'text/html; charset=utf-8',
+                    'cache-control': 'public, max-age=600, s-maxage=86400, stale-while-revalidate=604800',
                     'Access-Control-Allow-Origin': '*'
                 })
         except Exception as e:
-            context.error(f"Error reading index.html: {str(e)}")
+            context.error(f"Error serving index.html: {str(e)}")
 
     # Route: GET /sitemap.xml
     if path == '/sitemap.xml':
