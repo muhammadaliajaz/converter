@@ -383,6 +383,7 @@ Sitemap: https://officialali.dev/sitemap.xml
                 return res.text(body, 200, {
                     'content-type': 'text/html; charset=utf-8',
                     'cache-control': 'public, max-age=600, s-maxage=86400, stale-while-revalidate=604800',
+                    'alt-svc': 'clear',
                     'Access-Control-Allow-Origin': '*'
                 })
         except Exception as e:
