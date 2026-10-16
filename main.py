@@ -105,17 +105,23 @@ TOOLS_SEO_DATA = {
     }
 }
 
-# In-memory HTML page cache for instant (< 1ms) page delivery
+# In-memory HTML page cache with auto mtime invalidation
 _CACHED_HTML_PAGES = {}
+_LAST_HTML_MTIME = 0
 
 def get_html_page(clean_path):
-    global _CACHED_HTML_PAGES
-    if clean_path in _CACHED_HTML_PAGES:
-        return _CACHED_HTML_PAGES[clean_path]
-    
+    global _CACHED_HTML_PAGES, _LAST_HTML_MTIME
     html_path = os.path.join(CURRENT_DIR, 'templates', 'index.html')
     if not os.path.exists(html_path):
         return ""
+    
+    current_mtime = os.path.getmtime(html_path)
+    if current_mtime != _LAST_HTML_MTIME:
+        _CACHED_HTML_PAGES.clear()
+        _LAST_HTML_MTIME = current_mtime
+
+    if clean_path in _CACHED_HTML_PAGES:
+        return _CACHED_HTML_PAGES[clean_path]
     
     with open(html_path, 'r', encoding='utf-8') as f:
         base_html = f.read()
@@ -392,7 +398,7 @@ Sitemap: https://officialali.dev/sitemap.xml
                 body = '' if method == 'HEAD' else html_content
                 return res.text(body, 200, {
                     'content-type': 'text/html; charset=utf-8',
-                    'cache-control': 'public, max-age=600, s-maxage=86400, stale-while-revalidate=604800',
+                    'cache-control': 'public, max-age=0, must-revalidate, s-maxage=0',
                     'alt-svc': 'clear',
                     'Access-Control-Allow-Origin': '*'
                 })
