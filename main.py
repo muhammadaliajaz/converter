@@ -398,7 +398,9 @@ Sitemap: https://officialali.dev/sitemap.xml
                 body = '' if method == 'HEAD' else html_content
                 return res.text(body, 200, {
                     'content-type': 'text/html; charset=utf-8',
-                    'cache-control': 'public, max-age=0, must-revalidate, s-maxage=0',
+                    'cache-control': 'no-cache, no-store, must-revalidate, max-age=0, s-maxage=0',
+                    'pragma': 'no-cache',
+                    'expires': '0',
                     'alt-svc': 'clear',
                     'Access-Control-Allow-Origin': '*'
                 })
