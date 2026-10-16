@@ -363,55 +363,165 @@
                 </div>
             </div>
 
-            <!-- Mobile Slide-Down Sheet (Anchored directly under floating capsule) -->
+            <!-- Mobile Slide-Down Sheet (Ultra-Premium Glass Drawer) -->
             <div id="mobileMenuSheet"
-                class="hidden mobile-menu-drawer mt-2 bg-white/95 backdrop-blur-2xl rounded-3xl border border-zinc-200/90 shadow-2xl p-4 sm:p-5 transition-all">
-                <!-- Quick Categories -->
-                <div class="grid grid-cols-2 gap-2 mb-3">
+                class="hidden mobile-menu-drawer mt-2.5 bg-white/95 backdrop-blur-2xl rounded-3xl border border-zinc-200/90 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.18)] p-4 transition-all">
+                
+                <!-- Quick Category Switcher (Clean, Modern Pill Cards) -->
+                <div class="grid grid-cols-2 gap-2 mb-3.5">
                     <button type="button" onclick="filterCategory('pdf'); closeMobileNav();"
-                        class="p-2.5 bg-zinc-50 hover:bg-zinc-100 rounded-2xl text-left border border-zinc-200/80 transition flex items-center gap-2">
-                        <span
-                            class="w-7 h-7 rounded-xl bg-zinc-900 text-white flex items-center justify-center text-xs font-bold">PDF</span>
-                        <span class="text-xs font-semibold text-zinc-800">PDF Tools (13)</span>
+                        class="group p-2.5 bg-zinc-50 hover:bg-zinc-100 active:scale-[0.98] rounded-2xl text-left border border-zinc-200/80 transition flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-zinc-900 text-white flex items-center justify-center shadow-xs">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs font-semibold text-zinc-900 leading-none">PDF Suite</p>
+                                <p class="text-[10px] text-zinc-500 mt-1">13 Power Tools</p>
+                            </div>
+                        </div>
+                        <svg class="w-3.5 h-3.5 text-zinc-300 group-hover:text-zinc-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </button>
+
                     <button type="button" onclick="filterCategory('ai-ocr'); closeMobileNav();"
-                        class="p-2.5 bg-emerald-50 hover:bg-emerald-100/80 rounded-2xl text-left border border-emerald-200 transition flex items-center gap-2">
-                        <span
-                            class="w-7 h-7 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">AI</span>
-                        <span class="text-xs font-semibold text-emerald-950">AI OCR (2)</span>
+                        class="group p-2.5 bg-emerald-50/70 hover:bg-emerald-50 active:scale-[0.98] rounded-2xl text-left border border-emerald-200/80 transition flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-xs">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-1.5 leading-none">
+                                    <p class="text-xs font-semibold text-emerald-950">AI &amp; OCR</p>
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                </div>
+                                <p class="text-[10px] text-emerald-700/80 mt-1">Marksheets &amp; Text</p>
+                            </div>
+                        </div>
+                        <svg class="w-3.5 h-3.5 text-emerald-400 group-hover:text-emerald-700 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </button>
                 </div>
 
-                <!-- Top Featured Quick Launchers -->
-                <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2 px-1">Featured Workspaces
-                </p>
-                <div class="space-y-1 mb-3">
+                <!-- Section Header -->
+                <div class="flex items-center justify-between mb-2 px-1">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Featured Workspaces</span>
+                    <span class="text-[10px] text-zinc-400 font-medium">Free • Instant</span>
+                </div>
+
+                <!-- Featured Workspaces (Premium Vector Icon Tiles) -->
+                <div class="space-y-1.5 mb-3.5">
+                    <!-- Tool 1: Marksheet to Excel -->
                     <button type="button" onclick="openWorkspaceById('image-to-excel'); closeMobileNav();"
-                        class="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-zinc-800 hover:bg-zinc-100 text-left">
-                        <span class="flex items-center gap-2">📊 Image to Excel (Marksheet)</span>
-                        <span
-                            class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-full">New
-                            AI</span>
+                        class="group w-full flex items-center justify-between p-2 rounded-2xl hover:bg-zinc-50 active:scale-[0.99] border border-transparent hover:border-zinc-200/70 transition text-left">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-semibold text-zinc-900 group-hover:text-emerald-700 transition truncate">Marksheet to Excel</span>
+                                    <span class="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-full shrink-0">New AI</span>
+                                </div>
+                                <p class="text-[11px] text-zinc-400 truncate">Extract tables &amp; marks from photo</p>
+                            </div>
+                        </div>
+                        <svg class="w-3.5 h-3.5 text-zinc-300 group-hover:text-zinc-600 transition shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </button>
+
+                    <!-- Tool 2: PDF to Word -->
                     <button type="button" onclick="openWorkspaceById('pdf-to-word'); closeMobileNav();"
-                        class="w-full flex items-center justify-between p-2 rounded-xl text-xs font-medium text-zinc-700 hover:bg-zinc-100 text-left">
-                        <span class="flex items-center gap-2">📝 PDF to Word (Exact Table)</span>
+                        class="group w-full flex items-center justify-between p-2 rounded-2xl hover:bg-zinc-50 active:scale-[0.99] border border-transparent hover:border-zinc-200/70 transition text-left">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 border border-blue-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <span class="text-xs font-semibold text-zinc-900 group-hover:text-blue-700 transition truncate block">PDF to Word</span>
+                                <p class="text-[11px] text-zinc-400 truncate">Exact layout, tables &amp; formatting</p>
+                            </div>
+                        </div>
+                        <svg class="w-3.5 h-3.5 text-zinc-300 group-hover:text-zinc-600 transition shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </button>
+
+                    <!-- Tool 3: Word to PDF -->
                     <button type="button" onclick="openWorkspaceById('word-to-pdf'); closeMobileNav();"
-                        class="w-full flex items-center justify-between p-2 rounded-xl text-xs font-medium text-zinc-700 hover:bg-zinc-100 text-left">
-                        <span class="flex items-center gap-2">📄 Word to PDF</span>
+                        class="group w-full flex items-center justify-between p-2 rounded-2xl hover:bg-zinc-50 active:scale-[0.99] border border-transparent hover:border-zinc-200/70 transition text-left">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <span class="text-xs font-semibold text-zinc-900 group-hover:text-indigo-700 transition truncate block">Word to PDF</span>
+                                <p class="text-[11px] text-zinc-400 truncate">Instant DOCX to high-res PDF</p>
+                            </div>
+                        </div>
+                        <svg class="w-3.5 h-3.5 text-zinc-300 group-hover:text-zinc-600 transition shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </button>
+
+                    <!-- Tool 4: Compress PDF -->
                     <button type="button" onclick="openWorkspaceById('compress-pdf'); closeMobileNav();"
-                        class="w-full flex items-center justify-between p-2 rounded-xl text-xs font-medium text-zinc-700 hover:bg-zinc-100 text-left">
-                        <span class="flex items-center gap-2">🗜️ Compress PDF</span>
+                        class="group w-full flex items-center justify-between p-2 rounded-2xl hover:bg-zinc-50 active:scale-[0.99] border border-transparent hover:border-zinc-200/70 transition text-left">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 border border-amber-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                                </svg>
+                            </div>
+                            <div class="min-w-0">
+                                <span class="text-xs font-semibold text-zinc-900 group-hover:text-amber-700 transition truncate block">Compress PDF</span>
+                                <p class="text-[11px] text-zinc-400 truncate">Shrink MB to KB with zero loss</p>
+                            </div>
+                        </div>
+                        <svg class="w-3.5 h-3.5 text-zinc-300 group-hover:text-zinc-600 transition shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
                     </button>
                 </div>
+
+                <!-- Direct Upload & Convert Action -->
+                <button type="button" onclick="openWorkspaceById('word-to-pdf'); closeMobileNav();"
+                    class="w-full py-2.5 px-4 bg-zinc-950 hover:bg-zinc-800 text-white rounded-2xl text-xs font-semibold shadow-[0_2px_10px_rgba(0,0,0,0.12)] flex items-center justify-center gap-2 active:scale-[0.98] transition">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                    </svg>
+                    <span>Launch File Converter</span>
+                </button>
 
                 <!-- Links Footer -->
-                <div class="pt-3 border-t border-zinc-100 flex items-center justify-between text-xs text-zinc-600">
-                    <a href="#gridContainer" onclick="closeMobileNav();" class="hover:text-zinc-900 font-medium">Browse
-                        All 20 Tools &darr;</a>
-                    <a href="#faqHeading" onclick="closeMobileNav();" class="hover:text-zinc-900 font-medium">FAQs</a>
+                <div class="pt-3 mt-3 border-t border-zinc-100 flex items-center justify-between text-xs text-zinc-500">
+                    <a href="#gridContainer" onclick="closeMobileNav();" class="hover:text-zinc-900 font-medium flex items-center gap-1.5 transition">
+                        <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                        </svg>
+                        <span>Browse All 20 Tools &darr;</span>
+                    </a>
+                    <a href="#faqHeading" onclick="closeMobileNav();" class="hover:text-zinc-900 font-medium flex items-center gap-1.5 transition">
+                        <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span>FAQs</span>
+                    </a>
                 </div>
             </div>
         </div>
