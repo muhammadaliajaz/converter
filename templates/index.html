@@ -363,164 +363,101 @@
                 </div>
             </div>
 
-            <!-- Mobile Slide-Down Sheet (Ultra-Premium Glass Drawer) -->
+            <!-- Mobile Slide-Down Sheet (Ultra-Clean Studio Drawer) -->
             <div id="mobileMenuSheet"
-                class="hidden mobile-menu-drawer mt-2.5 bg-white/95 backdrop-blur-2xl rounded-3xl border border-zinc-200/90 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.18)] p-4 transition-all">
+                class="hidden mobile-menu-drawer mt-2.5 bg-white/98 backdrop-blur-3xl rounded-3xl border border-zinc-200/90 shadow-[0_20px_50px_rgba(0,0,0,0.12)] p-4 sm:p-5 transition-all text-zinc-900">
                 
-                <!-- Quick Category Switcher (Clean, Modern Pill Cards) -->
-                <div class="grid grid-cols-2 gap-2 mb-3.5">
+                <!-- Quick Category Filter Chips -->
+                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-3 mb-3 border-b border-zinc-100">
+                    <button type="button" onclick="filterCategory('all'); closeMobileNav();"
+                        class="px-3 py-1.5 rounded-full text-xs font-semibold bg-zinc-900 text-white shrink-0 shadow-xs">
+                        All Tools (20)
+                    </button>
                     <button type="button" onclick="filterCategory('pdf'); closeMobileNav();"
-                        class="group p-2.5 bg-zinc-50 hover:bg-zinc-100 active:scale-[0.98] rounded-2xl text-left border border-zinc-200/80 transition flex items-center justify-between">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-xl bg-zinc-900 text-white flex items-center justify-center shadow-xs">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="text-xs font-semibold text-zinc-900 leading-none">PDF Suite</p>
-                                <p class="text-[10px] text-zinc-500 mt-1">13 Power Tools</p>
-                            </div>
-                        </div>
-                        <svg class="w-3.5 h-3.5 text-zinc-300 group-hover:text-zinc-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
+                        class="px-3 py-1.5 rounded-full text-xs font-medium bg-zinc-100 hover:bg-zinc-200 text-zinc-700 shrink-0 transition">
+                        PDF Suite
                     </button>
-
                     <button type="button" onclick="filterCategory('ai-ocr'); closeMobileNav();"
-                        class="group p-2.5 bg-emerald-50/70 hover:bg-emerald-50 active:scale-[0.98] rounded-2xl text-left border border-emerald-200/80 transition flex items-center justify-between">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-xs">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="flex items-center gap-1.5 leading-none">
-                                    <p class="text-xs font-semibold text-emerald-950">AI &amp; OCR</p>
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                </div>
-                                <p class="text-[10px] text-emerald-700/80 mt-1">Marksheets &amp; Text</p>
-                            </div>
-                        </div>
-                        <svg class="w-3.5 h-3.5 text-emerald-400 group-hover:text-emerald-700 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
+                        class="px-3 py-1.5 rounded-full text-xs font-medium bg-zinc-100 hover:bg-zinc-200 text-zinc-700 shrink-0 transition flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        AI Marksheet OCR
+                    </button>
+                    <button type="button" onclick="filterCategory('image'); closeMobileNav();"
+                        class="px-3 py-1.5 rounded-full text-xs font-medium bg-zinc-100 hover:bg-zinc-200 text-zinc-700 shrink-0 transition">
+                        Image Tools
                     </button>
                 </div>
 
-                <!-- Section Header -->
-                <div class="flex items-center justify-between mb-2 px-1">
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Featured Workspaces</span>
-                    <span class="text-[10px] text-zinc-400 font-medium">Free • Instant</span>
-                </div>
-
-                <!-- Featured Workspaces (Premium Vector Icon Tiles) -->
-                <div class="space-y-1.5 mb-3.5">
-                    <!-- Tool 1: Marksheet to Excel -->
+                <!-- Primary Workspaces List (Clean Monochrome Minimalist Layout) -->
+                <div class="space-y-0.5 mb-4">
                     <button type="button" onclick="openWorkspaceById('image-to-excel'); closeMobileNav();"
-                        class="group w-full flex items-center justify-between p-2 rounded-2xl hover:bg-zinc-50 active:scale-[0.99] border border-transparent hover:border-zinc-200/70 transition text-left">
+                        class="w-full flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-zinc-100/70 active:bg-zinc-100 text-left transition group">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
-                            </div>
-                            <div class="min-w-0">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-xs font-semibold text-zinc-900 group-hover:text-emerald-700 transition truncate">Marksheet to Excel</span>
-                                    <span class="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-full shrink-0">New AI</span>
-                                </div>
-                                <p class="text-[11px] text-zinc-400 truncate">Extract tables &amp; marks from photo</p>
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <div>
+                                <span class="text-xs font-semibold text-zinc-900 group-hover:text-black transition">Marksheet to Excel</span>
+                                <span class="text-[11px] text-zinc-400 block">Extract student grades &amp; tables</span>
                             </div>
                         </div>
-                        <svg class="w-3.5 h-3.5 text-zinc-300 group-hover:text-zinc-600 transition shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
+                        <span class="text-[10px] font-semibold text-zinc-500 bg-zinc-100 px-2 py-0.5 rounded-md group-hover:bg-zinc-200 transition">AI OCR</span>
                     </button>
 
-                    <!-- Tool 2: PDF to Word -->
                     <button type="button" onclick="openWorkspaceById('pdf-to-word'); closeMobileNav();"
-                        class="group w-full flex items-center justify-between p-2 rounded-2xl hover:bg-zinc-50 active:scale-[0.99] border border-transparent hover:border-zinc-200/70 transition text-left">
+                        class="w-full flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-zinc-100/70 active:bg-zinc-100 text-left transition group">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 border border-blue-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
-                            </div>
-                            <div class="min-w-0">
-                                <span class="text-xs font-semibold text-zinc-900 group-hover:text-blue-700 transition truncate block">PDF to Word</span>
-                                <p class="text-[11px] text-zinc-400 truncate">Exact layout, tables &amp; formatting</p>
+                            <span class="w-2 h-2 rounded-full bg-zinc-400"></span>
+                            <div>
+                                <span class="text-xs font-semibold text-zinc-900 group-hover:text-black transition">PDF to Word</span>
+                                <span class="text-[11px] text-zinc-400 block">Preserve exact tables &amp; formatting</span>
                             </div>
                         </div>
-                        <svg class="w-3.5 h-3.5 text-zinc-300 group-hover:text-zinc-600 transition shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
+                        <svg class="w-4 h-4 text-zinc-300 group-hover:text-zinc-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
 
-                    <!-- Tool 3: Word to PDF -->
                     <button type="button" onclick="openWorkspaceById('word-to-pdf'); closeMobileNav();"
-                        class="group w-full flex items-center justify-between p-2 rounded-2xl hover:bg-zinc-50 active:scale-[0.99] border border-transparent hover:border-zinc-200/70 transition text-left">
+                        class="w-full flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-zinc-100/70 active:bg-zinc-100 text-left transition group">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                </svg>
-                            </div>
-                            <div class="min-w-0">
-                                <span class="text-xs font-semibold text-zinc-900 group-hover:text-indigo-700 transition truncate block">Word to PDF</span>
-                                <p class="text-[11px] text-zinc-400 truncate">Instant DOCX to high-res PDF</p>
+                            <span class="w-2 h-2 rounded-full bg-zinc-400"></span>
+                            <div>
+                                <span class="text-xs font-semibold text-zinc-900 group-hover:text-black transition">Word to PDF</span>
+                                <span class="text-[11px] text-zinc-400 block">Convert DOCX to high-res PDF</span>
                             </div>
                         </div>
-                        <svg class="w-3.5 h-3.5 text-zinc-300 group-hover:text-zinc-600 transition shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
+                        <svg class="w-4 h-4 text-zinc-300 group-hover:text-zinc-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
 
-                    <!-- Tool 4: Compress PDF -->
                     <button type="button" onclick="openWorkspaceById('compress-pdf'); closeMobileNav();"
-                        class="group w-full flex items-center justify-between p-2 rounded-2xl hover:bg-zinc-50 active:scale-[0.99] border border-transparent hover:border-zinc-200/70 transition text-left">
+                        class="w-full flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-zinc-100/70 active:bg-zinc-100 text-left transition group">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 border border-amber-500/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-                                </svg>
-                            </div>
-                            <div class="min-w-0">
-                                <span class="text-xs font-semibold text-zinc-900 group-hover:text-amber-700 transition truncate block">Compress PDF</span>
-                                <p class="text-[11px] text-zinc-400 truncate">Shrink MB to KB with zero loss</p>
+                            <span class="w-2 h-2 rounded-full bg-zinc-400"></span>
+                            <div>
+                                <span class="text-xs font-semibold text-zinc-900 group-hover:text-black transition">Compress PDF</span>
+                                <span class="text-[11px] text-zinc-400 block">Shrink file size without quality loss</span>
                             </div>
                         </div>
-                        <svg class="w-3.5 h-3.5 text-zinc-300 group-hover:text-zinc-600 transition shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
+                        <svg class="w-4 h-4 text-zinc-300 group-hover:text-zinc-600 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
                 </div>
 
-                <!-- Direct Upload & Convert Action -->
+                <!-- Convert CTA Button (Monochrome Solid Black) -->
                 <button type="button" onclick="openWorkspaceById('word-to-pdf'); closeMobileNav();"
-                    class="w-full py-2.5 px-4 bg-zinc-950 hover:bg-zinc-800 text-white rounded-2xl text-xs font-semibold shadow-[0_2px_10px_rgba(0,0,0,0.12)] flex items-center justify-center gap-2 active:scale-[0.98] transition">
-                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="w-full py-2.5 px-4 bg-zinc-950 hover:bg-zinc-800 text-white rounded-2xl text-xs font-semibold shadow-xs flex items-center justify-center gap-2 active:scale-[0.98] transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                     </svg>
-                    <span>Launch File Converter</span>
+                    <span>Upload &amp; Convert Document</span>
                 </button>
 
-                <!-- Links Footer -->
+                <!-- Footer Directory Links -->
                 <div class="pt-3 mt-3 border-t border-zinc-100 flex items-center justify-between text-xs text-zinc-500">
-                    <a href="#gridContainer" onclick="closeMobileNav();" class="hover:text-zinc-900 font-medium flex items-center gap-1.5 transition">
-                        <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
-                        </svg>
-                        <span>Browse All 20 Tools &darr;</span>
+                    <a href="#gridContainer" onclick="closeMobileNav();" class="hover:text-zinc-900 font-medium transition">
+                        Browse All 20 Tools &darr;
                     </a>
-                    <a href="#faqHeading" onclick="closeMobileNav();" class="hover:text-zinc-900 font-medium flex items-center gap-1.5 transition">
-                        <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <span>FAQs</span>
+                    <a href="#testimonialsHeading" onclick="closeMobileNav();" class="hover:text-zinc-900 font-medium transition">
+                        Reviews
+                    </a>
+                    <a href="#faqHeading" onclick="closeMobileNav();" class="hover:text-zinc-900 font-medium transition">
+                        FAQs
                     </a>
                 </div>
             </div>
@@ -1349,71 +1286,134 @@
                 </div>
             </section>
 
-            <!-- Internal Links Directory for Crawlers & Users -->
-            <section aria-labelledby="directoryHeading" class="bg-zinc-50 p-6 rounded-xl border border-zinc-200">
-                <h2 id="directoryHeading" class="text-base font-semibold text-zinc-900 mb-4 text-center">Free Online
-                    Document &amp; Image Converter Tools</h2>
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 text-xs">
-                    <a href="/word-to-pdf" onclick="openWorkspaceById('word-to-pdf'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">Word
-                        to PDF</a>
-                    <a href="/pdf-to-word" onclick="openWorkspaceById('pdf-to-word'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">PDF
-                        to Word</a>
-                    <a href="/compress-image" onclick="openWorkspaceById('compress-image'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">Compress
-                        Image</a>
-                    <a href="/ppt-to-pdf" onclick="openWorkspaceById('ppt-to-pdf'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">PPT
-                        to PDF</a>
-                    <a href="/merge-pdf" onclick="openWorkspaceById('merge-pdf'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">Merge
-                        PDF</a>
-                    <a href="/split-pdf" onclick="openWorkspaceById('split-pdf'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">Split
-                        PDF</a>
-                    <a href="/compress-pdf" onclick="openWorkspaceById('compress-pdf'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">Compress
-                        PDF</a>
-                    <a href="/pdf-to-ppt" onclick="openWorkspaceById('pdf-to-ppt'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">PDF
-                        to PPT</a>
-                    <a href="/pdf-to-excel" onclick="openWorkspaceById('pdf-to-excel'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">PDF
-                        to Excel</a>
-                    <a href="/excel-to-pdf" onclick="openWorkspaceById('excel-to-pdf'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">Excel
-                        to PDF</a>
-                    <a href="/pdf-to-jpg" onclick="openWorkspaceById('pdf-to-jpg'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">PDF
-                        to JPG</a>
-                    <a href="/jpg-to-pdf" onclick="openWorkspaceById('jpg-to-pdf'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">JPG
-                        to PDF</a>
-                    <a href="/unlock-pdf" onclick="openWorkspaceById('unlock-pdf'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">Unlock
-                        PDF</a>
-                    <a href="/protect-pdf" onclick="openWorkspaceById('protect-pdf'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">Protect
-                        PDF</a>
-                    <a href="/page-numbers" onclick="openWorkspaceById('page-numbers'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">Page
-                        Numbers</a>
-                    <a href="/translate-pdf" onclick="openWorkspaceById('translate-pdf'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">Translate
-                        PDF</a>
-                    <a href="/convert-image-format" onclick="openWorkspaceById('convert-image-format'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">Convert
-                        Image</a>
-                    <a href="/edit-pdf" onclick="openWorkspaceById('edit-pdf'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">Edit
-                        PDF</a>
-                    <a href="/image-to-text" onclick="openWorkspaceById('image-to-text'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">Image
-                        to Text</a>
-                    <a href="/image-to-excel" onclick="openWorkspaceById('image-to-excel'); return false;"
-                        class="p-2 bg-white rounded-md border border-zinc-200 text-zinc-700 font-medium hover:border-zinc-400 hover:text-zinc-900 transition text-center block">Image
-                        to Excel</a>
+            <!-- Customer Testimonials Section (Bento Grid matching User Design) -->
+            <section aria-labelledby="testimonialsHeading" class="my-12 sm:my-16">
+                <div class="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-zinc-100 border border-zinc-200/80 text-zinc-800 text-xs font-semibold mb-3">
+                        <span class="text-amber-500 text-sm leading-none">★★★★★</span>
+                        <span>Trusted by 50,000+ professionals &amp; students</span>
+                    </div>
+                    <h2 id="testimonialsHeading" class="text-2xl sm:text-4xl font-extrabold text-zinc-900 tracking-[-0.03em] leading-tight">
+                        Loved by professionals, students &amp; teams
+                    </h2>
+                    <p class="text-zinc-500 text-sm sm:text-base mt-2 max-w-lg mx-auto leading-relaxed">
+                        See why over 50,000 users rely on SmartFile daily for pixel-perfect PDF conversions, table extraction, and secure file handling.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+                    <!-- Left Tall Featured Dark Card (Spans full height on desktop) -->
+                    <div class="lg:col-span-4 bg-zinc-950 text-white rounded-[28px] p-7 sm:p-8 flex flex-col justify-between shadow-[0_12px_36px_rgba(0,0,0,0.16)] border border-zinc-900 min-h-[360px] lg:min-h-[470px]">
+                        <div>
+                            <div class="flex items-center justify-between mb-6">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80"
+                                     alt="Emma Rodriguez" class="w-12 h-12 rounded-full object-cover ring-2 ring-zinc-800 shadow-sm">
+                                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-900/90 border border-zinc-800 text-xs font-semibold text-zinc-200">
+                                    <span>4.9</span>
+                                    <span class="text-amber-400">★</span>
+                                    <span class="text-zinc-400 font-normal">Rating</span>
+                                </div>
+                            </div>
+                            <blockquote class="text-lg sm:text-xl font-medium leading-relaxed text-zinc-100 tracking-[-0.01em]">
+                                &ldquo;It&apos;s not just about converting files&mdash;it&apos;s about getting clean, ready-to-use tables and documents without fixing broken layouts for hours.&rdquo;
+                            </blockquote>
+                        </div>
+                        <div class="pt-6 border-t border-zinc-850 mt-6">
+                            <p class="font-bold text-white text-sm">Emma Rodriguez</p>
+                            <p class="text-xs text-zinc-400 mt-0.5">Digital Marketer at SocialLift</p>
+                        </div>
+                    </div>
+
+                    <!-- Right 2x2 Grid of 4 Clean White Cards -->
+                    <div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <!-- Card 1 (Top Left) -->
+                        <div class="bg-white rounded-[28px] p-6 sm:p-7 border border-zinc-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80"
+                                         alt="Michael Grant" class="w-10 h-10 rounded-full object-cover ring-1 ring-zinc-200 shadow-xs">
+                                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-50 border border-zinc-200/80 text-xs font-semibold text-zinc-700">
+                                        <span>4.9</span>
+                                        <span class="text-amber-500">★</span>
+                                        <span class="text-zinc-400 font-normal">Rating</span>
+                                    </div>
+                                </div>
+                                <blockquote class="text-sm sm:text-[14px] font-medium leading-relaxed text-zinc-800">
+                                    &ldquo;I&apos;ve processed 40+ student marksheet scans straight to Excel here faster than on any other tool I&apos;ve tried. Extracted every single column perfectly.&rdquo;
+                                </blockquote>
+                            </div>
+                            <div class="pt-4 border-t border-zinc-100 mt-4">
+                                <p class="font-bold text-zinc-900 text-xs sm:text-sm">Michael Grant</p>
+                                <p class="text-[11px] sm:text-xs text-zinc-500 mt-0.5">Content Creator</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 (Top Right) -->
+                        <div class="bg-white rounded-[28px] p-6 sm:p-7 border border-zinc-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80"
+                                         alt="David Kim" class="w-10 h-10 rounded-full object-cover ring-1 ring-zinc-200 shadow-xs">
+                                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-50 border border-zinc-200/80 text-xs font-semibold text-zinc-700">
+                                        <span>4.9</span>
+                                        <span class="text-amber-500">★</span>
+                                        <span class="text-zinc-400 font-normal">Rating</span>
+                                    </div>
+                                </div>
+                                <blockquote class="text-sm sm:text-[14px] font-medium leading-relaxed text-zinc-800">
+                                    &ldquo;User-friendly, engaging, and built for growth. Every Word to PDF and image conversion comes out crisp, clean, and immediately shareable.&rdquo;
+                                </blockquote>
+                            </div>
+                            <div class="pt-4 border-t border-zinc-100 mt-4">
+                                <p class="font-bold text-zinc-900 text-xs sm:text-sm">David Kim</p>
+                                <p class="text-[11px] sm:text-xs text-zinc-500 mt-0.5">Social Media Strategist</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 (Bottom Left) -->
+                        <div class="bg-white rounded-[28px] p-6 sm:p-7 border border-zinc-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80"
+                                         alt="Emma Rodriguez" class="w-10 h-10 rounded-full object-cover ring-1 ring-zinc-200 shadow-xs">
+                                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-50 border border-zinc-200/80 text-xs font-semibold text-zinc-700">
+                                        <span>4.9</span>
+                                        <span class="text-amber-500">★</span>
+                                        <span class="text-zinc-400 font-normal">Rating</span>
+                                    </div>
+                                </div>
+                                <blockquote class="text-sm sm:text-[14px] font-medium leading-relaxed text-zinc-800">
+                                    &ldquo;The PDF to Word table formatting is spot on. Nested tables, borders, and numbers stayed in exact position without any manual reformatting.&rdquo;
+                                </blockquote>
+                            </div>
+                            <div class="pt-4 border-t border-zinc-100 mt-4">
+                                <p class="font-bold text-zinc-900 text-xs sm:text-sm">Emma Rodriguez</p>
+                                <p class="text-[11px] sm:text-xs text-zinc-500 mt-0.5">Digital Marketer at SocialLift</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 4 (Bottom Right) -->
+                        <div class="bg-white rounded-[28px] p-6 sm:p-7 border border-zinc-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-md transition flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&auto=format&fit=crop&q=80"
+                                         alt="David Kim" class="w-10 h-10 rounded-full object-cover ring-1 ring-zinc-200 shadow-xs">
+                                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-50 border border-zinc-200/80 text-xs font-semibold text-zinc-700">
+                                        <span>4.9</span>
+                                        <span class="text-amber-500">★</span>
+                                        <span class="text-zinc-400 font-normal">Rating</span>
+                                    </div>
+                                </div>
+                                <blockquote class="text-sm sm:text-[14px] font-medium leading-relaxed text-zinc-800">
+                                    &ldquo;Reduced an 80MB annual report PDF down to 5MB in under 3 seconds. Instant download, zero watermarks, and 100% free forever.&rdquo;
+                                </blockquote>
+                            </div>
+                            <div class="pt-4 border-t border-zinc-100 mt-4">
+                                <p class="font-bold text-zinc-900 text-xs sm:text-sm">David Kim</p>
+                                <p class="text-[11px] sm:text-xs text-zinc-500 mt-0.5">Social Media Strategist</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
