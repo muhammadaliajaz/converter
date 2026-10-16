@@ -31,7 +31,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Security constraints
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024 # 50 MB
-app.config['SESSION_COOKIE_SECURE'] = True
+is_https = bool(os.environ.get('APPWRITE_FUNCTION_ID') or os.environ.get('HTTPS') == 'on')
+app.config['SESSION_COOKIE_SECURE'] = is_https
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
@@ -593,6 +594,31 @@ def parse_pdf_for_edit():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.after_request
+def apply_connection_and_security_headers(response):
+    response.headers['Alt-Svc'] = 'clear'
+    response.headers['Connection'] = 'keep-alive'
+    response.headers['Keep-Alive'] = 'timeout=30, max=100'
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
+    return response
+
+@app.errorhandler(413)
+def request_entity_too_large(error):
+    return jsonify({'error': 'File too large. Maximum allowed size is 50MB.'}), 413
+
+@app.errorhandler(404)
+def not_found_error(error):
+    return jsonify({'error': 'Resource not found'}), 404
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    return jsonify({'error': 'An internal server error occurred. Please try again.'}), 500
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    # Listen on 0.0.0.0 so all devices (phones, laptops) on the network can connect
+    # threaded=True handles concurrent requests without dropping/resetting connections
+    app.run(host='0.0.0.0', port=port, threaded=True, debug=False)
 

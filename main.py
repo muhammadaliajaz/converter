@@ -250,8 +250,12 @@ def dispatch_wsgi(flask_app, path, method, headers, query, body_bytes):
     response_bytes = b''.join(response_chunks)
     
     resp_headers = {k: v for k, v in headers_box if k.lower() != 'content-length'}
+    resp_headers['Content-Length'] = str(len(response_bytes))
     resp_headers['Access-Control-Allow-Origin'] = '*'
     resp_headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains; preload'
+    resp_headers['Alt-Svc'] = 'clear'
+    resp_headers['Connection'] = 'keep-alive'
+    resp_headers['Keep-Alive'] = 'timeout=30, max=100'
 
     return status_code_box[0], resp_headers, response_bytes
 
@@ -395,17 +399,25 @@ Sitemap: https://officialali.dev/sitemap.xml
             lookup_key = clean_path if clean_path in TOOLS_LIST else ''
             html_content = get_html_page(lookup_key)
             if html_content:
+                html_bytes = html_content.encode('utf-8')
                 body = '' if method == 'HEAD' else html_content
                 return res.text(body, 200, {
                     'content-type': 'text/html; charset=utf-8',
+                    'content-length': str(len(html_bytes) if method != 'HEAD' else 0),
                     'cache-control': 'no-cache, no-store, must-revalidate, max-age=0, s-maxage=0',
                     'pragma': 'no-cache',
                     'expires': '0',
-                    'alt-svc': 'clear',
+                    'Alt-Svc': 'clear',
+                    'Connection': 'keep-alive',
+                    'Keep-Alive': 'timeout=30, max=100',
                     'Access-Control-Allow-Origin': '*'
                 })
         except Exception as e:
             context.error(f"Error serving index.html: {str(e)}")
+            return res.text("Service temporarily unavailable. Please reload.", 503, {
+                'content-type': 'text/plain; charset=utf-8',
+                'Connection': 'close'
+            })
 
     # Route: GET /health
     if path == '/health' or path == '/api/health':
@@ -415,19 +427,18 @@ Sitemap: https://officialali.dev/sitemap.xml
             "version": "1.0.0"
         })
 
-    # Route: GET/HEAD /favicon.ico -> Instant response (< 1ms) to eliminate background browser cold-start jams
-    if path == '/favicon.ico':
+    # Route: Browser Apple Touch Icons & Common Mobile Probes (Prevent 302 redirect loops and socket drops)
+    if path in (
+        '/favicon.ico', '/apple-touch-icon.png', '/apple-touch-icon-precomposed.png',
+        '/og-image.png', '/manifest.json', '/site.webmanifest', '/sw.js',
+        '/service-worker.js', '/browserconfig.xml'
+    ):
+        mime = 'image/x-icon' if 'ico' in path else ('image/png' if 'png' in path else 'application/json')
         return res.text('', 204, {
-            'content-type': 'image/x-icon',
+            'content-type': mime,
             'cache-control': 'public, max-age=604800',
-            'Access-Control-Allow-Origin': '*'
-        })
-
-    # Route: Browser Apple Touch Icons & Common Static Probes
-    if path in ('/apple-touch-icon.png', '/apple-touch-icon-precomposed.png', '/og-image.png'):
-        return res.text('', 204, {
-            'content-type': 'image/png',
-            'cache-control': 'public, max-age=604800',
+            'Alt-Svc': 'clear',
+            'Connection': 'keep-alive',
             'Access-Control-Allow-Origin': '*'
         })
 
