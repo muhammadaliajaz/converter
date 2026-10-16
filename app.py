@@ -281,6 +281,35 @@ def upload_file():
                 success, res = translate_tools.extract_text_from_image(input_path, out_path)
                 if success: output_files.append((out_name, f"{original_name}_text.txt"))
                 
+            elif conversion_type == 'image-to-excel':
+                out_name = f"{unique_batch_id}_{idx}_{original_name}.xlsx"
+                out_path = os.path.join(app.config['OUTPUT_FOLDER'], out_name)
+                import openpyxl
+                from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+                from openpyxl.utils import get_column_letter
+                wb = openpyxl.Workbook()
+                ws = wb.active
+                ws.title = "Marksheet"
+                headers = ["Roll No", "Student Name", "Subject 1", "Subject 2", "Total Marks", "Grade", "Status"]
+                ws.append(headers)
+                header_fill = PatternFill(start_color="F1F5F9", end_color="F1F5F9", fill_type="solid")
+                header_font = Font(name="Calibri", size=11, bold=True, color="0F172A")
+                thin_border = Border(
+                    left=Side(style='thin', color='CBD5E1'),
+                    right=Side(style='thin', color='CBD5E1'),
+                    top=Side(style='thin', color='CBD5E1'),
+                    bottom=Side(style='thin', color='CBD5E1')
+                )
+                for col_num in range(1, len(headers) + 1):
+                    cell = ws.cell(row=1, column=col_num)
+                    cell.fill = header_fill
+                    cell.font = header_font
+                    cell.border = thin_border
+                    cell.alignment = Alignment(horizontal="center", vertical="center")
+                    ws.column_dimensions[get_column_letter(col_num)].width = 18
+                wb.save(out_path)
+                output_files.append((out_name, f"{original_name}_marksheet.xlsx"))
+                
             elif conversion_type == 'compress-pdf':
                 lvl = req_form.get('compression_level', 'medium')
                 target_kb_raw = req_form.get('pdf_target_kb') if lvl == 'custom' else None
