@@ -217,6 +217,13 @@
             .mobile-nav-flex { display: none !important; }
             .mobile-menu-drawer { display: none !important; }
         }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .hero-tab { transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); }
+        .workstation-glow {
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25), 0 20px 40px -15px rgba(0, 0, 0, 0.12) !important;
+            border-color: #10b981 !important;
+        }
 
         /* Quill Editor Paper Styling */
         .ql-toolbar.ql-snow {
@@ -250,377 +257,147 @@
 
 <body>
 
-    <!-- TOP STICKY RESPONSIVE NAVIGATION BAR -->
-    <header class="sticky top-0 z-40 w-full bg-white/90 backdrop-blur-md border-b border-zinc-200/80 shadow-xs transition-all">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-            <!-- Brand Logo -->
-            <a href="https://officialali.dev/" title="Smart File Converter - Free Online PDF & Document Tools" class="flex items-center gap-2.5 group">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-800 flex items-center justify-center text-white shadow-sm group-hover:scale-105 transition-transform">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-base font-bold text-zinc-900 tracking-tight leading-none flex items-center gap-1.5">
-                        SmartFile
-                        <span class="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">v2.0</span>
-                    </span>
-                    <span class="text-[11px] font-medium text-zinc-400 leading-none mt-1">Free Online Document Toolkit</span>
-                </div>
-            </a>
-
-            <!-- Desktop Nav Links -->
-            <nav class="desktop-nav-flex items-center gap-1" aria-label="Desktop Navigation">
-                <a href="https://officialali.dev/" class="px-3 py-2 text-xs font-semibold text-zinc-900 rounded-lg hover:bg-zinc-100 transition">Home</a>
-                <a href="https://officialali.dev/#directoryHeading" class="px-3 py-2 text-xs font-medium text-zinc-600 hover:text-zinc-900 rounded-lg hover:bg-zinc-100 transition flex items-center gap-1.5">
-                    All Tools
-                    <span class="text-[10px] bg-zinc-200 text-zinc-700 font-bold px-1.5 py-0.2 rounded-full">20</span>
+        <!-- DRIBBBLE-GRADE FLOATING ISLAND CAPSULE NAVBAR -->
+    <header class="fixed top-3 sm:top-5 inset-x-0 z-50 pointer-events-none px-3 sm:px-6 transition-all duration-300">
+        <div class="max-w-5xl mx-auto flex flex-col pointer-events-auto">
+            <!-- Glass Capsule Bar -->
+            <div class="w-full bg-white/85 backdrop-blur-2xl border border-zinc-200/90 shadow-[0_8px_30px_rgb(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.04)] rounded-full px-4 sm:px-5 h-14 sm:h-16 flex items-center justify-between transition-all">
+                <!-- Brand Logo & Monogram -->
+                <a href="https://officialali.dev/" title="Smart File Converter - Free Online PDF & Document Tools" class="flex items-center gap-2.5 group">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-zinc-950 via-zinc-900 to-zinc-800 flex items-center justify-center text-white shadow-sm ring-1 ring-zinc-900/10 group-hover:scale-105 transition-transform">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex items-baseline gap-1.5">
+                        <span class="text-[16px] sm:text-[17px] font-bold text-zinc-900 tracking-[-0.03em] leading-none">Smart<span class="text-zinc-500 font-semibold">File</span></span>
+                        <span class="text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80">AI 2.0</span>
+                    </div>
                 </a>
-                <button type="button" onclick="openWorkspaceById('image-to-excel')" class="px-3 py-2 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition flex items-center gap-1.5 border border-emerald-200/80">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    AI Marksheets
-                    <span class="text-[9px] bg-emerald-600 text-white font-bold px-1 py-0.2 rounded">New</span>
-                </button>
-                <a href="https://officialali.dev/#faqHeading" class="px-3 py-2 text-xs font-medium text-zinc-600 hover:text-zinc-900 rounded-lg hover:bg-zinc-100 transition">FAQs</a>
-            </nav>
 
-            <!-- Desktop CTA -->
-            <div class="desktop-nav-flex items-center gap-2.5">
-                <button type="button" onclick="openWorkspaceById('word-to-pdf')" class="px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold rounded-xl shadow-xs transition flex items-center gap-1.5">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                    Upload File
-                </button>
+                <!-- Desktop Center Nav Tabs -->
+                <nav class="desktop-nav-flex items-center gap-1 bg-zinc-100/70 p-1 rounded-full border border-zinc-200/60" aria-label="Desktop Navigation">
+                    <a href="https://officialali.dev/" class="px-3.5 py-1.5 text-xs font-semibold text-zinc-900 bg-white shadow-xs rounded-full transition">Home</a>
+                    <button type="button" onclick="selectHeroTab('word-to-pdf')" class="px-3 py-1.5 text-xs font-medium text-zinc-600 hover:text-zinc-900 rounded-full hover:bg-white/60 transition">Quick Convert</button>
+                    <a href="#gridContainer" class="px-3 py-1.5 text-xs font-medium text-zinc-600 hover:text-zinc-900 rounded-full hover:bg-white/60 transition flex items-center gap-1.5">
+                        All Tools
+                        <span class="text-[10px] bg-zinc-200 text-zinc-700 font-bold px-1.5 py-0.2 rounded-full">20</span>
+                    </a>
+                    <button type="button" onclick="selectHeroTab('image-to-excel')" class="px-3 py-1.5 text-xs font-semibold text-emerald-800 bg-emerald-100/70 hover:bg-emerald-100 rounded-full transition flex items-center gap-1.5 border border-emerald-200/80">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        AI Marksheet
+                        <span class="text-[9px] bg-emerald-600 text-white font-bold px-1 py-0.2 rounded">New</span>
+                    </button>
+                    <a href="#faqHeading" class="px-3 py-1.5 text-xs font-medium text-zinc-600 hover:text-zinc-900 rounded-full hover:bg-white/60 transition">FAQs</a>
+                </nav>
+
+                <!-- Desktop CTA Pill Button -->
+                <div class="desktop-nav-flex items-center gap-2">
+                    <button type="button" onclick="selectHeroTab('word-to-pdf')" class="px-4 sm:px-5 py-2 sm:py-2.5 bg-zinc-950 hover:bg-zinc-800 text-white text-xs font-semibold rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.12)] hover:shadow-lg transition-all flex items-center gap-1.5 active:scale-95">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        Convert File
+                    </button>
+                </div>
+
+                <!-- Mobile Controls: AI OCR Pill + Hamburger Toggle -->
+                <div class="mobile-nav-flex items-center gap-2">
+                    <button type="button" onclick="selectHeroTab('image-to-excel')" class="px-2.5 py-1.5 text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-full flex items-center gap-1 shadow-2xs">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        AI OCR
+                    </button>
+                    
+                    <button type="button" id="mobileMenuBtn" onclick="toggleMobileNav()" aria-label="Toggle Navigation Menu" class="w-9 h-9 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-800 flex items-center justify-center transition focus:outline-none">
+                        <svg id="menuIconOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                        <svg id="menuIconClose" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
             </div>
 
-            <!-- Mobile Controls: AI OCR Pill + Hamburger Button -->
-            <div class="mobile-nav-flex items-center gap-2">
-                <button type="button" onclick="openWorkspaceById('image-to-excel')" class="px-2.5 py-1.5 text-[11px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    AI OCR
-                </button>
-                
-                <button type="button" id="mobileMenuBtn" onclick="toggleMobileNav()" aria-label="Toggle Navigation Menu" class="w-9 h-9 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-800 flex items-center justify-center transition focus:outline-none">
-                    <svg id="menuIconOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                    <svg id="menuIconClose" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-        </div>
+            <!-- Mobile Slide-Down Sheet (Anchored directly under floating capsule) -->
+            <div id="mobileMenuSheet" class="hidden mobile-menu-drawer mt-2 bg-white/95 backdrop-blur-2xl rounded-3xl border border-zinc-200/90 shadow-2xl p-4 sm:p-5 transition-all">
+                <!-- Quick Categories -->
+                <div class="grid grid-cols-2 gap-2 mb-3">
+                    <button type="button" onclick="filterCategory('pdf'); closeMobileNav();" class="p-2.5 bg-zinc-50 hover:bg-zinc-100 rounded-2xl text-left border border-zinc-200/80 transition flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-xl bg-zinc-900 text-white flex items-center justify-center text-xs font-bold">PDF</span>
+                        <span class="text-xs font-semibold text-zinc-800">PDF Tools (13)</span>
+                    </button>
+                    <button type="button" onclick="filterCategory('ai-ocr'); closeMobileNav();" class="p-2.5 bg-emerald-50 hover:bg-emerald-100/80 rounded-2xl text-left border border-emerald-200 transition flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">AI</span>
+                        <span class="text-xs font-semibold text-emerald-950">AI OCR (2)</span>
+                    </button>
+                </div>
 
-        <!-- Mobile Slide-Down Sheet -->
-        <div id="mobileMenuSheet" class="hidden mobile-menu-drawer bg-white/98 backdrop-blur-xl border-b border-zinc-200 shadow-xl px-4 py-5 transition-all">
-            <!-- Quick Categories -->
-            <div class="grid grid-cols-2 gap-2 mb-4">
-                <button type="button" onclick="filterCategory('pdf'); closeMobileNav();" class="p-2.5 bg-zinc-50 hover:bg-zinc-100 rounded-xl text-left border border-zinc-200/80 transition flex items-center gap-2">
-                    <span class="w-7 h-7 rounded-lg bg-zinc-900 text-white flex items-center justify-center text-xs font-bold">PDF</span>
-                    <span class="text-xs font-semibold text-zinc-800">PDF Tools (13)</span>
-                </button>
-                <button type="button" onclick="filterCategory('ai-ocr'); closeMobileNav();" class="p-2.5 bg-emerald-50 hover:bg-emerald-100/80 rounded-xl text-left border border-emerald-200 transition flex items-center gap-2">
-                    <span class="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">AI</span>
-                    <span class="text-xs font-semibold text-emerald-950">AI OCR (2)</span>
-                </button>
-            </div>
+                <!-- Top Featured Quick Launchers -->
+                <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2 px-1">Featured Workspaces</p>
+                <div class="space-y-1 mb-3">
+                    <button type="button" onclick="selectHeroTab('image-to-excel'); closeMobileNav();" class="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-zinc-800 hover:bg-zinc-100 text-left">
+                        <span class="flex items-center gap-2">📊 Image to Excel (Marksheet)</span>
+                        <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-full">New AI</span>
+                    </button>
+                    <button type="button" onclick="selectHeroTab('pdf-to-word'); closeMobileNav();" class="w-full flex items-center justify-between p-2 rounded-xl text-xs font-medium text-zinc-700 hover:bg-zinc-100 text-left">
+                        <span class="flex items-center gap-2">📝 PDF to Word (Exact Table)</span>
+                    </button>
+                    <button type="button" onclick="selectHeroTab('word-to-pdf'); closeMobileNav();" class="w-full flex items-center justify-between p-2 rounded-xl text-xs font-medium text-zinc-700 hover:bg-zinc-100 text-left">
+                        <span class="flex items-center gap-2">📄 Word to PDF</span>
+                    </button>
+                    <button type="button" onclick="selectHeroTab('compress-pdf'); closeMobileNav();" class="w-full flex items-center justify-between p-2 rounded-xl text-xs font-medium text-zinc-700 hover:bg-zinc-100 text-left">
+                        <span class="flex items-center gap-2">🗜️ Compress PDF</span>
+                    </button>
+                </div>
 
-            <!-- Top Featured Tools List -->
-            <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-2 px-1">Top Features</p>
-            <div class="space-y-1 mb-4">
-                <button type="button" onclick="openWorkspaceById('image-to-excel'); closeMobileNav();" class="w-full flex items-center justify-between p-2 rounded-lg text-xs font-semibold text-zinc-800 hover:bg-zinc-100 text-left">
-                    <span class="flex items-center gap-2">📊 Image to Excel (Marksheet)</span>
-                    <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-full">New AI</span>
-                </button>
-                <button type="button" onclick="openWorkspaceById('pdf-to-word'); closeMobileNav();" class="w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium text-zinc-700 hover:bg-zinc-100 text-left">
-                    <span class="flex items-center gap-2">📝 PDF to Word (Exact Table)</span>
-                </button>
-                <button type="button" onclick="openWorkspaceById('word-to-pdf'); closeMobileNav();" class="w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium text-zinc-700 hover:bg-zinc-100 text-left">
-                    <span class="flex items-center gap-2">📄 Word to PDF</span>
-                </button>
-                <button type="button" onclick="openWorkspaceById('compress-pdf'); closeMobileNav();" class="w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium text-zinc-700 hover:bg-zinc-100 text-left">
-                    <span class="flex items-center gap-2">🗜️ Compress PDF</span>
-                </button>
-                <button type="button" onclick="openWorkspaceById('edit-pdf'); closeMobileNav();" class="w-full flex items-center justify-between p-2 rounded-lg text-xs font-medium text-zinc-700 hover:bg-zinc-100 text-left">
-                    <span class="flex items-center gap-2">✏️ Edit PDF Studio</span>
-                </button>
-            </div>
-
-            <!-- Links Footer -->
-            <div class="pt-3 border-t border-zinc-100 flex items-center justify-between text-xs text-zinc-600">
-                <a href="https://officialali.dev/#directoryHeading" onclick="closeMobileNav();" class="hover:text-zinc-900 font-medium">Browse All 20 Tools</a>
-                <a href="https://officialali.dev/#faqHeading" onclick="closeMobileNav();" class="hover:text-zinc-900 font-medium">Help & FAQs</a>
+                <!-- Links Footer -->
+                <div class="pt-3 border-t border-zinc-100 flex items-center justify-between text-xs text-zinc-600">
+                    <a href="#gridContainer" onclick="closeMobileNav();" class="hover:text-zinc-900 font-medium">Browse All 20 Tools &darr;</a>
+                    <a href="#faqHeading" onclick="closeMobileNav();" class="hover:text-zinc-900 font-medium">FAQs</a>
+                </div>
             </div>
         </div>
     </header>
 
     <!-- MAIN PAGE CONTAINER -->
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-24 sm:pt-32">
 
     <!-- HEADER -->
-    <header class="text-center mb-12">
-        <h1 id="mainHeading" class="text-3xl sm:text-4xl font-bold text-zinc-900 mb-3 tracking-tight">
+    <header class="text-center mb-8 sm:mb-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100/90 border border-zinc-200/80 text-zinc-700 text-xs font-medium mb-4 shadow-2xs">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            100% Free Online Document Studio • No Registration • Instant Processing
+        </div>
+        <h1 id="mainHeading" class="text-3xl sm:text-5xl font-extrabold text-zinc-900 mb-3 tracking-[-0.03em] leading-tight">
             Word to PDF &amp; PDF to Word Converter Online Free
         </h1>
         <p class="text-zinc-500 font-normal text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-            Convert Word to PDF, PDF to Word, compress images, and merge or split PDF documents instantly in your browser with zero registration or limits.
+            Convert Word to PDF, PDF to Word, compress documents, and extract tables from marksheet photos instantly with zero limits.
         </p>
     </header>
 
-    <!-- PROMINENT NEW FEATURES DASHBOARD BANNER -->
-    <section class="max-w-6xl mx-auto mb-8 px-2" aria-label="New Features Announcement">
-        <div class="bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-950 border border-zinc-800 rounded-2xl p-4 sm:p-5 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
-            <div class="flex items-start gap-3.5">
-                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 flex items-center justify-center font-bold text-base flex-shrink-0">
-                    <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2 mb-1 flex-wrap">
-                        <span class="px-2 py-0.5 bg-emerald-500 text-zinc-950 font-bold text-[10px] rounded-full uppercase tracking-wider flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-zinc-950 animate-pulse"></span>New AI Features</span>
-                        <h2 class="text-sm sm:text-base font-semibold text-white">AI Marksheet &amp; Image to Excel / Word Studio</h2>
-                    </div>
-                    <p class="text-xs text-zinc-300 max-w-2xl leading-relaxed">Scan student marksheets, document photos, or tables. Edit misspelled names, numbers, or grades directly in a live grid and export to Excel (.xlsx) or Word (.doc).</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-2.5 w-full md:w-auto flex-shrink-0">
-                <button type="button" onclick="openWorkspaceById('image-to-excel')" class="flex-1 md:flex-initial px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-semibold rounded-xl text-xs transition shadow flex items-center justify-center gap-1.5">
-                    Image to Excel
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+    <!-- HERO WORKSTATION SLOT (Visible Immediately on Page Load!) -->
+    <div id="heroWorkstationSlot" class="w-full max-w-3xl mx-auto mb-14 px-2">
+<!-- Modal Card Container -->
+        <section id="workspaceContainer" class="relative bg-white rounded-3xl shadow-[0_12px_40px_rgb(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.04)] border border-zinc-200/90 w-full max-w-3xl p-5 sm:p-8 z-10 overflow-hidden transform transition-all" onclick="event.stopPropagation()" aria-label="Tool Workspace">
+            <!-- Quick Tool Switcher Tabs -->
+            <div class="flex items-center gap-1.5 pb-4 mb-5 border-b border-zinc-100 overflow-x-auto no-scrollbar" role="tablist">
+                <button type="button" onclick="selectHeroTab('word-to-pdf')" id="tab-word-to-pdf" class="hero-tab active px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900 text-white transition flex items-center gap-1.5 flex-shrink-0 shadow-xs">
+                    <span>📄</span> Word to PDF
                 </button>
-                <button type="button" onclick="openWorkspaceById('image-to-text')" class="flex-1 md:flex-initial px-3.5 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-medium rounded-xl text-xs transition border border-zinc-700 flex items-center justify-center">
-                    Image to Text
+                <button type="button" onclick="selectHeroTab('pdf-to-word')" id="tab-pdf-to-word" class="hero-tab px-3.5 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition flex items-center gap-1.5 flex-shrink-0">
+                    <span>📝</span> PDF to Word
                 </button>
+                <button type="button" onclick="selectHeroTab('image-to-excel')" id="tab-image-to-excel" class="hero-tab px-3.5 py-1.5 rounded-full text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 transition flex items-center gap-1.5 flex-shrink-0">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>📊</span> Marksheet to Excel
+                </button>
+                <button type="button" onclick="selectHeroTab('compress-pdf')" id="tab-compress-pdf" class="hero-tab px-3.5 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition flex items-center gap-1.5 flex-shrink-0">
+                    <span>🗜️</span> Compress PDF
+                </button>
+                <button type="button" onclick="selectHeroTab('merge-pdf')" id="tab-merge-pdf" class="hero-tab px-3.5 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition flex items-center gap-1.5 flex-shrink-0">
+                    <span>🔗</span> Merge PDF
+                </button>
+                <a href="#directoryHeading" class="px-3.5 py-1.5 rounded-full text-xs font-medium text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 transition flex items-center gap-1 flex-shrink-0">
+                    All 20 Tools &darr;
+                </a>
             </div>
-        </div>
-    </section>
 
-    <!-- CATEGORY FILTER PILLS -->
-    <div class="max-w-6xl mx-auto flex items-center justify-center sm:justify-start gap-2 mb-6 px-2 flex-wrap" aria-label="Tool Categories">
-        <button type="button" onclick="filterCategory('all', this)" class="category-pill active px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900 text-white transition shadow-sm flex items-center gap-1.5">
-            All Tools (20)
-        </button>
-        <button type="button" onclick="filterCategory('ai-ocr', this)" class="category-pill px-3.5 py-1.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-700 hover:bg-zinc-200 transition flex items-center gap-1.5 border border-zinc-200">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            AI OCR &amp; Marksheets <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.2 rounded-full">New</span>
-        </button>
-        <button type="button" onclick="filterCategory('pdf', this)" class="category-pill px-3.5 py-1.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-700 hover:bg-zinc-200 transition border border-zinc-200">
-            PDF Tools
-        </button>
-        <button type="button" onclick="filterCategory('image', this)" class="category-pill px-3.5 py-1.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-700 hover:bg-zinc-200 transition border border-zinc-200">
-            Image Tools
-        </button>
-    </div>
-
-    <!-- GRID VIEW -->
-    <main id="gridContainer"
-        class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-
-        <div id="tool-card-merge-pdf" role="button" tabindex="0" data-category="pdf"
-            aria-label="Merge PDF - Combine multiple PDFs into one." onclick="openWorkspaceById('merge-pdf')"
-            class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h6.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-1.5M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
-            </div>
-            <h2 id="tool-title-merge-pdf" class="text-base font-semibold text-zinc-900 mb-1">Merge PDF</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Combine multiple PDFs into one document.</p>
-        </div>
-
-        <div id="tool-card-split-pdf" role="button" tabindex="0" data-category="pdf"
-            aria-label="Split PDF - Separate pages into multiple PDFs." onclick="openWorkspaceById('split-pdf')"
-            class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 0A3 3 0 104.879 4.879a3 3 0 004.242 4.242zm0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243z"></path></svg>
-            </div>
-            <h2 id="tool-title-split-pdf" class="text-base font-semibold text-zinc-900 mb-1">Split PDF</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Separate pages into multiple PDFs.</p>
-        </div>
-
-        <div id="tool-card-compress-pdf" role="button" tabindex="0" data-category="pdf"
-            aria-label="Compress PDF - Reduce file size while saving quality."
-            onclick="openWorkspaceById('compress-pdf')" class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
-            </div>
-            <h2 id="tool-title-compress-pdf" class="text-base font-semibold text-zinc-900 mb-1">Compress PDF</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Reduce file size maintaining quality.</p>
-        </div>
-
-        <div id="tool-card-pdf-to-word" role="button" tabindex="0" data-category="pdf"
-            aria-label="PDF to Word - Convert PDFs to editable DOCX." onclick="openWorkspaceById('pdf-to-word')"
-            class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-            </div>
-            <h2 id="tool-title-pdf-to-word" class="text-base font-semibold text-zinc-900 mb-1">PDF to Word</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Convert PDFs to editable DOCX documents.</p>
-        </div>
-
-        <div id="tool-card-pdf-to-ppt" role="button" tabindex="0" data-category="pdf"
-            aria-label="PDF to PPT - Convert PDFs to PowerPoint slides." onclick="openWorkspaceById('pdf-to-ppt')"
-            class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12H4z"></path></svg>
-            </div>
-            <h2 id="tool-title-pdf-to-ppt" class="text-base font-semibold text-zinc-900 mb-1">PDF to PPT</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Convert PDFs to PowerPoint presentations.</p>
-        </div>
-
-        <div id="tool-card-pdf-to-excel" role="button" tabindex="0" data-category="pdf"
-            aria-label="PDF to Excel - Extract PDF tables to spreadsheet." onclick="openWorkspaceById('pdf-to-excel')"
-            class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            </div>
-            <h2 id="tool-title-pdf-to-excel" class="text-base font-semibold text-zinc-900 mb-1">PDF to Excel</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Extract tables to Excel spreadsheets.</p>
-        </div>
-
-        <div id="tool-card-word-to-pdf" role="button" tabindex="0" data-category="pdf"
-            aria-label="Word to PDF - Convert DOCX to standard PDF." onclick="openWorkspaceById('word-to-pdf')"
-            class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-            </div>
-            <h2 id="tool-title-word-to-pdf" class="text-base font-semibold text-zinc-900 mb-1">Word to PDF</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Convert Word DOCX to standard PDF.</p>
-        </div>
-
-        <div id="tool-card-ppt-to-pdf" role="button" tabindex="0" data-category="pdf"
-            aria-label="PPT to PDF - Make PowerPoint slides a PDF." onclick="openWorkspaceById('ppt-to-pdf')"
-            class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 13v-1m4 1v-3m4 3V8M8 21l4-4 4 4M3 4h18M4 4h16v12H4z"></path></svg>
-            </div>
-            <h2 id="tool-title-ppt-to-pdf" class="text-base font-semibold text-zinc-900 mb-1">PPT to PDF</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Convert PowerPoint presentations to PDF.</p>
-        </div>
-
-        <div id="tool-card-excel-to-pdf" role="button" tabindex="0" data-category="pdf"
-            aria-label="Excel to PDF - Make spreadsheets into a PDF." onclick="openWorkspaceById('excel-to-pdf')"
-            class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-            </div>
-            <h2 id="tool-title-excel-to-pdf" class="text-base font-semibold text-zinc-900 mb-1">Excel to PDF</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Convert Excel spreadsheets into PDF.</p>
-        </div>
-
-        <div id="tool-card-pdf-to-jpg" role="button" tabindex="0" data-category="pdf image" aria-label="PDF to JPG - Extract PDF pages as images."
-            onclick="openWorkspaceById('pdf-to-jpg')" class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-            </div>
-            <h2 id="tool-title-pdf-to-jpg" class="text-base font-semibold text-zinc-900 mb-1">PDF to JPG</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Extract PDF pages as high quality images.</p>
-        </div>
-
-        <div id="tool-card-jpg-to-pdf" role="button" tabindex="0" data-category="pdf image" aria-label="JPG to PDF - Combine images into a PDF."
-            onclick="openWorkspaceById('jpg-to-pdf')" class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-            </div>
-            <h2 id="tool-title-jpg-to-pdf" class="text-base font-semibold text-zinc-900 mb-1">JPG to PDF</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Combine image files into a single PDF.</p>
-        </div>
-
-        <div id="tool-card-unlock-pdf" role="button" tabindex="0" data-category="pdf"
-            aria-label="Unlock PDF - Remove password restrictions." onclick="openWorkspaceById('unlock-pdf')"
-            class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
-            </div>
-            <h2 id="tool-title-unlock-pdf" class="text-base font-semibold text-zinc-900 mb-1">Unlock PDF</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Remove security and password restrictions.</p>
-        </div>
-
-        <div id="tool-card-protect-pdf" role="button" tabindex="0" data-category="pdf"
-            aria-label="Protect PDF - Add password to secure your PDF." onclick="openWorkspaceById('protect-pdf')"
-            class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-            </div>
-            <h2 id="tool-title-protect-pdf" class="text-base font-semibold text-zinc-900 mb-1">Protect PDF</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Add password encryption to your PDF.</p>
-        </div>
-
-        <div id="tool-card-page-numbers" role="button" tabindex="0" data-category="pdf"
-            aria-label="Page Numbers - Stamp page numbers to a PDF." onclick="openWorkspaceById('page-numbers')"
-            class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
-            </div>
-            <h2 id="tool-title-page-numbers" class="text-base font-semibold text-zinc-900 mb-1">Page Numbers</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Insert customized page numbers to PDF.</p>
-        </div>
-
-        <div id="tool-card-translate-pdf" role="button" tabindex="0" data-category="pdf"
-            aria-label="Translate PDF - Extract and translate PDF text." onclick="openWorkspaceById('translate-pdf')"
-            class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
-            </div>
-            <h2 id="tool-title-translate-pdf" class="text-base font-semibold text-zinc-900 mb-1">Translate PDF</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Translate document text between languages.</p>
-        </div>
-
-        <div id="tool-card-compress-image" role="button" tabindex="0" data-category="image"
-            aria-label="Compress Image - Squeeze images to target KB." onclick="openWorkspaceById('compress-image')"
-            class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
-            </div>
-            <h2 id="tool-title-compress-image" class="text-base font-semibold text-zinc-900 mb-1">Compress Image</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Reduce image file size to target KB.</p>
-        </div>
-
-        <div id="tool-card-convert-image-format" role="button" tabindex="0" data-category="image"
-            aria-label="Convert Image - Change format PNG, JPG, WEBP."
-            onclick="openWorkspaceById('convert-image-format')" class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-            </div>
-            <h2 id="tool-title-convert-image-format" class="text-base font-semibold text-zinc-900 mb-1">Convert Image</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Convert between PNG, JPG, and WEBP formats.</p>
-        </div>
-
-        <div id="tool-card-edit-pdf" role="button" tabindex="0" data-category="pdf"
-            aria-label="Edit PDF - Add text, replace text, or rotate PDF."
-            onclick="openWorkspaceById('edit-pdf')" class="tool-card">
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-            </div>
-            <h2 id="tool-title-edit-pdf" class="text-base font-semibold text-zinc-900 mb-1">Edit PDF Studio</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Edit PDF text, replace text, and add elements.</p>
-        </div>
-
-        <div id="tool-card-image-to-text" role="button" tabindex="0"
-            data-category="ai-ocr image"
-            aria-label="Image to Text - Extract text from images using OCR."
-            onclick="openWorkspaceById('image-to-text')" class="tool-card relative group border-zinc-300 hover:border-zinc-900">
-            <span class="absolute top-2.5 right-2.5 px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded-full uppercase tracking-wider flex items-center gap-1 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>New</span>
-            <div class="tool-icon-wrapper" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M14 3h7m-7 4h7m-7 4h4"></path></svg>
-            </div>
-            <h2 id="tool-title-image-to-text" class="text-base font-semibold text-zinc-900 mb-1">Image to Text</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Extract text from photos and PNGs via OCR.</p>
-        </div>
-
-        <div id="tool-card-image-to-excel" role="button" tabindex="0"
-            data-category="ai-ocr image"
-            aria-label="Image to Excel - Extract marksheets and tables from photo to Excel."
-            onclick="openWorkspaceById('image-to-excel')" class="tool-card relative group border-emerald-400 hover:border-emerald-600 ring-1 ring-emerald-500/30">
-            <span class="absolute top-2.5 right-2.5 px-2 py-0.5 bg-emerald-600 text-white text-[10px] font-bold rounded-full uppercase tracking-wider flex items-center gap-1 shadow-sm"><span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>New AI</span>
-            <div class="tool-icon-wrapper text-emerald-700 bg-emerald-50 border-emerald-200" aria-hidden="true">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 3h6v6h-6zM15 6h6"></path></svg>
-            </div>
-            <h2 id="tool-title-image-to-excel" class="text-base font-semibold text-zinc-900 mb-1">Image to Excel</h2>
-            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Extract student marksheets and tables into Excel.</p>
-        </div>
-
-    </main>
-
-    <!-- WORKSPACE MODAL OVERLAY (Mobile & Desktop Modal Dialog) -->
-    <div id="workspaceModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm p-3 sm:p-6 flex items-center justify-center transition-opacity" role="dialog" aria-modal="true">
-        <!-- Backdrop click listener to close -->
-        <div class="fixed inset-0" onclick="closeWorkspace()" aria-hidden="true"></div>
-        
-        <!-- Modal Card Container -->
-        <section id="workspaceContainer" class="relative bg-white rounded-2xl shadow-2xl border border-zinc-200 w-full max-w-2xl p-5 sm:p-8 z-10 my-auto max-h-[92vh] overflow-y-auto transform transition-all" onclick="event.stopPropagation()" aria-label="Tool Workspace">
             <!-- Modal Header with Title & Close (X) Button -->
             <div class="flex items-center justify-between pb-3 mb-5 border-b border-zinc-100">
                 <div class="flex items-center gap-3">
@@ -630,7 +407,7 @@
                         <p id="toolSubDescription" class="text-xs text-zinc-500 mt-0.5">Upload file to convert instantly</p>
                     </div>
                 </div>
-                <button type="button" onclick="closeWorkspace()" aria-label="Close modal" class="w-9 h-9 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-900 flex items-center justify-center transition focus:outline-none">
+                <button type="button" id="workspaceCloseBtn" onclick="closeWorkspace()" aria-label="Close modal" class="hidden w-9 h-9 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-900 flex items-center justify-center transition focus:outline-none">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
@@ -918,6 +695,238 @@
     </section>
     </div>
 
+    <!-- CATEGORY FILTER PILLS -->
+    <div class="max-w-6xl mx-auto flex items-center justify-center sm:justify-start gap-2 mb-6 px-2 flex-wrap" aria-label="Tool Categories">
+        <button type="button" onclick="filterCategory('all', this)" class="category-pill active px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900 text-white transition shadow-sm flex items-center gap-1.5">
+            All Tools (20)
+        </button>
+        <button type="button" onclick="filterCategory('ai-ocr', this)" class="category-pill px-3.5 py-1.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-700 hover:bg-zinc-200 transition flex items-center gap-1.5 border border-zinc-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            AI OCR &amp; Marksheets <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.2 rounded-full">New</span>
+        </button>
+        <button type="button" onclick="filterCategory('pdf', this)" class="category-pill px-3.5 py-1.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-700 hover:bg-zinc-200 transition border border-zinc-200">
+            PDF Tools
+        </button>
+        <button type="button" onclick="filterCategory('image', this)" class="category-pill px-3.5 py-1.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-700 hover:bg-zinc-200 transition border border-zinc-200">
+            Image Tools
+        </button>
+    </div>
+
+    <!-- GRID VIEW -->
+    <main id="gridContainer"
+        class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+
+        <div id="tool-card-merge-pdf" role="button" tabindex="0" data-category="pdf"
+            aria-label="Merge PDF - Combine multiple PDFs into one." onclick="openWorkspaceById('merge-pdf')"
+            class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h6.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-1.5M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+            </div>
+            <h2 id="tool-title-merge-pdf" class="text-base font-semibold text-zinc-900 mb-1">Merge PDF</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Combine multiple PDFs into one document.</p>
+        </div>
+
+        <div id="tool-card-split-pdf" role="button" tabindex="0" data-category="pdf"
+            aria-label="Split PDF - Separate pages into multiple PDFs." onclick="openWorkspaceById('split-pdf')"
+            class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 0A3 3 0 104.879 4.879a3 3 0 004.242 4.242zm0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243z"></path></svg>
+            </div>
+            <h2 id="tool-title-split-pdf" class="text-base font-semibold text-zinc-900 mb-1">Split PDF</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Separate pages into multiple PDFs.</p>
+        </div>
+
+        <div id="tool-card-compress-pdf" role="button" tabindex="0" data-category="pdf"
+            aria-label="Compress PDF - Reduce file size while saving quality."
+            onclick="openWorkspaceById('compress-pdf')" class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+            </div>
+            <h2 id="tool-title-compress-pdf" class="text-base font-semibold text-zinc-900 mb-1">Compress PDF</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Reduce file size maintaining quality.</p>
+        </div>
+
+        <div id="tool-card-pdf-to-word" role="button" tabindex="0" data-category="pdf"
+            aria-label="PDF to Word - Convert PDFs to editable DOCX." onclick="openWorkspaceById('pdf-to-word')"
+            class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            </div>
+            <h2 id="tool-title-pdf-to-word" class="text-base font-semibold text-zinc-900 mb-1">PDF to Word</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Convert PDFs to editable DOCX documents.</p>
+        </div>
+
+        <div id="tool-card-pdf-to-ppt" role="button" tabindex="0" data-category="pdf"
+            aria-label="PDF to PPT - Convert PDFs to PowerPoint slides." onclick="openWorkspaceById('pdf-to-ppt')"
+            class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12H4z"></path></svg>
+            </div>
+            <h2 id="tool-title-pdf-to-ppt" class="text-base font-semibold text-zinc-900 mb-1">PDF to PPT</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Convert PDFs to PowerPoint presentations.</p>
+        </div>
+
+        <div id="tool-card-pdf-to-excel" role="button" tabindex="0" data-category="pdf"
+            aria-label="PDF to Excel - Extract PDF tables to spreadsheet." onclick="openWorkspaceById('pdf-to-excel')"
+            class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            </div>
+            <h2 id="tool-title-pdf-to-excel" class="text-base font-semibold text-zinc-900 mb-1">PDF to Excel</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Extract tables to Excel spreadsheets.</p>
+        </div>
+
+        <div id="tool-card-word-to-pdf" role="button" tabindex="0" data-category="pdf"
+            aria-label="Word to PDF - Convert DOCX to standard PDF." onclick="openWorkspaceById('word-to-pdf')"
+            class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            </div>
+            <h2 id="tool-title-word-to-pdf" class="text-base font-semibold text-zinc-900 mb-1">Word to PDF</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Convert Word DOCX to standard PDF.</p>
+        </div>
+
+        <div id="tool-card-ppt-to-pdf" role="button" tabindex="0" data-category="pdf"
+            aria-label="PPT to PDF - Make PowerPoint slides a PDF." onclick="openWorkspaceById('ppt-to-pdf')"
+            class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 13v-1m4 1v-3m4 3V8M8 21l4-4 4 4M3 4h18M4 4h16v12H4z"></path></svg>
+            </div>
+            <h2 id="tool-title-ppt-to-pdf" class="text-base font-semibold text-zinc-900 mb-1">PPT to PDF</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Convert PowerPoint presentations to PDF.</p>
+        </div>
+
+        <div id="tool-card-excel-to-pdf" role="button" tabindex="0" data-category="pdf"
+            aria-label="Excel to PDF - Make spreadsheets into a PDF." onclick="openWorkspaceById('excel-to-pdf')"
+            class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            </div>
+            <h2 id="tool-title-excel-to-pdf" class="text-base font-semibold text-zinc-900 mb-1">Excel to PDF</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Convert Excel spreadsheets into PDF.</p>
+        </div>
+
+        <div id="tool-card-pdf-to-jpg" role="button" tabindex="0" data-category="pdf image" aria-label="PDF to JPG - Extract PDF pages as images."
+            onclick="openWorkspaceById('pdf-to-jpg')" class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+            </div>
+            <h2 id="tool-title-pdf-to-jpg" class="text-base font-semibold text-zinc-900 mb-1">PDF to JPG</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Extract PDF pages as high quality images.</p>
+        </div>
+
+        <div id="tool-card-jpg-to-pdf" role="button" tabindex="0" data-category="pdf image" aria-label="JPG to PDF - Combine images into a PDF."
+            onclick="openWorkspaceById('jpg-to-pdf')" class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            </div>
+            <h2 id="tool-title-jpg-to-pdf" class="text-base font-semibold text-zinc-900 mb-1">JPG to PDF</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Combine image files into a single PDF.</p>
+        </div>
+
+        <div id="tool-card-unlock-pdf" role="button" tabindex="0" data-category="pdf"
+            aria-label="Unlock PDF - Remove password restrictions." onclick="openWorkspaceById('unlock-pdf')"
+            class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+            </div>
+            <h2 id="tool-title-unlock-pdf" class="text-base font-semibold text-zinc-900 mb-1">Unlock PDF</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Remove security and password restrictions.</p>
+        </div>
+
+        <div id="tool-card-protect-pdf" role="button" tabindex="0" data-category="pdf"
+            aria-label="Protect PDF - Add password to secure your PDF." onclick="openWorkspaceById('protect-pdf')"
+            class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            <h2 id="tool-title-protect-pdf" class="text-base font-semibold text-zinc-900 mb-1">Protect PDF</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Add password encryption to your PDF.</p>
+        </div>
+
+        <div id="tool-card-page-numbers" role="button" tabindex="0" data-category="pdf"
+            aria-label="Page Numbers - Stamp page numbers to a PDF." onclick="openWorkspaceById('page-numbers')"
+            class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
+            </div>
+            <h2 id="tool-title-page-numbers" class="text-base font-semibold text-zinc-900 mb-1">Page Numbers</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Insert customized page numbers to PDF.</p>
+        </div>
+
+        <div id="tool-card-translate-pdf" role="button" tabindex="0" data-category="pdf"
+            aria-label="Translate PDF - Extract and translate PDF text." onclick="openWorkspaceById('translate-pdf')"
+            class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+            </div>
+            <h2 id="tool-title-translate-pdf" class="text-base font-semibold text-zinc-900 mb-1">Translate PDF</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Translate document text between languages.</p>
+        </div>
+
+        <div id="tool-card-compress-image" role="button" tabindex="0" data-category="image"
+            aria-label="Compress Image - Squeeze images to target KB." onclick="openWorkspaceById('compress-image')"
+            class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+            </div>
+            <h2 id="tool-title-compress-image" class="text-base font-semibold text-zinc-900 mb-1">Compress Image</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Reduce image file size to target KB.</p>
+        </div>
+
+        <div id="tool-card-convert-image-format" role="button" tabindex="0" data-category="image"
+            aria-label="Convert Image - Change format PNG, JPG, WEBP."
+            onclick="openWorkspaceById('convert-image-format')" class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            </div>
+            <h2 id="tool-title-convert-image-format" class="text-base font-semibold text-zinc-900 mb-1">Convert Image</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Convert between PNG, JPG, and WEBP formats.</p>
+        </div>
+
+        <div id="tool-card-edit-pdf" role="button" tabindex="0" data-category="pdf"
+            aria-label="Edit PDF - Add text, replace text, or rotate PDF."
+            onclick="openWorkspaceById('edit-pdf')" class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            </div>
+            <h2 id="tool-title-edit-pdf" class="text-base font-semibold text-zinc-900 mb-1">Edit PDF Studio</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Edit PDF text, replace text, and add elements.</p>
+        </div>
+
+        <div id="tool-card-image-to-text" role="button" tabindex="0"
+            data-category="ai-ocr image"
+            aria-label="Image to Text - Extract text from images using OCR."
+            onclick="openWorkspaceById('image-to-text')" class="tool-card relative group border-zinc-300 hover:border-zinc-900">
+            <span class="absolute top-2.5 right-2.5 px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded-full uppercase tracking-wider flex items-center gap-1 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>New</span>
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M14 3h7m-7 4h7m-7 4h4"></path></svg>
+            </div>
+            <h2 id="tool-title-image-to-text" class="text-base font-semibold text-zinc-900 mb-1">Image to Text</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Extract text from photos and PNGs via OCR.</p>
+        </div>
+
+        <div id="tool-card-image-to-excel" role="button" tabindex="0"
+            data-category="ai-ocr image"
+            aria-label="Image to Excel - Extract marksheets and tables from photo to Excel."
+            onclick="openWorkspaceById('image-to-excel')" class="tool-card relative group border-emerald-400 hover:border-emerald-600 ring-1 ring-emerald-500/30">
+            <span class="absolute top-2.5 right-2.5 px-2 py-0.5 bg-emerald-600 text-white text-[10px] font-bold rounded-full uppercase tracking-wider flex items-center gap-1 shadow-sm"><span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>New AI</span>
+            <div class="tool-icon-wrapper text-emerald-700 bg-emerald-50 border-emerald-200" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 3h6v6h-6zM15 6h6"></path></svg>
+            </div>
+            <h2 id="tool-title-image-to-excel" class="text-base font-semibold text-zinc-900 mb-1">Image to Excel</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Extract student marksheets and tables into Excel.</p>
+        </div>
+
+    </main>
+
+    <!-- WORKSPACE MODAL OVERLAY (Mobile Modal Dialog) -->
+    <div id="workspaceModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm p-3 sm:p-6 flex items-center justify-center transition-opacity" role="dialog" aria-modal="true">
+        <!-- Backdrop click listener to close -->
+        <div class="fixed inset-0" onclick="closeWorkspace()" aria-hidden="true"></div>
+        <div id="workspaceModalCard" class="w-full max-w-3xl z-10 my-auto flex items-center justify-center"></div>
+    </div>
+
     <!-- SEO CONTENT SECTION (Features, How It Works, Tools Directory, FAQs) -->
     <article id="seoArticle" class="max-w-6xl mx-auto mt-20 space-y-16">
         <!-- Features & Benefits -->
@@ -1079,87 +1088,91 @@
     </article>
     </div><!-- END MAIN PAGE CONTAINER -->
 
-    <!-- MODERN 4-COLUMN SAAS FOOTER -->
-    <footer class="w-full bg-zinc-950 text-zinc-400 mt-24 border-t border-zinc-800 pt-16 pb-12" aria-label="Site Footer">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-zinc-800/80">
+    <!-- LUMINOUS MODERN SAAS FOOTER -->
+    <footer class="w-full bg-gradient-to-b from-white via-zinc-50/60 to-zinc-100/90 text-zinc-600 mt-28 border-t border-zinc-200/90 pt-16 sm:pt-20 pb-12 relative overflow-hidden" aria-label="Site Footer">
+        <!-- Delicate ambient top radial light -->
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-gradient-to-b from-zinc-200/40 to-transparent blur-3xl pointer-events-none" aria-hidden="true"></div>
+
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 relative">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-14 border-b border-zinc-200/80">
                 <!-- Brand & Mission Column -->
                 <div class="space-y-4 md:col-span-1">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-9 h-9 rounded-xl bg-white text-zinc-950 flex items-center justify-center font-black shadow-sm">
-                            <svg class="w-5 h-5 text-zinc-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <a href="https://officialali.dev/" class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-zinc-950 via-zinc-900 to-zinc-800 text-white flex items-center justify-center font-black shadow-sm ring-1 ring-zinc-900/10">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         </div>
-                        <div>
-                            <span class="text-base font-bold text-white tracking-tight">SmartFile</span>
-                            <span class="text-xs text-zinc-500 block leading-none">Converter</span>
+                        <div class="flex items-baseline gap-1.5">
+                            <span class="text-base font-bold text-zinc-900 tracking-[-0.03em]">Smart<span class="text-zinc-500 font-semibold">File</span></span>
+                            <span class="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80">v2.0</span>
                         </div>
-                    </div>
-                    <p class="text-xs text-zinc-400 leading-relaxed">
-                        Free, instant, and secure document workstation. Convert Word, PDF, Excel, PowerPoint, and images with 100% original table &amp; layout preservation.
+                    </a>
+                    <p class="text-xs text-zinc-500 leading-relaxed">
+                        Free, instant, and secure document workstation. Convert Word, PDF, Excel, PowerPoint, and images with 100% original table, font, and layout preservation.
                     </p>
-                    <div class="flex flex-col gap-2 pt-1 text-[11px] text-zinc-400">
-                        <span class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg> 256-Bit SSL End-to-End Encryption</span>
-                        <span class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg> Automatic File Purge (Zero Storage)</span>
-                        <span class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> High-Speed In-Browser &amp; Cloud Engine</span>
+                    <div class="flex flex-col gap-2 pt-1 text-[11px] text-zinc-600">
+                        <span class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg> 256-Bit SSL End-to-End Encryption</span>
+                        <span class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg> Automatic Instant File Shredder</span>
+                        <span class="flex items-center gap-2"><svg class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Client-Side &amp; High-Speed Cloud Engine</span>
                     </div>
                 </div>
 
                 <!-- PDF Tools Column -->
                 <div class="space-y-3">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-white">Popular PDF Tools</h3>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-900">Popular PDF Tools</h3>
                     <ul class="space-y-2 text-xs">
-                        <li><a href="https://officialali.dev/pdf-to-word" onclick="openWorkspaceById('pdf-to-word'); return false;" class="hover:text-white transition">PDF to Word (Editable DOCX)</a></li>
-                        <li><a href="https://officialali.dev/word-to-pdf" onclick="openWorkspaceById('word-to-pdf'); return false;" class="hover:text-white transition">Word to PDF Converter</a></li>
-                        <li><a href="https://officialali.dev/merge-pdf" onclick="openWorkspaceById('merge-pdf'); return false;" class="hover:text-white transition">Merge PDF Files</a></li>
-                        <li><a href="https://officialali.dev/split-pdf" onclick="openWorkspaceById('split-pdf'); return false;" class="hover:text-white transition">Split PDF Pages</a></li>
-                        <li><a href="https://officialali.dev/compress-pdf" onclick="openWorkspaceById('compress-pdf'); return false;" class="hover:text-white transition">Compress PDF (Custom KB)</a></li>
-                        <li><a href="https://officialali.dev/edit-pdf" onclick="openWorkspaceById('edit-pdf'); return false;" class="hover:text-white transition">Edit PDF Studio</a></li>
-                        <li><a href="https://officialali.dev/pdf-to-excel" onclick="openWorkspaceById('pdf-to-excel'); return false;" class="hover:text-white transition">PDF to Excel (Spreadsheet)</a></li>
+                        <li><a href="https://officialali.dev/pdf-to-word" onclick="selectHeroTab('pdf-to-word'); return false;" class="text-zinc-600 hover:text-zinc-950 transition">PDF to Word (Exact Table)</a></li>
+                        <li><a href="https://officialali.dev/word-to-pdf" onclick="selectHeroTab('word-to-pdf'); return false;" class="text-zinc-600 hover:text-zinc-950 transition">Word to PDF Converter</a></li>
+                        <li><a href="https://officialali.dev/merge-pdf" onclick="selectHeroTab('merge-pdf'); return false;" class="text-zinc-600 hover:text-zinc-950 transition">Merge PDF Files</a></li>
+                        <li><a href="https://officialali.dev/split-pdf" onclick="selectHeroTab('split-pdf'); return false;" class="text-zinc-600 hover:text-zinc-950 transition">Split PDF Pages</a></li>
+                        <li><a href="https://officialali.dev/compress-pdf" onclick="selectHeroTab('compress-pdf'); return false;" class="text-zinc-600 hover:text-zinc-950 transition">Compress PDF (Custom KB)</a></li>
+                        <li><a href="https://officialali.dev/edit-pdf" onclick="selectHeroTab('edit-pdf'); return false;" class="text-zinc-600 hover:text-zinc-950 transition">Edit PDF Studio</a></li>
+                        <li><a href="https://officialali.dev/pdf-to-excel" onclick="selectHeroTab('pdf-to-excel'); return false;" class="text-zinc-600 hover:text-zinc-950 transition">PDF to Excel (Spreadsheet)</a></li>
                     </ul>
                 </div>
 
                 <!-- AI OCR & Image Tools Column -->
                 <div class="space-y-3">
                     <div class="flex items-center gap-1.5">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-white">AI OCR &amp; Images</h3>
-                        <span class="text-[9px] bg-emerald-500 text-zinc-950 font-bold px-1.5 py-0.2 rounded-full uppercase">New</span>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-900">AI OCR &amp; Images</h3>
+                        <span class="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.2 rounded-full uppercase border border-emerald-200">New AI</span>
                     </div>
                     <ul class="space-y-2 text-xs">
-                        <li><a href="https://officialali.dev/image-to-excel" onclick="openWorkspaceById('image-to-excel'); return false;" class="text-emerald-400 hover:text-emerald-300 font-semibold transition flex items-center gap-1">Image to Excel (Marksheet)</a></li>
-                        <li><a href="https://officialali.dev/image-to-text" onclick="openWorkspaceById('image-to-text'); return false;" class="hover:text-white transition">Image to Text (AI OCR)</a></li>
-                        <li><a href="https://officialali.dev/compress-image" onclick="openWorkspaceById('compress-image'); return false;" class="hover:text-white transition">Compress Image to KB</a></li>
-                        <li><a href="https://officialali.dev/convert-image-format" onclick="openWorkspaceById('convert-image-format'); return false;" class="hover:text-white transition">Convert Image Format</a></li>
-                        <li><a href="https://officialali.dev/jpg-to-pdf" onclick="openWorkspaceById('jpg-to-pdf'); return false;" class="hover:text-white transition">JPG to PDF</a></li>
-                        <li><a href="https://officialali.dev/pdf-to-jpg" onclick="openWorkspaceById('pdf-to-jpg'); return false;" class="hover:text-white transition">PDF to JPG Images</a></li>
-                        <li><a href="https://officialali.dev/translate-pdf" onclick="openWorkspaceById('translate-pdf'); return false;" class="hover:text-white transition">Translate PDF Document</a></li>
+                        <li><a href="https://officialali.dev/image-to-excel" onclick="selectHeroTab('image-to-excel'); return false;" class="text-emerald-700 hover:text-emerald-900 font-semibold transition flex items-center gap-1">Image to Excel (Marksheet)</a></li>
+                        <li><a href="https://officialali.dev/image-to-text" onclick="selectHeroTab('image-to-text'); return false;" class="text-zinc-600 hover:text-zinc-950 transition">Image to Text (AI OCR)</a></li>
+                        <li><a href="https://officialali.dev/compress-image" onclick="selectHeroTab('compress-image'); return false;" class="text-zinc-600 hover:text-zinc-950 transition">Compress Image to KB</a></li>
+                        <li><a href="https://officialali.dev/convert-image-format" onclick="selectHeroTab('convert-image-format'); return false;" class="text-zinc-600 hover:text-zinc-950 transition">Convert Image Format</a></li>
+                        <li><a href="https://officialali.dev/jpg-to-pdf" onclick="selectHeroTab('jpg-to-pdf'); return false;" class="text-zinc-600 hover:text-zinc-950 transition">JPG to PDF</a></li>
+                        <li><a href="https://officialali.dev/pdf-to-jpg" onclick="selectHeroTab('pdf-to-jpg'); return false;" class="text-zinc-600 hover:text-zinc-950 transition">PDF to JPG Images</a></li>
+                        <li><a href="https://officialali.dev/translate-pdf" onclick="selectHeroTab('translate-pdf'); return false;" class="text-zinc-600 hover:text-zinc-950 transition">Translate PDF Document</a></li>
                     </ul>
                 </div>
 
                 <!-- Security & Quick Links Column -->
                 <div class="space-y-3">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-white">Quick Links &amp; Info</h3>
-                    <ul class="space-y-2 text-xs">
-                        <li><a href="https://officialali.dev/#directoryHeading" class="hover:text-white transition">All 20 Converter Tools</a></li>
-                        <li><a href="https://officialali.dev/#faqHeading" class="hover:text-white transition">Frequently Asked Questions</a></li>
-                        <li><a href="https://officialali.dev/sitemap.xml" target="_blank" class="hover:text-white transition">XML Sitemap</a></li>
-                        <li><a href="https://officialali.dev/llms.txt" target="_blank" class="hover:text-white transition">LLM &amp; API Documentation</a></li>
-                        <li><a href="https://officialali.dev/llms-full.txt" target="_blank" class="hover:text-white transition">Full Technical Spec</a></li>
-                    </ul>
-                    <div class="pt-3">
-                        <div class="p-3 bg-zinc-900 border border-zinc-800 rounded-xl">
-                            <span class="text-[11px] text-zinc-300 font-semibold block mb-0.5">100% Free Guarantee</span>
-                            <p class="text-[10px] text-zinc-500 leading-normal">No hidden fees, subscriptions, or credit card requirements.</p>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-900">Platform &amp; Status</h3>
+                    <div class="p-3 bg-white border border-zinc-200 rounded-2xl shadow-xs">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span class="text-xs text-zinc-900 font-semibold">All Systems Operational</span>
                         </div>
+                        <p class="text-[11px] text-zinc-500 leading-normal">Cloud and client-side document engines running with zero downtime.</p>
                     </div>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="#gridContainer" class="text-zinc-600 hover:text-zinc-950 transition">Browse All 20 Tools</a></li>
+                        <li><a href="#faqHeading" class="text-zinc-600 hover:text-zinc-950 transition">Frequently Asked Questions</a></li>
+                        <li><a href="https://officialali.dev/sitemap.xml" target="_blank" class="text-zinc-600 hover:text-zinc-950 transition">XML Sitemap</a></li>
+                        <li><a href="https://officialali.dev/llms.txt" target="_blank" class="text-zinc-600 hover:text-zinc-950 transition">LLM &amp; API Specs</a></li>
+                    </ul>
                 </div>
             </div>
 
             <!-- Bottom Sub-Footer Bar -->
             <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
-                <p>Smart File Converter &copy; 2026. All rights reserved.</p>
-                <div class="flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-zinc-400 font-medium">All Cloud &amp; Client Systems Operational</span>
+                <p>Smart File Converter &copy; 2026. Handcrafted for students, educators &amp; professionals.</p>
+                <div class="flex items-center gap-3">
+                    <span class="px-2.5 py-1 rounded-full bg-zinc-100 text-zinc-700 font-medium text-[11px]">100% Free Forever</span>
+                    <span class="text-zinc-400">•</span>
+                    <span class="text-zinc-500">Zero File Storage</span>
                 </div>
             </div>
         </div>
@@ -1277,14 +1290,54 @@
             }
         }
 
-        function openWorkspaceById(toolId) {
+        function openWorkspaceById(toolId, isFromCardClick = true) {
             const tool = toolsData[toolId] || { name: toolId, icon: '' };
             const modal = document.getElementById('workspaceModal');
+            const modalCard = document.getElementById('workspaceModalCard');
             const container = document.getElementById('workspaceContainer');
+            const slot = document.getElementById('heroWorkstationSlot');
+            const closeBtn = document.getElementById('workspaceCloseBtn');
             
-            // Show modal without hiding the dashboard grid
-            if (modal) modal.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
+            // On mobile screen (< 768px) AND when triggered from card click down in the directory:
+            const isMobileCardClick = isFromCardClick && window.innerWidth < 768;
+            
+            if (isMobileCardClick) {
+                // Move container into modal for focused mobile view
+                if (modalCard && container && container.parentElement !== modalCard) {
+                    modalCard.appendChild(container);
+                }
+                if (modal) modal.classList.remove('hidden');
+                if (closeBtn) closeBtn.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            } else {
+                // Keep container in hero workstation slot
+                if (slot && container && container.parentElement !== slot) {
+                    slot.appendChild(container);
+                }
+                if (modal) modal.classList.add('hidden');
+                if (closeBtn) closeBtn.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+                
+                // If clicked from grid on desktop, smooth-scroll up to hero
+                if (isFromCardClick && container) {
+                    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    container.classList.add('workstation-glow');
+                    setTimeout(() => container.classList.remove('workstation-glow'), 1400);
+                }
+            }
+
+            // Update top tabs active state
+            document.querySelectorAll('.hero-tab').forEach(t => {
+                t.className = 'hero-tab px-3.5 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition flex items-center gap-1.5 flex-shrink-0';
+            });
+            const activeTab = document.getElementById('tab-' + toolId);
+            if (activeTab) {
+                if (toolId === 'image-to-excel') {
+                    activeTab.className = 'hero-tab active px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-700 text-white transition flex items-center gap-1.5 flex-shrink-0 shadow-xs';
+                } else {
+                    activeTab.className = 'hero-tab active px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900 text-white transition flex items-center gap-1.5 flex-shrink-0 shadow-xs';
+                }
+            }
 
             toolIcon.innerHTML = svgIcons[toolId] || tool.icon || '';
             toolTitle.innerText = tool.name || toolId;
@@ -1315,14 +1368,14 @@
             if (toolId === 'convert-image-format') { document.getElementById('imgFormatBlock').classList.remove('hidden'); showSettings = true; }
             
             if (toolId === 'edit-pdf') {
-                container.classList.remove('max-w-2xl');
+                container.classList.remove('max-w-3xl', 'max-w-2xl');
                 container.classList.add('max-w-5xl');
                 document.getElementById('editPdfBlock').classList.remove('hidden');
                 document.getElementById('dropZone')?.classList.add('hidden');
                 document.getElementById('convertBtn')?.classList.add('hidden');
                 showSettings = true;
             } else if (toolId === 'image-to-text' || toolId === 'image-to-excel') {
-                container.classList.remove('max-w-2xl');
+                container.classList.remove('max-w-3xl', 'max-w-2xl');
                 container.classList.add('max-w-5xl');
                 document.getElementById('ocrStudioBlock').classList.remove('hidden');
                 document.getElementById('dropZone')?.classList.add('hidden');
@@ -1331,7 +1384,7 @@
                 initOcrStudio(toolId);
             } else {
                 container.classList.remove('max-w-5xl');
-                container.classList.add('max-w-2xl');
+                container.classList.add('max-w-3xl');
                 document.getElementById('dropZone')?.classList.remove('hidden');
                 document.getElementById('convertBtn')?.classList.remove('hidden');
             }
@@ -1342,9 +1395,13 @@
             if (window.history && window.history.pushState) {
                 const currentPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
                 if (currentPath !== toolId) {
-                    window.history.pushState({ modalOpen: true, toolId: toolId }, null, '/' + toolId);
+                    window.history.pushState({ modalOpen: isMobileCardClick, toolId: toolId }, null, '/' + toolId);
                 }
             }
+        }
+
+        function selectHeroTab(toolId) {
+            openWorkspaceById(toolId, false);
         }
 
         function togglePdfKbInput(val) {
@@ -1359,8 +1416,19 @@
 
         function closeWorkspace(updateHistory = true) {
             const modal = document.getElementById('workspaceModal');
+            const container = document.getElementById('workspaceContainer');
+            const slot = document.getElementById('heroWorkstationSlot');
+            const closeBtn = document.getElementById('workspaceCloseBtn');
+            
             if (modal) modal.classList.add('hidden');
             document.body.classList.remove('overflow-hidden');
+            if (closeBtn) closeBtn.classList.add('hidden');
+            
+            // Return container to hero workstation slot
+            if (container && slot && container.parentElement !== slot) {
+                slot.appendChild(container);
+            }
+
             updatePageMetadata(null);
             if (updateHistory && window.history && window.history.pushState) {
                 const currentPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
@@ -1419,18 +1487,22 @@
             const rawHash = window.location.hash.replace(/^#+/, '');
             const toolId = rawPath || rawHash;
             if (toolId && toolsData[toolId]) {
-                openWorkspaceById(toolId);
+                openWorkspaceById(toolId, false);
+            } else {
+                openWorkspaceById('word-to-pdf', false);
             }
         }
 
-        window.addEventListener('popstate', () => {
+        window.addEventListener('popstate', (e) => {
             const rawPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
             const rawHash = window.location.hash.replace(/^#+/, '');
             const toolId = rawPath || rawHash;
             if (toolId && toolsData[toolId]) {
-                openWorkspaceById(toolId);
+                const isModal = e.state && e.state.modalOpen;
+                openWorkspaceById(toolId, isModal);
             } else {
                 closeWorkspace(false);
+                openWorkspaceById('word-to-pdf', false);
             }
         });
 
