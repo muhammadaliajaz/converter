@@ -6,6 +6,8 @@ import openpyxl
 from docx import Document
 from docx.shared import Pt, RGBColor, Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
+from docx.oxml import parse_xml
 from pptx import Presentation
 from pptx.util import Inches as PPTInches, Pt as PPTPt
 from reportlab.lib.pagesizes import letter
@@ -27,15 +29,15 @@ def pdf_to_docx(input_path, output_path):
     """
     High-Fidelity PDF to DOCX Converter.
     Preserves exact document layout, page dimensions, margins, font styling,
-    alignment, paragraph spacing, tables, embedded images, and page breaks.
-    Applies strict XML 1.0 sanitization to guarantee 0 MS Word corruption errors.
+    alignment, paragraph spacing, multi-column tables, embedded images, and page breaks.
+    Strictly excludes text inside table boundaries from loose paragraph dumping,
+    interleaves tables in their exact vertical order, and sets proper Word table styles.
     """
     try:
         doc = Document()
         pdf = fitz.open(input_path)
 
         for page_idx, page in enumerate(pdf):
-            # Page dimensions and margins setup
             page_rect = page.rect
             page_w_in = page_rect.width / 72.0
             page_h_in = page_rect.height / 72.0
@@ -52,39 +54,193 @@ def pdf_to_docx(input_path, output_path):
             section.left_margin = Inches(0.5)
             section.right_margin = Inches(0.5)
 
+            content_width_in = max(1.0, page_w_in - 1.0)
+
+            # 1. Detect Tables on Page
+            detected_tables = []
+            table_bboxes = []
+            try:
+                tabs = page.find_tables()
+                if not tabs or len(tabs.tables) == 0:
+                    tabs = page.find_tables(strategy="text")
+                if tabs and len(tabs.tables) > 0:
+                    for tab in tabs.tables:
+                        matrix = tab.extract()
+                        if matrix and len(matrix) > 0 and any(any(cell for cell in row) for row in matrix):
+                            detected_tables.append(tab)
+                            table_bboxes.append(tab.bbox)
+            except Exception:
+                pass
+
+            # Helper function: Check if a bounding box overlaps with any detected table
+            def is_inside_table(bbox):
+                bx0, by0, bx1, by1 = bbox
+                bcx = (bx0 + bx1) / 2.0
+                bcy = (by0 + by1) / 2.0
+                for tx0, ty0, tx1, ty1 in table_bboxes:
+                    if (tx0 - 4 <= bcx <= tx1 + 4) and (ty0 - 4 <= bcy <= ty1 + 4):
+                        return True
+                    overlap_x = max(0, min(bx1, tx1) - max(bx0, tx0))
+                    overlap_y = max(0, min(by1, ty1) - max(by0, ty0))
+                    overlap_area = overlap_x * overlap_y
+                    box_area = max(1, (bx1 - bx0) * (by1 - by0))
+                    if (overlap_area / box_area) > 0.4:
+                        return True
+                return False
+
             blocks = page.get_text("dict")["blocks"]
-            tables = page.find_tables()
             img_list = page.get_images()
+
+            # 2. Build Ordered List of Page Elements (Text, Tables, Images)
+            elements = []
+
+            # Add detected tables to elements
+            for tab in detected_tables:
+                elements.append({
+                    'type': 'table',
+                    'y0': tab.bbox[1],
+                    'bbox': tab.bbox,
+                    'tab': tab
+                })
+
+            # Add text blocks (only if NOT inside a table) and images
+            for b in blocks:
+                b_type = b.get("type", 0)
+                b_bbox = b.get("bbox", [0, 0, 0, 0])
+                
+                # Skip text blocks that fall inside a table
+                if is_inside_table(b_bbox):
+                    continue
+
+                if b_type == 0 and "lines" in b:
+                    valid_lines = []
+                    for line in b["lines"]:
+                        line_text = "".join(span.get("text", "") for span in line.get("spans", []))
+                        if clean_xml_text(line_text).strip():
+                            valid_lines.append(line)
+                    if valid_lines:
+                        b_copy = dict(b)
+                        b_copy["lines"] = valid_lines
+                        elements.append({
+                            'type': 'text_block',
+                            'y0': b_bbox[1],
+                            'bbox': b_bbox,
+                            'block': b_copy
+                        })
+                elif b_type == 1 and "image" in b:
+                    elements.append({
+                        'type': 'image_block',
+                        'y0': b_bbox[1],
+                        'bbox': b_bbox,
+                        'block': b
+                    })
+
+            # Sort all elements strictly by their vertical position (top to bottom reading order)
+            elements.sort(key=lambda item: item['y0'])
 
             has_content = False
 
-            # Sort blocks by vertical top position for exact reading order
-            blocks_sorted = sorted(blocks, key=lambda b: b.get("bbox", [0, 0, 0, 0])[1])
+            # 3. Render Elements Sequentially in Document
+            for item in elements:
+                itype = item['type']
 
-            for b in blocks_sorted:
-                # 1. Text Block
-                if b.get("type") == 0 and "lines" in b:
+                # --- TABLE RENDERING ---
+                if itype == 'table':
                     has_content = True
+                    tab = item['tab']
+                    matrix = tab.extract()
+                    if not matrix or len(matrix) == 0:
+                        continue
+
+                    max_cols = max(len(row) for row in matrix if row)
+                    if max_cols == 0:
+                        continue
+
+                    cleaned_matrix = []
+                    for row in matrix:
+                        cleaned_row = [clean_xml_text(cell) if cell is not None else "" for cell in row]
+                        while len(cleaned_row) < max_cols:
+                            cleaned_row.append("")
+                        if any(c.strip() for c in cleaned_row):
+                            cleaned_matrix.append(cleaned_row)
+
+                    if not cleaned_matrix:
+                        continue
+
+                    num_rows = len(cleaned_matrix)
+                    tbl = doc.add_table(rows=num_rows, cols=max_cols)
+                    tbl.style = 'Table Grid'
+                    tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
+                    tbl.autofit = False
+
+                    t_bbox = tab.bbox
+                    t_width_in = min((t_bbox[2] - t_bbox[0]) / 72.0, content_width_in)
+                    col_width_in = t_width_in / max_cols
+
+                    for row_idx, row_vals in enumerate(cleaned_matrix):
+                        tr = tbl.rows[row_idx]
+                        try:
+                            tr._tr.get_or_add_trPr().append(parse_xml(r'<w:cantSplit xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"/>'))
+                        except Exception:
+                            pass
+
+                        is_header = (row_idx == 0)
+
+                        for col_idx in range(max_cols):
+                            cell = tbl.cell(row_idx, col_idx)
+                            cell.width = Inches(col_width_in)
+                            cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+                            cell_text = row_vals[col_idx].strip()
+                            cell.text = cell_text
+
+                            for p in cell.paragraphs:
+                                p.paragraph_format.space_before = Pt(2)
+                                p.paragraph_format.space_after = Pt(2)
+                                p.paragraph_format.line_spacing = 1.05
+                                
+                                if is_header:
+                                    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                                    for run in p.runs:
+                                        run.bold = True
+                                        run.font.size = Pt(9.5)
+                                else:
+                                    for run in p.runs:
+                                        run.font.size = Pt(9.0)
+
+                            if is_header:
+                                try:
+                                    shd_xml = r'<w:shd xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" w:fill="F1F5F9"/>'
+                                    cell._tc.get_or_add_tcPr().append(parse_xml(shd_xml))
+                                except Exception:
+                                    pass
+
+                    # Small spacing after table
+                    p_spacer = doc.add_paragraph()
+                    p_spacer.paragraph_format.space_before = Pt(0)
+                    p_spacer.paragraph_format.space_after = Pt(4)
+
+                # --- TEXT BLOCK RENDERING ---
+                elif itype == 'text_block':
+                    has_content = True
+                    b = item['block']
                     for line in b["lines"]:
                         p = doc.add_paragraph()
-                        # Tight paragraph spacing to preserve PDF line positioning
                         p.paragraph_format.space_before = Pt(0)
                         p.paragraph_format.space_after = Pt(1)
-                        p.paragraph_format.line_spacing = 1.0
+                        p.paragraph_format.line_spacing = 1.05
 
-                        # Calculate line alignment based on bounding box
                         line_bbox = line.get("bbox", [0, 0, 0, 0])
                         left_margin = line_bbox[0]
                         right_margin = page_rect.width - line_bbox[2]
 
                         if abs(left_margin - right_margin) < 35 and left_margin > 40:
                             p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                        elif left_margin > page_rect.width * 0.5:
+                        elif left_margin > page_rect.width * 0.55:
                             p.alignment = WD_ALIGN_PARAGRAPH.RIGHT
                         else:
                             p.alignment = WD_ALIGN_PARAGRAPH.LEFT
 
-                        for span in line["spans"]:
+                        for span in line.get("spans", []):
                             raw_text = span.get("text", "")
                             text = clean_xml_text(raw_text)
                             if not text:
@@ -92,11 +248,11 @@ def pdf_to_docx(input_path, output_path):
 
                             run = p.add_run(text)
                             if "size" in span:
-                                run.font.size = Pt(span["size"])
+                                run.font.size = Pt(max(6.0, span["size"]))
 
                             font_name = span.get("font", "").strip()
                             if font_name:
-                                clean_font = re.sub(r'^[A-Z]{6}\+', '', font_name)  # Strip PDF subset prefixes
+                                clean_font = re.sub(r'^[A-Z]{6}\+', '', font_name)
                                 clean_font = clean_font.replace('-', ' ').replace(',', ' ')
                                 run.font.name = clean_font
 
@@ -113,20 +269,20 @@ def pdf_to_docx(input_path, output_path):
                                 b_val = c & 0xFF
                                 run.font.color.rgb = RGBColor(r, g, b_val)
 
-                # 2. Embedded Image / Photo Block Preservation
-                elif b.get("type") == 1 and "image" in b:
+                # --- IMAGE RENDERING ---
+                elif itype == 'image_block':
                     has_content = True
+                    b = item['block']
                     try:
                         img_bytes = b["image"]
                         img_ext = b.get("ext", "png")
                         img_temp_path = f"{output_path}_img_{page_idx}_{b.get('number', 0)}.{img_ext}"
-                        
                         with open(img_temp_path, "wb") as f_img:
                             f_img.write(img_bytes)
 
                         bbox = b.get("bbox", [0, 0, 100, 100])
                         img_w_pt = bbox[2] - bbox[0]
-                        img_w_in = min(img_w_pt / 72.0, page_w_in - 1.0)
+                        img_w_in = min(img_w_pt / 72.0, content_width_in)
                         img_w_in = max(img_w_in, 0.5)
 
                         p_img = doc.add_paragraph()
@@ -139,32 +295,12 @@ def pdf_to_docx(input_path, output_path):
                             p_img.alignment = WD_ALIGN_PARAGRAPH.LEFT
 
                         p_img.add_run().add_picture(img_temp_path, width=Inches(img_w_in))
-
                         try: os.remove(img_temp_path)
                         except: pass
                     except Exception:
                         pass
 
-            # High-fidelity Table Preservation
-            if tables and len(tables.tables) > 0:
-                for tab in tables.tables:
-                    extracted = tab.extract()
-                    if extracted and len(extracted) > 0:
-                        max_cols = max(len(row) for row in extracted if row)
-                        if max_cols > 0:
-                            t = doc.add_table(rows=len(extracted), cols=max_cols)
-                            t.style = 'Table Grid'
-                            t.autofit = False
-                            for r_idx, row in enumerate(extracted):
-                                for c_idx in range(max_cols):
-                                    cell_val = clean_xml_text(row[c_idx]) if c_idx < len(row) else ""
-                                    cell = t.cell(r_idx, c_idx)
-                                    cell.text = cell_val
-                                    for paragraph in cell.paragraphs:
-                                        paragraph.paragraph_format.space_before = Pt(0)
-                                        paragraph.paragraph_format.space_after = Pt(0)
-
-            # Scanned Page Fallback or Image Fallback
+            # 4. Scanned Page Fallback
             if not has_content and len(img_list) > 0:
                 for img_info in img_list:
                     try:
@@ -176,17 +312,16 @@ def pdf_to_docx(input_path, output_path):
                             img_temp_path = f"{output_path}_xref_{xref}.{image_ext}"
                             with open(img_temp_path, "wb") as f_img:
                                 f_img.write(image_bytes)
-                            doc.add_picture(img_temp_path, width=Inches(page_w_in - 1.0))
+                            doc.add_picture(img_temp_path, width=Inches(content_width_in))
                             try: os.remove(img_temp_path)
                             except: pass
                     except Exception:
                         pass
-
             elif not has_content and len(img_list) == 0:
                 pix = page.get_pixmap(dpi=150)
                 img_temp = f"{output_path}_page_{page.number}.png"
                 pix.save(img_temp)
-                doc.add_picture(img_temp, width=Inches(page_w_in - 1.0))
+                doc.add_picture(img_temp, width=Inches(content_width_in))
                 try: os.remove(img_temp)
                 except: pass
 
