@@ -1,9 +1,13 @@
 import os
 import io
+import re
 import uuid
 import datetime
 import zipfile
 import threading
+import urllib.parse
+from PIL import Image
+Image.MAX_IMAGE_PIXELS = 100_000_000
 from flask import Flask, render_template, request, jsonify, send_file
 from werkzeug.utils import secure_filename
 from database import db
@@ -105,6 +109,51 @@ def cleanup_old_files():
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def is_safe_file_content(file_bytes, ext_str):
+    """
+    Validates file magic signatures and checks for malicious executable / script headers.
+    Protects against disguised uploads (.exe, .php, .sh, .bat renamed to .pdf or .png).
+    """
+    if not file_bytes:
+        return False, "File is empty"
+
+    ext = ext_str.lower().lstrip('.')
+    if ext not in ALLOWED_EXTENSIONS:
+        return False, f"File type '.{ext}' is not authorized"
+
+    # Block dangerous executable/script signatures in first 512 bytes
+    header_check = file_bytes[:512].lower()
+    dangerous_signatures = [
+        b'<?php', b'<%', b'<script', b'eval(', b'base64_decode',
+        b'/bin/sh', b'/bin/bash', b'cmd.exe', b'powershell'
+    ]
+    if any(sig in header_check for sig in dangerous_signatures):
+        return False, "Malicious script signature detected in file content"
+
+    # Signature verification per extension
+    if ext == 'pdf':
+        if b'%PDF-' not in file_bytes[:1024]:
+            return False, "Corrupted or invalid PDF header"
+    elif ext in ('png', 'jpg', 'jpeg', 'webp', 'bmp'):
+        if ext == 'png' and not file_bytes.startswith(b'\x89PNG\r\n\x1a\n'):
+            return False, "Invalid PNG file header"
+        elif ext in ('jpg', 'jpeg') and not file_bytes.startswith(b'\xff\xd8\xff'):
+            return False, "Invalid JPEG file header"
+        elif ext == 'webp' and not (file_bytes.startswith(b'RIFF') and b'WEBP' in file_bytes[:16]):
+            return False, "Invalid WEBP file header"
+        elif ext == 'bmp' and not file_bytes.startswith(b'BM'):
+            return False, "Invalid BMP file header"
+        try:
+            with Image.open(io.BytesIO(file_bytes)) as img:
+                img.verify()
+        except Exception:
+            return False, "Corrupted image file structure"
+    elif ext in ('docx', 'xlsx', 'pptx'):
+        if not file_bytes.startswith(b'PK\x03\x04'):
+            return False, f"Invalid Office document header for .{ext}"
+    
+    return True, "Valid"
+
 TOOLS_LIST = [
     'merge-pdf', 'split-pdf', 'compress-pdf', 'pdf-to-word',
     'pdf-to-ppt', 'pdf-to-excel', 'word-to-pdf', 'ppt-to-pdf',
@@ -192,8 +241,18 @@ def upload_file():
                 
             try:
                 import base64
-                raw_bytes = base64.b64decode(base64_str)
+                if conversion_type == 'edit-pdf' and not base64_str and data.get('quill_html'):
+                    # Quill edit mode generates PDF directly from HTML
+                    raw_bytes = b'%PDF-1.4 editor'
+                else:
+                    raw_bytes = base64.b64decode(base64_str)
+
                 _, ext = os.path.splitext(orig_name)
+                is_safe, msg = is_safe_file_content(raw_bytes, ext)
+                if not is_safe:
+                    error_msgs.append(f"{orig_name}: {msg}")
+                    continue
+
                 input_filename = f"{unique_batch_id}_{idx}_input{ext}"
                 input_path = os.path.join(app.config['UPLOAD_FOLDER'], input_filename)
                 with open(input_path, 'wb') as f:
@@ -227,10 +286,19 @@ def upload_file():
                 
             filename = secure_filename(file.filename)
             _, ext = os.path.splitext(filename)
-            input_filename = f"{unique_batch_id}_{idx}_input{ext}"
-            input_path = os.path.join(app.config['UPLOAD_FOLDER'], input_filename)
-            file.save(input_path)
-            saved_inputs.append((input_path, filename))
+            try:
+                raw_bytes = file.read()
+                is_safe, msg = is_safe_file_content(raw_bytes, ext)
+                if not is_safe:
+                    error_msgs.append(f"{filename}: {msg}")
+                    continue
+                input_filename = f"{unique_batch_id}_{idx}_input{ext}"
+                input_path = os.path.join(app.config['UPLOAD_FOLDER'], input_filename)
+                with open(input_path, 'wb') as f:
+                    f.write(raw_bytes)
+                saved_inputs.append((input_path, filename))
+            except Exception as e:
+                error_msgs.append(f"{filename}: {str(e)}")
 
         req_form = request.form
 
@@ -309,6 +377,7 @@ def upload_file():
                     cell.alignment = Alignment(horizontal="center", vertical="center")
                     ws.column_dimensions[get_column_letter(col_num)].width = 18
                 wb.save(out_path)
+                success = True
                 output_files.append((out_name, f"{original_name}_marksheet.xlsx"))
                 
             elif conversion_type == 'compress-pdf':
@@ -487,51 +556,66 @@ def upload_file():
         try: os.remove(path)
         except: pass
 
+    safe_download_name = urllib.parse.quote(download_name_param)
     return jsonify({
         'success': True, 
-        'download_url': f'/download/{final_download}?name={download_name_param}',
+        'download_url': f'/download/{final_download}?name={safe_download_name}',
         'partial_errors': error_msgs if error_msgs else None
     })
 
 @app.route('/download/<filename>')
 def download_file(filename):
-    file_path = os.path.join(app.config['OUTPUT_FOLDER'], filename)
-    if not os.path.exists(file_path):
-        safe_filename = secure_filename(filename)
-        file_path = os.path.join(app.config['OUTPUT_FOLDER'], safe_filename)
+    clean_filename = secure_filename(os.path.basename(filename))
+    if not clean_filename:
+        return "Invalid file request.", 400
 
-    if os.path.exists(file_path):
-        user_name = request.args.get('name')
-        if user_name:
-            download_name = user_name
+    output_dir = os.path.abspath(app.config['OUTPUT_FOLDER'])
+    file_path = os.path.abspath(os.path.join(output_dir, clean_filename))
+
+    try:
+        if os.path.commonpath([output_dir, file_path]) != output_dir:
+            return "Access denied.", 403
+    except ValueError:
+        return "Access denied.", 403
+
+    if not os.path.exists(file_path) or not os.path.isfile(file_path):
+        return "File not found or expired.", 404
+
+    user_name = request.args.get('name', '')
+    if user_name:
+        # Prevent CRLF / header injection and directory traversal
+        download_name = secure_filename(os.path.basename(user_name)).strip()
+        download_name = re.sub(r'[\r\n\x00-\x1f]', '', download_name)
+    else:
+        download_name = clean_filename
+        download_name = re.sub(r'^[a-f0-9]{8,64}_\d+_', '', download_name)
+        download_name = re.sub(r'^[a-f0-9]{8,64}_', '', download_name)
+
+    if not download_name:
+        download_name = clean_filename
+
+    import mimetypes
+    mime_type, _ = mimetypes.guess_type(download_name)
+    if not mime_type:
+        ext_lower = download_name.lower()
+        if ext_lower.endswith('.docx'):
+            mime_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        elif ext_lower.endswith('.xlsx'):
+            mime_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        elif ext_lower.endswith('.pptx'):
+            mime_type = 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+        elif ext_lower.endswith('.pdf'):
+            mime_type = 'application/pdf'
+        elif ext_lower.endswith('.png'):
+            mime_type = 'image/png'
+        elif ext_lower.endswith('.jpg') or ext_lower.endswith('.jpeg'):
+            mime_type = 'image/jpeg'
+        elif ext_lower.endswith('.webp'):
+            mime_type = 'image/webp'
         else:
-            download_name = os.path.basename(file_path)
-            import re
-            download_name = re.sub(r'^[a-f0-9]{8,64}_\d+_', '', download_name)
-            download_name = re.sub(r'^[a-f0-9]{8,64}_', '', download_name)
+            mime_type = 'application/octet-stream'
 
-        import mimetypes
-        mime_type, _ = mimetypes.guess_type(download_name)
-        if not mime_type:
-            if download_name.endswith('.docx'):
-                mime_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-            elif download_name.endswith('.xlsx'):
-                mime_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            elif download_name.endswith('.pptx'):
-                mime_type = 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-            elif download_name.endswith('.pdf'):
-                mime_type = 'application/pdf'
-            elif download_name.endswith('.png'):
-                mime_type = 'image/png'
-            elif download_name.endswith('.jpg') or download_name.endswith('.jpeg'):
-                mime_type = 'image/jpeg'
-            elif download_name.endswith('.webp'):
-                mime_type = 'image/webp'
-            else:
-                mime_type = 'application/octet-stream'
-
-        return send_file(file_path, download_name=download_name, as_attachment=True, mimetype=mime_type)
-    return "File not found or expired.", 404
+    return send_file(file_path, download_name=download_name, as_attachment=True, mimetype=mime_type)
 
 @app.route('/robots.txt')
 def serve_robots():
@@ -570,15 +654,21 @@ def parse_pdf_for_edit():
                 file_b64 = file_b64.split(',', 1)[1]
             import base64
             raw_bytes = base64.b64decode(file_b64)
+            if b'%PDF-' not in raw_bytes[:1024]:
+                return jsonify({'error': 'Invalid or corrupted PDF file header'}), 400
             temp_name = f"temp_parse_{uuid.uuid4().hex}.pdf"
             input_path = os.path.join(app.config['UPLOAD_FOLDER'], temp_name)
             with open(input_path, 'wb') as f:
                 f.write(raw_bytes)
         elif 'file' in request.files:
             file = request.files['file']
+            raw_bytes = file.read()
+            if b'%PDF-' not in raw_bytes[:1024]:
+                return jsonify({'error': 'Invalid or corrupted PDF file header'}), 400
             temp_name = f"temp_parse_{uuid.uuid4().hex}.pdf"
             input_path = os.path.join(app.config['UPLOAD_FOLDER'], temp_name)
-            file.save(input_path)
+            with open(input_path, 'wb') as f:
+                f.write(raw_bytes)
             
         if not input_path or not os.path.exists(input_path):
             return jsonify({'error': 'No valid PDF file provided'}), 400
@@ -599,6 +689,10 @@ def apply_connection_and_security_headers(response):
     response.headers['Alt-Svc'] = 'clear'
     response.headers['Connection'] = 'keep-alive'
     response.headers['Keep-Alive'] = 'timeout=30, max=100'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'

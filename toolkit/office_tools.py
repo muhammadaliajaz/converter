@@ -400,15 +400,11 @@ def pdf_to_ppt(input_path, output_path):
         for page_num in range(len(doc)):
             page = doc[page_num]
             pix = page.get_pixmap(dpi=150)
-            img_path = f"{input_path}_slide_{page_num}.png"
-            pix.save(img_path)
+            img_stream = io.BytesIO(pix.tobytes("png"))
 
             blank_slide_layout = prs.slide_layouts[6]
             slide = prs.slides.add_slide(blank_slide_layout)
-            slide.shapes.add_picture(img_path, 0, 0, width=prs.slide_width, height=prs.slide_height)
-
-            try: os.remove(img_path)
-            except: pass
+            slide.shapes.add_picture(img_stream, 0, 0, width=prs.slide_width, height=prs.slide_height)
 
         doc.close()
         prs.save(output_path)

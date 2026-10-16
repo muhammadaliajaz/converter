@@ -5,14 +5,15 @@ from PyPDF2 import PdfReader
 
 def extract_text_from_pdf(input_path, output_path):
     try:
-        reader = PdfReader(input_path)
-        text = ""
-        for page in reader.pages:
-            t = page.extract_text()
+        doc = fitz.open(input_path)
+        text_parts = []
+        for page in doc:
+            t = page.get_text()
             if t:
-                text += t + "\n"
+                text_parts.append(t)
+        doc.close()
         with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(text)
+            f.write("\n".join(text_parts))
         return True, output_path
     except Exception as e:
         return False, str(e)

@@ -6,53 +6,55 @@ from reportlab.pdfgen import canvas
 from PIL import Image
 
 def merge_pdfs(input_paths, output_path):
+    """
+    High-speed PDF merger using PyMuPDF (C-speed, in-memory, auto-deflated).
+    """
     try:
-        merger = PdfMerger()
+        merged_doc = fitz.open()
         for path in input_paths:
-            merger.append(path)
-        merger.write(output_path)
-        merger.close()
+            with fitz.open(path) as sub_doc:
+                merged_doc.insert_pdf(sub_doc)
+        merged_doc.save(output_path, garbage=3, deflate=True)
+        merged_doc.close()
         return True, output_path
     except Exception as e:
         return False, str(e)
 
 def split_pdf(input_path, output_dir, unique_batch_id):
+    """
+    High-speed PDF splitter using PyMuPDF.
+    """
     try:
-        reader = PdfReader(input_path)
+        doc = fitz.open(input_path)
         output_files = []
-        for i in range(len(reader.pages)):
-            writer = PdfWriter()
-            writer.add_page(reader.pages[i])
+        for i in range(len(doc)):
+            page_doc = fitz.open()
+            page_doc.insert_pdf(doc, from_page=i, to_page=i)
             out_name = f"{unique_batch_id}_page_{i+1}.pdf"
             out_path = os.path.join(output_dir, out_name)
-            with open(out_path, "wb") as f:
-                writer.write(f)
+            page_doc.save(out_path, garbage=3, deflate=True)
+            page_doc.close()
             output_files.append((out_name, out_name))
+        doc.close()
         return True, output_files
     except Exception as e:
         return False, str(e)
 
 def add_page_numbers(input_path, output_path):
+    """
+    High-speed page numbering using PyMuPDF without any intermediate disk writes.
+    """
     try:
-        reader = PdfReader(input_path)
-        writer = PdfWriter()
-        
-        for i, page in enumerate(reader.pages):
-            temp_num_path = f"{input_path}_temp_num_{i}.pdf"
-            c = canvas.Canvas(temp_num_path, pagesize=(float(page.mediabox.width), float(page.mediabox.height)))
-            c.setFont("Helvetica", 12)
-            c.drawString(float(page.mediabox.width) / 2, 20, str(i + 1))
-            c.save()
-            
-            num_pdf = PdfReader(temp_num_path)
-            num_page = num_pdf.pages[0]
-            page.merge_page(num_page)
-            writer.add_page(page)
-            
-            os.remove(temp_num_path)
-            
-        with open(output_path, "wb") as f:
-            writer.write(f)
+        doc = fitz.open(input_path)
+        total_pages = len(doc)
+        for i, page in enumerate(doc):
+            rect = page.rect
+            text = f"{i + 1} / {total_pages}" if total_pages > 1 else "1"
+            # Centered at bottom with 25px bottom margin
+            box = fitz.Rect(0, rect.height - 35, rect.width, rect.height - 12)
+            page.insert_textbox(box, text, fontsize=10, fontname="helv", color=(0.25, 0.25, 0.25), align=fitz.TEXT_ALIGN_CENTER)
+        doc.save(output_path, garbage=3, deflate=True)
+        doc.close()
         return True, output_path
     except Exception as e:
         return False, str(e)

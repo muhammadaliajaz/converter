@@ -2050,6 +2050,11 @@
             document.getElementById('fileInfo').classList.add('hidden');
             document.getElementById('resultArea').classList.add('hidden');
             document.getElementById('statusArea').classList.add('hidden');
+            const stElem = document.getElementById('statusText');
+            if (stElem) {
+                stElem.innerText = 'Processing...';
+                stElem.className = 'text-zinc-900 font-medium text-sm mb-2';
+            }
             document.getElementById('convertBtn').disabled = false;
 
             ['passwordBlock', 'languageBlock', 'compressPdfBlock', 'compressImgBlock', 'imgFormatBlock', 'editPdfBlock', 'ocrStudioBlock'].forEach(id => {
@@ -2473,6 +2478,75 @@
             }
         }
 
+        // =========================================================================
+        // Unified Status & Result Management (Strict Mutual Exclusivity)
+        // Eliminates stale error displays, race conditions, and lingering red text
+        // =========================================================================
+        function setStatusProcessing(message) {
+            const statusArea = document.getElementById('statusArea');
+            const statusText = document.getElementById('statusText');
+            const resultArea = document.getElementById('resultArea');
+            const progressBar = document.getElementById('progressBar');
+
+            if (resultArea) resultArea.classList.add('hidden');
+            if (statusArea) statusArea.classList.remove('hidden');
+            if (statusText) {
+                statusText.innerText = message || 'Processing your document...';
+                statusText.className = 'text-zinc-900 font-medium text-sm mb-2';
+            }
+            if (progressBar) progressBar.style.width = '5%';
+        }
+
+        function setStatusSuccess(downloadUrl) {
+            const statusArea = document.getElementById('statusArea');
+            const statusText = document.getElementById('statusText');
+            const resultArea = document.getElementById('resultArea');
+            const progressBar = document.getElementById('progressBar');
+            const dlLink = document.getElementById('downloadLink');
+
+            if (progressBar) progressBar.style.width = '100%';
+            if (statusArea) statusArea.classList.add('hidden');
+            if (statusText) {
+                statusText.innerText = '';
+                statusText.className = 'text-zinc-900 font-medium text-sm mb-2';
+            }
+            if (resultArea) resultArea.classList.remove('hidden');
+
+            if (dlLink && downloadUrl) {
+                dlLink.href = downloadUrl;
+                try {
+                    if (downloadUrl.includes('name=')) {
+                        const urlParts = downloadUrl.split('?');
+                        if (urlParts.length > 1) {
+                            const params = new URLSearchParams(urlParts[1]);
+                            const cleanName = params.get('name');
+                            if (cleanName) {
+                                dlLink.setAttribute('download', decodeURIComponent(cleanName));
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Filename parse notice:", e);
+                }
+            }
+        }
+
+        function setStatusError(errorMessage) {
+            const statusArea = document.getElementById('statusArea');
+            const statusText = document.getElementById('statusText');
+            const resultArea = document.getElementById('resultArea');
+            const progressBar = document.getElementById('progressBar');
+
+            // CRITICAL: resultArea MUST be hidden when an error occurs so error never shows above or alongside result
+            if (resultArea) resultArea.classList.add('hidden');
+            if (progressBar) progressBar.style.width = '0%';
+            if (statusArea) statusArea.classList.remove('hidden');
+            if (statusText) {
+                statusText.innerText = errorMessage || 'An error occurred during conversion. Please try again.';
+                statusText.className = 'text-red-600 font-medium text-sm mb-2';
+            }
+        }
+
         async function triggerQuillSubmit() {
             if (!quill) return;
             const htmlContent = quill.root.innerHTML;
@@ -2482,14 +2556,11 @@
             }
 
             document.getElementById('convertBtn').disabled = true;
-            document.getElementById('statusArea').classList.remove('hidden');
-            document.getElementById('statusText').classList.replace('text-red-600', 'text-indigo-600');
-            document.getElementById('statusText').innerText = 'Converting document to PDF...';
-            document.getElementById('resultArea').classList.add('hidden');
+            setStatusProcessing('Converting document to PDF...');
 
-            let progress = 0;
+            let progress = 5;
             const pb = document.getElementById('progressBar');
-            const pt = setInterval(() => { progress += Math.random() * 10; if (progress > 90) progress = 90; pb.style.width = progress + '%'; }, 200);
+            const pt = setInterval(() => { progress += (95 - progress) * 0.15; if (pb) pb.style.width = Math.min(progress, 95) + '%'; }, 100);
 
             try {
                 const payload = {
@@ -2506,31 +2577,18 @@
 
                 const responseText = await res.text();
                 let json = {};
-                try { json = JSON.parse(responseText); } catch (err) { throw new Error(responseText.substring(0, 150)); }
+                try { json = JSON.parse(responseText); } catch (err) { throw new Error('Server returned an unexpected response.'); }
 
                 clearInterval(pt);
-                pb.style.width = '100%';
 
                 if (res.ok && json.success) {
-                    document.getElementById('statusArea').classList.add('hidden');
-                    document.getElementById('resultArea').classList.remove('hidden');
-                    const dlLink = document.getElementById('downloadLink');
-                    dlLink.href = json.download_url;
-                    if (json.download_url && json.download_url.includes('name=')) {
-                        try {
-                            const params = new URLSearchParams(json.download_url.split('?')[1]);
-                            const cleanName = params.get('name');
-                            if (cleanName) dlLink.setAttribute('download', cleanName);
-                        } catch (e) { }
-                    }
+                    setStatusSuccess(json.download_url);
                 } else {
                     throw new Error(json.error || 'Conversion failed.');
                 }
             } catch (err) {
                 clearInterval(pt);
-                pb.style.width = '0%';
-                document.getElementById('statusText').innerText = err.message;
-                document.getElementById('statusText').classList.replace('text-indigo-600', 'text-red-600');
+                setStatusError(err.message);
             } finally {
                 document.getElementById('convertBtn').disabled = false;
             }
@@ -2580,14 +2638,11 @@
             });
 
             document.getElementById('convertBtn').disabled = true;
-            document.getElementById('statusArea').classList.remove('hidden');
-            document.getElementById('statusText').classList.replace('text-red-600', 'text-indigo-600');
-            document.getElementById('statusText').innerText = 'Applying edits & compiling PDF with exact original layout...';
-            document.getElementById('resultArea').classList.add('hidden');
+            setStatusProcessing('Applying edits & compiling PDF with exact original layout...');
 
-            let progress = 0;
+            let progress = 5;
             const pb = document.getElementById('progressBar');
-            const pt = setInterval(() => { progress += Math.random() * 10; if (progress > 90) progress = 90; pb.style.width = progress + '%'; }, 200);
+            const pt = setInterval(() => { progress += (95 - progress) * 0.15; if (pb) pb.style.width = Math.min(progress, 95) + '%'; }, 100);
 
             try {
                 const payload = {
@@ -2604,31 +2659,18 @@
 
                 const responseText = await res.text();
                 let json = {};
-                try { json = JSON.parse(responseText); } catch (e) { throw new Error(responseText.substring(0, 150)); }
+                try { json = JSON.parse(responseText); } catch (e) { throw new Error('Server returned an unexpected response.'); }
 
                 clearInterval(pt);
-                pb.style.width = '100%';
 
                 if (res.ok && json.success) {
-                    document.getElementById('statusArea').classList.add('hidden');
-                    document.getElementById('resultArea').classList.remove('hidden');
-                    const dlLink = document.getElementById('downloadLink');
-                    dlLink.href = json.download_url;
-                    if (json.download_url && json.download_url.includes('name=')) {
-                        try {
-                            const params = new URLSearchParams(json.download_url.split('?')[1]);
-                            const cleanName = params.get('name');
-                            if (cleanName) dlLink.setAttribute('download', cleanName);
-                        } catch (e) { }
-                    }
+                    setStatusSuccess(json.download_url);
                 } else {
                     throw new Error(json.error || 'PDF saving failed.');
                 }
             } catch (err) {
                 clearInterval(pt);
-                pb.style.width = '0%';
-                document.getElementById('statusText').innerText = err.message;
-                document.getElementById('statusText').classList.replace('text-indigo-600', 'text-red-600');
+                setStatusError(err.message);
             } finally {
                 document.getElementById('convertBtn').disabled = false;
             }
@@ -2686,14 +2728,13 @@
             if (!fileInput.files.length) return alert('Select files first');
 
             document.getElementById('convertBtn').disabled = true;
-            document.getElementById('statusArea').classList.remove('hidden');
-            document.getElementById('resultArea').classList.add('hidden');
+            setStatusProcessing('Processing your document...');
+
             let progress = 5;
             const pb = document.getElementById('progressBar');
-            pb.style.width = '5%';
             const pt = setInterval(() => {
                 progress += (95 - progress) * 0.18;
-                pb.style.width = Math.min(progress, 95) + '%';
+                if (pb) pb.style.width = Math.min(progress, 95) + '%';
             }, 100);
 
             try {
@@ -2719,56 +2760,35 @@
                     files: filesData
                 };
 
-                let res, responseText, json = {};
-                const bodyStr = JSON.stringify(payload);
+                let res;
                 try {
                     res = await fetch('/upload', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: bodyStr
+                        body: JSON.stringify(payload)
                     });
-                    responseText = await res.text();
+                } catch (netErr) {
+                    throw new Error('Connection error. Please check your network and try again.');
+                }
+
+                const responseText = await res.text();
+                let json = {};
+                try {
                     json = JSON.parse(responseText);
-                } catch (firstErr) {
-                    // Cold-start automatic retry fallback
-                    await new Promise(r => setTimeout(r, 400));
-                    res = await fetch('/upload', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: bodyStr
-                    });
-                    responseText = await res.text();
-                    try {
-                        json = JSON.parse(responseText);
-                    } catch (e2) {
-                        throw new Error(responseText.substring(0, 150) || 'Server returned an invalid or empty response.');
-                    }
+                } catch (parseErr) {
+                    throw new Error(responseText.substring(0, 150) || 'Server returned an invalid or empty response.');
                 }
 
                 clearInterval(pt);
-                pb.style.width = '100%';
 
                 if (res.ok && json.success) {
-                    document.getElementById('statusArea').classList.add('hidden');
-                    document.getElementById('resultArea').classList.remove('hidden');
-                    const dlLink = document.getElementById('downloadLink');
-                    dlLink.href = json.download_url;
-
-                    if (json.download_url && json.download_url.includes('name=')) {
-                        try {
-                            const params = new URLSearchParams(json.download_url.split('?')[1]);
-                            const cleanName = params.get('name');
-                            if (cleanName) {
-                                dlLink.setAttribute('download', cleanName);
-                            }
-                        } catch (e) { }
-                    }
-                } else throw new Error(json.error || 'Conversion failed.');
+                    setStatusSuccess(json.download_url);
+                } else {
+                    throw new Error(json.error || 'Conversion failed. Please verify your file.');
+                }
             } catch (err) {
                 clearInterval(pt);
-                pb.style.width = '0%';
-                document.getElementById('statusText').innerText = err.message;
-                document.getElementById('statusText').classList.replace('text-indigo-600', 'text-red-600');
+                setStatusError(err.message);
             } finally {
                 document.getElementById('convertBtn').disabled = false;
             }
