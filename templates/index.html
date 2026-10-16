@@ -245,14 +245,6 @@
             scrollbar-width: none;
         }
 
-        .hero-tab {
-            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .workstation-glow {
-            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25), 0 20px 40px -15px rgba(0, 0, 0, 0.12) !important;
-            border-color: #10b981 !important;
-        }
 
         /* Quill Editor Paper Styling */
         .ql-toolbar.ql-snow {
@@ -394,22 +386,22 @@
                 <p class="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2 px-1">Featured Workspaces
                 </p>
                 <div class="space-y-1 mb-3">
-                    <button type="button" onclick="selectHeroTab('image-to-excel'); closeMobileNav();"
+                    <button type="button" onclick="openWorkspaceById('image-to-excel'); closeMobileNav();"
                         class="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-zinc-800 hover:bg-zinc-100 text-left">
                         <span class="flex items-center gap-2">📊 Image to Excel (Marksheet)</span>
                         <span
                             class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded-full">New
                             AI</span>
                     </button>
-                    <button type="button" onclick="selectHeroTab('pdf-to-word'); closeMobileNav();"
+                    <button type="button" onclick="openWorkspaceById('pdf-to-word'); closeMobileNav();"
                         class="w-full flex items-center justify-between p-2 rounded-xl text-xs font-medium text-zinc-700 hover:bg-zinc-100 text-left">
                         <span class="flex items-center gap-2">📝 PDF to Word (Exact Table)</span>
                     </button>
-                    <button type="button" onclick="selectHeroTab('word-to-pdf'); closeMobileNav();"
+                    <button type="button" onclick="openWorkspaceById('word-to-pdf'); closeMobileNav();"
                         class="w-full flex items-center justify-between p-2 rounded-xl text-xs font-medium text-zinc-700 hover:bg-zinc-100 text-left">
                         <span class="flex items-center gap-2">📄 Word to PDF</span>
                     </button>
-                    <button type="button" onclick="selectHeroTab('compress-pdf'); closeMobileNav();"
+                    <button type="button" onclick="openWorkspaceById('compress-pdf'); closeMobileNav();"
                         class="w-full flex items-center justify-between p-2 rounded-xl text-xs font-medium text-zinc-700 hover:bg-zinc-100 text-left">
                         <span class="flex items-center gap-2">🗜️ Compress PDF</span>
                     </button>
@@ -440,41 +432,17 @@
             </p>
         </header>
 
-        <!-- HERO WORKSTATION SLOT (Visible Immediately on Page Load!) -->
-        <div id="heroWorkstationSlot" class="w-full max-w-3xl mx-auto mb-14 px-2">
+        <!-- WORKSPACE MODAL OVERLAY (Opens on Tool Card Click) -->
+        <div id="workspaceModal"
+            class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm p-3 sm:p-6 flex items-center justify-center transition-opacity"
+            role="dialog" aria-modal="true">
+            <!-- Backdrop click listener to close -->
+            <div class="fixed inset-0" onclick="closeWorkspace()" aria-hidden="true"></div>
+
             <!-- Modal Card Container -->
             <section id="workspaceContainer"
-                class="relative bg-white rounded-3xl shadow-[0_12px_40px_rgb(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.04)] border border-zinc-200/90 w-full max-w-3xl p-5 sm:p-8 z-10 overflow-hidden transform transition-all"
+                class="relative bg-white rounded-3xl shadow-2xl border border-zinc-200/90 w-full max-w-3xl p-5 sm:p-8 z-10 overflow-hidden transform transition-all my-auto"
                 onclick="event.stopPropagation()" aria-label="Tool Workspace">
-                <!-- Quick Tool Switcher Tabs -->
-                <div class="flex items-center gap-1.5 pb-4 mb-5 border-b border-zinc-100 overflow-x-auto no-scrollbar"
-                    role="tablist">
-                    <button type="button" onclick="selectHeroTab('word-to-pdf')" id="tab-word-to-pdf"
-                        class="hero-tab active px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900 text-white transition flex items-center gap-1.5 flex-shrink-0 shadow-xs">
-                        <span>📄</span> Word to PDF
-                    </button>
-                    <button type="button" onclick="selectHeroTab('pdf-to-word')" id="tab-pdf-to-word"
-                        class="hero-tab px-3.5 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition flex items-center gap-1.5 flex-shrink-0">
-                        <span>📝</span> PDF to Word
-                    </button>
-                    <button type="button" onclick="selectHeroTab('image-to-excel')" id="tab-image-to-excel"
-                        class="hero-tab px-3.5 py-1.5 rounded-full text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 transition flex items-center gap-1.5 flex-shrink-0">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span>📊</span> Marksheet to Excel
-                    </button>
-                    <button type="button" onclick="selectHeroTab('compress-pdf')" id="tab-compress-pdf"
-                        class="hero-tab px-3.5 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition flex items-center gap-1.5 flex-shrink-0">
-                        <span>🗜️</span> Compress PDF
-                    </button>
-                    <button type="button" onclick="selectHeroTab('merge-pdf')" id="tab-merge-pdf"
-                        class="hero-tab px-3.5 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition flex items-center gap-1.5 flex-shrink-0">
-                        <span>🔗</span> Merge PDF
-                    </button>
-                    <a href="#directoryHeading"
-                        class="px-3.5 py-1.5 rounded-full text-xs font-medium text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 transition flex items-center gap-1 flex-shrink-0">
-                        All 20 Tools &darr;
-                    </a>
-                </div>
 
                 <!-- Modal Header with Title & Close (X) Button -->
                 <div class="flex items-center justify-between pb-3 mb-5 border-b border-zinc-100">
@@ -490,7 +458,7 @@
                         </div>
                     </div>
                     <button type="button" id="workspaceCloseBtn" onclick="closeWorkspace()" aria-label="Close modal"
-                        class="hidden w-9 h-9 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-900 flex items-center justify-center transition focus:outline-none">
+                        class="w-9 h-9 rounded-xl bg-zinc-100 hover:bg-zinc-200 text-zinc-600 hover:text-zinc-900 flex items-center justify-center transition focus:outline-none">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M6 18L18 6M6 6l12 12"></path>
@@ -1193,15 +1161,6 @@
 
         </main>
 
-        <!-- WORKSPACE MODAL OVERLAY (Mobile Modal Dialog) -->
-        <div id="workspaceModal"
-            class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm p-3 sm:p-6 flex items-center justify-center transition-opacity"
-            role="dialog" aria-modal="true">
-            <!-- Backdrop click listener to close -->
-            <div class="fixed inset-0" onclick="closeWorkspace()" aria-hidden="true"></div>
-            <div id="workspaceModalCard" class="w-full max-w-3xl z-10 my-auto flex items-center justify-center"></div>
-        </div>
-
         <!-- SEO CONTENT SECTION (Features, How It Works, Tools Directory, FAQs) -->
         <article id="seoArticle" class="max-w-6xl mx-auto mt-20 space-y-16">
             <!-- Features & Benefits -->
@@ -1489,25 +1448,25 @@
                     <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-900">Popular PDF Tools</h3>
                     <ul class="space-y-2 text-xs">
                         <li><a href="https://officialali.dev/pdf-to-word"
-                                onclick="selectHeroTab('pdf-to-word'); return false;"
+                                onclick="openWorkspaceById('pdf-to-word'); return false;"
                                 class="text-zinc-600 hover:text-zinc-950 transition">PDF to Word (Exact Table)</a></li>
                         <li><a href="https://officialali.dev/word-to-pdf"
-                                onclick="selectHeroTab('word-to-pdf'); return false;"
+                                onclick="openWorkspaceById('word-to-pdf'); return false;"
                                 class="text-zinc-600 hover:text-zinc-950 transition">Word to PDF Converter</a></li>
                         <li><a href="https://officialali.dev/merge-pdf"
-                                onclick="selectHeroTab('merge-pdf'); return false;"
+                                onclick="openWorkspaceById('merge-pdf'); return false;"
                                 class="text-zinc-600 hover:text-zinc-950 transition">Merge PDF Files</a></li>
                         <li><a href="https://officialali.dev/split-pdf"
-                                onclick="selectHeroTab('split-pdf'); return false;"
+                                onclick="openWorkspaceById('split-pdf'); return false;"
                                 class="text-zinc-600 hover:text-zinc-950 transition">Split PDF Pages</a></li>
                         <li><a href="https://officialali.dev/compress-pdf"
-                                onclick="selectHeroTab('compress-pdf'); return false;"
+                                onclick="openWorkspaceById('compress-pdf'); return false;"
                                 class="text-zinc-600 hover:text-zinc-950 transition">Compress PDF (Custom KB)</a></li>
                         <li><a href="https://officialali.dev/edit-pdf"
-                                onclick="selectHeroTab('edit-pdf'); return false;"
+                                onclick="openWorkspaceById('edit-pdf'); return false;"
                                 class="text-zinc-600 hover:text-zinc-950 transition">Edit PDF Studio</a></li>
                         <li><a href="https://officialali.dev/pdf-to-excel"
-                                onclick="selectHeroTab('pdf-to-excel'); return false;"
+                                onclick="openWorkspaceById('pdf-to-excel'); return false;"
                                 class="text-zinc-600 hover:text-zinc-950 transition">PDF to Excel (Spreadsheet)</a></li>
                     </ul>
                 </div>
@@ -1522,26 +1481,26 @@
                     </div>
                     <ul class="space-y-2 text-xs">
                         <li><a href="https://officialali.dev/image-to-excel"
-                                onclick="selectHeroTab('image-to-excel'); return false;"
+                                onclick="openWorkspaceById('image-to-excel'); return false;"
                                 class="text-emerald-700 hover:text-emerald-900 font-semibold transition flex items-center gap-1">Image
                                 to Excel (Marksheet)</a></li>
                         <li><a href="https://officialali.dev/image-to-text"
-                                onclick="selectHeroTab('image-to-text'); return false;"
+                                onclick="openWorkspaceById('image-to-text'); return false;"
                                 class="text-zinc-600 hover:text-zinc-950 transition">Image to Text (AI OCR)</a></li>
                         <li><a href="https://officialali.dev/compress-image"
-                                onclick="selectHeroTab('compress-image'); return false;"
+                                onclick="openWorkspaceById('compress-image'); return false;"
                                 class="text-zinc-600 hover:text-zinc-950 transition">Compress Image to KB</a></li>
                         <li><a href="https://officialali.dev/convert-image-format"
-                                onclick="selectHeroTab('convert-image-format'); return false;"
+                                onclick="openWorkspaceById('convert-image-format'); return false;"
                                 class="text-zinc-600 hover:text-zinc-950 transition">Convert Image Format</a></li>
                         <li><a href="https://officialali.dev/jpg-to-pdf"
-                                onclick="selectHeroTab('jpg-to-pdf'); return false;"
+                                onclick="openWorkspaceById('jpg-to-pdf'); return false;"
                                 class="text-zinc-600 hover:text-zinc-950 transition">JPG to PDF</a></li>
                         <li><a href="https://officialali.dev/pdf-to-jpg"
-                                onclick="selectHeroTab('pdf-to-jpg'); return false;"
+                                onclick="openWorkspaceById('pdf-to-jpg'); return false;"
                                 class="text-zinc-600 hover:text-zinc-950 transition">PDF to JPG Images</a></li>
                         <li><a href="https://officialali.dev/translate-pdf"
-                                onclick="selectHeroTab('translate-pdf'); return false;"
+                                onclick="openWorkspaceById('translate-pdf'); return false;"
                                 class="text-zinc-600 hover:text-zinc-950 transition">Translate PDF Document</a></li>
                     </ul>
                 </div>
@@ -1695,54 +1654,15 @@
             }
         }
 
-        function openWorkspaceById(toolId, isFromCardClick = true) {
+        function openWorkspaceById(toolId) {
             const tool = toolsData[toolId] || { name: toolId, icon: '' };
             const modal = document.getElementById('workspaceModal');
-            const modalCard = document.getElementById('workspaceModalCard');
             const container = document.getElementById('workspaceContainer');
-            const slot = document.getElementById('heroWorkstationSlot');
             const closeBtn = document.getElementById('workspaceCloseBtn');
 
-            // On mobile screen (< 768px) AND when triggered from card click down in the directory:
-            const isMobileCardClick = isFromCardClick && window.innerWidth < 768;
-
-            if (isMobileCardClick) {
-                // Move container into modal for focused mobile view
-                if (modalCard && container && container.parentElement !== modalCard) {
-                    modalCard.appendChild(container);
-                }
-                if (modal) modal.classList.remove('hidden');
-                if (closeBtn) closeBtn.classList.remove('hidden');
-                document.body.classList.add('overflow-hidden');
-            } else {
-                // Keep container in hero workstation slot
-                if (slot && container && container.parentElement !== slot) {
-                    slot.appendChild(container);
-                }
-                if (modal) modal.classList.add('hidden');
-                if (closeBtn) closeBtn.classList.add('hidden');
-                document.body.classList.remove('overflow-hidden');
-
-                // If clicked from grid on desktop, smooth-scroll up to hero
-                if (isFromCardClick && container) {
-                    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    container.classList.add('workstation-glow');
-                    setTimeout(() => container.classList.remove('workstation-glow'), 1400);
-                }
-            }
-
-            // Update top tabs active state
-            document.querySelectorAll('.hero-tab').forEach(t => {
-                t.className = 'hero-tab px-3.5 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition flex items-center gap-1.5 flex-shrink-0';
-            });
-            const activeTab = document.getElementById('tab-' + toolId);
-            if (activeTab) {
-                if (toolId === 'image-to-excel') {
-                    activeTab.className = 'hero-tab active px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-700 text-white transition flex items-center gap-1.5 flex-shrink-0 shadow-xs';
-                } else {
-                    activeTab.className = 'hero-tab active px-3.5 py-1.5 rounded-full text-xs font-semibold bg-zinc-900 text-white transition flex items-center gap-1.5 flex-shrink-0 shadow-xs';
-                }
-            }
+            if (modal) modal.classList.remove('hidden');
+            if (closeBtn) closeBtn.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
 
             toolIcon.innerHTML = svgIcons[toolId] || tool.icon || '';
             toolTitle.innerText = tool.name || toolId;
@@ -1800,13 +1720,13 @@
             if (window.history && window.history.pushState) {
                 const currentPath = window.location.pathname.replace(/^\/+|\/+$/g, '');
                 if (currentPath !== toolId) {
-                    window.history.pushState({ modalOpen: isMobileCardClick, toolId: toolId }, null, '/' + toolId);
+                    window.history.pushState({ modalOpen: true, toolId: toolId }, null, '/' + toolId);
                 }
             }
         }
 
         function selectHeroTab(toolId) {
-            openWorkspaceById(toolId, false);
+            openWorkspaceById(toolId);
         }
 
         function togglePdfKbInput(val) {
@@ -1821,18 +1741,8 @@
 
         function closeWorkspace(updateHistory = true) {
             const modal = document.getElementById('workspaceModal');
-            const container = document.getElementById('workspaceContainer');
-            const slot = document.getElementById('heroWorkstationSlot');
-            const closeBtn = document.getElementById('workspaceCloseBtn');
-
             if (modal) modal.classList.add('hidden');
             document.body.classList.remove('overflow-hidden');
-            if (closeBtn) closeBtn.classList.add('hidden');
-
-            // Return container to hero workstation slot
-            if (container && slot && container.parentElement !== slot) {
-                slot.appendChild(container);
-            }
 
             updatePageMetadata(null);
             if (updateHistory && window.history && window.history.pushState) {
@@ -1892,9 +1802,9 @@
             const rawHash = window.location.hash.replace(/^#+/, '');
             const toolId = rawPath || rawHash;
             if (toolId && toolsData[toolId]) {
-                openWorkspaceById(toolId, false);
+                openWorkspaceById(toolId);
             } else {
-                openWorkspaceById('word-to-pdf', false);
+                closeWorkspace(false);
             }
         }
 
@@ -1903,11 +1813,9 @@
             const rawHash = window.location.hash.replace(/^#+/, '');
             const toolId = rawPath || rawHash;
             if (toolId && toolsData[toolId]) {
-                const isModal = e.state && e.state.modalOpen;
-                openWorkspaceById(toolId, isModal);
+                openWorkspaceById(toolId);
             } else {
                 closeWorkspace(false);
-                openWorkspaceById('word-to-pdf', false);
             }
         });
 
