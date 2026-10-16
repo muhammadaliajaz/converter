@@ -2026,6 +2026,7 @@
         }
 
         function openWorkspaceById(toolId) {
+            warmBackend();
             const tool = toolsData[toolId] || { name: toolId, icon: '' };
             const modal = document.getElementById('workspaceModal');
             const container = document.getElementById('workspaceContainer');
@@ -2227,9 +2228,13 @@
 
         // Initialize route on load
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', handleInitialRoute);
+            document.addEventListener('DOMContentLoaded', () => {
+                handleInitialRoute();
+                warmBackend();
+            });
         } else {
             handleInitialRoute();
+            warmBackend();
         }
 
         // Document & PDF Editor Engine (Original PDF Layout & Quill Rich Text Modes)
@@ -2359,11 +2364,11 @@
                     document.getElementById('statusArea')?.classList.remove('hidden');
 
                     try {
-                        const res = await fetch('/parse-pdf-for-edit', {
+                        const res = await fetchWithRetry('/parse-pdf-for-edit', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ file_b64: currentUploadedFileB64 })
-                        });
+                        }, 2, 800);
 
                         const parsed = await res.json();
                         document.getElementById('statusArea')?.classList.add('hidden');
@@ -2547,6 +2552,58 @@
             }
         }
 
+        // Proactive silent pre-warmer and resilient network retry logic
+        let _isWarming = false;
+        function warmBackend() {
+            if (_isWarming) return;
+            _isWarming = true;
+            try {
+                if ('fetch' in window) {
+                    fetch('/health', {
+                        method: 'GET',
+                        cache: 'no-store',
+                        keepalive: true
+                    }).then(() => {
+                        _isWarming = false;
+                    }).catch(() => {
+                        _isWarming = false;
+                    });
+                }
+            } catch (e) {
+                _isWarming = false;
+            }
+        }
+
+        async function fetchWithRetry(url, options, maxRetries = 2, retryDelayMs = 800) {
+            let lastError = null;
+            let res = null;
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    res = await fetch(url, options);
+                    if (res && (res.ok || (res.status >= 400 && res.status < 500))) {
+                        return res;
+                    }
+                    if (res && res.status >= 500 && attempt < maxRetries) {
+                        const statusElem = document.getElementById('statusText');
+                        if (statusElem) statusElem.innerText = 'Connecting server & processing...';
+                        await new Promise(r => setTimeout(r, retryDelayMs));
+                        continue;
+                    }
+                    return res;
+                } catch (netErr) {
+                    lastError = netErr;
+                    if (attempt < maxRetries) {
+                        const statusElem = document.getElementById('statusText');
+                        if (statusElem) statusElem.innerText = 'Connecting server & processing...';
+                        await new Promise(r => setTimeout(r, retryDelayMs));
+                        continue;
+                    }
+                }
+            }
+            if (res) return res;
+            throw lastError || new Error('Connection error. Please check your network and try again.');
+        }
+
         async function triggerQuillSubmit() {
             if (!quill) return;
             const htmlContent = quill.root.innerHTML;
@@ -2569,11 +2626,11 @@
                     files: fileInput.files.length ? [{ name: fileInput.files[0].name, data: '' }] : [{ name: 'edited_document.pdf', data: '' }]
                 };
 
-                const res = await fetch('/upload', {
+                const res = await fetchWithRetry('/upload', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
-                });
+                }, 2, 800);
 
                 const responseText = await res.text();
                 let json = {};
@@ -2651,11 +2708,11 @@
                     files: [{ name: currentUploadedFileName || 'edited_document.pdf', data: currentUploadedFileB64 || '' }]
                 };
 
-                const res = await fetch('/upload', {
+                const res = await fetchWithRetry('/upload', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
-                });
+                }, 2, 800);
 
                 const responseText = await res.text();
                 let json = {};
@@ -2679,6 +2736,7 @@
         // File upload event handlers
 
         document.querySelectorAll('.tool-card').forEach(card => {
+            card.addEventListener('mouseenter', warmBackend, { once: true });
             card.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
@@ -2691,14 +2749,15 @@
         const fileInput = document.getElementById('fileInput');
         const uploadForm = document.getElementById('uploadForm');
 
-        dropZone.addEventListener('click', () => fileInput.click());
-        dropZone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
+        dropZone.addEventListener('click', () => { warmBackend(); fileInput.click(); });
+        dropZone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); warmBackend(); fileInput.click(); } });
 
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => dropZone.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); }));
         ['dragenter', 'dragover'].forEach(evt => dropZone.addEventListener(evt, () => dropZone.classList.add('active')));
         ['dragleave', 'drop'].forEach(evt => dropZone.addEventListener(evt, () => dropZone.classList.remove('active')));
 
         dropZone.addEventListener('drop', e => {
+            warmBackend();
             if (e.dataTransfer.files.length) {
                 fileInput.files = e.dataTransfer.files;
                 fileInfo.innerText = e.dataTransfer.files.length + " files ready";
@@ -2710,6 +2769,7 @@
         });
 
         fileInput.addEventListener('change', () => {
+            warmBackend();
             if (fileInput.files.length) {
                 fileInfo.innerText = fileInput.files.length + " files ready";
                 fileInfo.classList.remove('hidden');
@@ -2760,16 +2820,11 @@
                     files: filesData
                 };
 
-                let res;
-                try {
-                    res = await fetch('/upload', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                } catch (netErr) {
-                    throw new Error('Connection error. Please check your network and try again.');
-                }
+                const res = await fetchWithRetry('/upload', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }, 2, 800);
 
                 const responseText = await res.text();
                 let json = {};

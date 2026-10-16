@@ -183,10 +183,18 @@ def get_flask_app():
         with _FLASK_APP_LOCK:
             if _FLASK_APP is None:
                 from app import app as flask_app
-                flask_app.config['TESTING'] = True
+                flask_app.config['TESTING'] = False
+                flask_app.config['PROPAGATE_EXCEPTIONS'] = False
                 flask_app.config['WTF_CSRF_ENABLED'] = False
+                flask_app.config['RATELIMIT_ENABLED'] = False
                 _FLASK_APP = flask_app
     return _FLASK_APP
+
+# Immediately pre-warm Flask app in background thread upon container boot
+try:
+    threading.Thread(target=get_flask_app, daemon=True).start()
+except Exception:
+    pass
 
 def dispatch_wsgi(flask_app, path, method, headers, query, body_bytes):
     """
@@ -228,11 +236,10 @@ def dispatch_wsgi(flask_app, path, method, headers, query, body_bytes):
             k_upper = k.upper().replace('-', '_')
             if k_upper == 'CONTENT_TYPE':
                 environ['CONTENT_TYPE'] = str(v)
-            elif k_upper == 'CONTENT_LENGTH':
-                environ['CONTENT_LENGTH'] = str(v)
-            elif k_upper != 'HOST':
+            elif k_upper != 'CONTENT_LENGTH' and k_upper != 'HOST':
                 environ[f'HTTP_{k_upper}'] = str(v)
 
+    environ['CONTENT_LENGTH'] = str(len(body_bytes))
     if 'CONTENT_TYPE' not in environ:
         environ['CONTENT_TYPE'] = 'application/json'
 
@@ -395,6 +402,13 @@ Sitemap: https://officialali.dev/sitemap.xml
 
     # Route: GET/HEAD / or /<tool-name> -> Render HTML Website UI INSTANTLY (< 1ms) from RAM cache
     if method in ('GET', 'HEAD') and (path == '/' or path == '/index.html' or clean_path in TOOLS_LIST):
+        # Silently pre-warm Flask backend in background while user views the page
+        if _FLASK_APP is None:
+            try:
+                threading.Thread(target=get_flask_app, daemon=True).start()
+            except Exception:
+                pass
+
         try:
             lookup_key = clean_path if clean_path in TOOLS_LIST else ''
             html_content = get_html_page(lookup_key)
@@ -421,10 +435,18 @@ Sitemap: https://officialali.dev/sitemap.xml
 
     # Route: GET /health
     if path == '/health' or path == '/api/health':
+        flask_app = get_flask_app()
         return res.json({
             "status": "success",
-            "message": "Converter app is running on Appwrite Function!",
+            "message": "Converter app is running and pre-warmed!",
+            "warmed": bool(flask_app is not None),
             "version": "1.0.0"
+        }, 200, {
+            'cache-control': 'no-cache, no-store, must-revalidate',
+            'Connection': 'keep-alive',
+            'Keep-Alive': 'timeout=30, max=100',
+            'Alt-Svc': 'clear',
+            'Access-Control-Allow-Origin': '*'
         })
 
     # Route: Browser Apple Touch Icons & Common Mobile Probes (Prevent 302 redirect loops and socket drops)
@@ -499,11 +521,15 @@ Sitemap: https://officialali.dev/sitemap.xml
             body_bytes=body_bytes
         )
 
-        # Preserve exact Content-Type header from Flask WSGI response
-        if hasattr(res, 'binary') and callable(getattr(res, 'binary')):
-            return res.binary(response_bytes, status_code, resp_headers)
-        elif hasattr(res, 'bytes') and callable(getattr(res, 'bytes')):
-            return res.bytes(response_bytes, status_code, resp_headers)
+        # Strictly preserve binary format for downloads vs UTF-8 text for JSON responses
+        is_binary_download = path.startswith('/download/')
+        if is_binary_download:
+            if hasattr(res, 'binary') and callable(getattr(res, 'binary')):
+                return res.binary(response_bytes, status_code, resp_headers)
+            elif hasattr(res, 'bytes') and callable(getattr(res, 'bytes')):
+                return res.bytes(response_bytes, status_code, resp_headers)
+            else:
+                return res.text(response_bytes.decode('latin1'), status_code, resp_headers)
         else:
             text_response = response_bytes.decode('utf-8', errors='replace')
             return res.text(text_response, status_code, resp_headers)

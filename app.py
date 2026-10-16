@@ -198,6 +198,9 @@ def upload_file():
         except Exception:
             pass
     
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    os.makedirs(app.config['OUTPUT_FOLDER'], exist_ok=True)
+
     unique_batch_id = str(uuid.uuid4())
     output_files = [] # list of tuples: (actual_filename_on_disk, clean_filename_for_zip)
     error_msgs = []
