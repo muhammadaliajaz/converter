@@ -69,6 +69,15 @@ Compresses JPG, PNG, and WEBP images to a specified target file size limit in KB
 ### 17. Convert Image (/convert-image-format)
 Converts images between JPG, PNG, WEBP, and BMP formats while standardizing color space to 32-bit RGBA or 24-bit RGB for 100% OS compatibility.
 
+### 18. Edit PDF (/edit-pdf)
+Visually edits PDF text in-place, stamps text annotations, and rotates PDF pages while preserving the exact original typography, design, and styling.
+
+### 19. Image to Text (/image-to-text)
+Extracts editable text from images, PNG, and JPG files using optical character recognition (OCR) with one-click export to Word (.docx) or Text.
+
+### 20. Image to Excel (/image-to-excel)
+Parses tables, marksheets, receipts, and grid data from image files directly into formatted Microsoft Excel (.xlsx) spreadsheets using AI OCR.
+
 ## Security & Privacy Policy
 
 - Zero Registration: No user registration, accounts, or personal data collection required.

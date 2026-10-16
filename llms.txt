@@ -30,6 +30,9 @@ Smart File Converter (https://officialali.dev/) is a privacy-first web applicati
 - [Translate PDF](https://officialali.dev/translate-pdf): Translate PDF text into English, Spanish, French, German, Arabic, Urdu, and more.
 - [Compress Image](https://officialali.dev/compress-image): Reduce image file size to a target KB limit without quality loss.
 - [Convert Image](https://officialali.dev/convert-image-format): Convert images between JPG, PNG, WEBP, and BMP formats.
+- [Edit PDF](https://officialali.dev/edit-pdf): Visually edit PDF text, add annotations, or rotate pages online with exact layout retention.
+- [Image to Text](https://officialali.dev/image-to-text): Extract text from images, PNG, and JPG using high-accuracy AI OCR.
+- [Image to Excel](https://officialali.dev/image-to-excel): Convert marksheet, table, and document images directly into editable Excel spreadsheets.
 
 ## Optional
 

@@ -109,7 +109,7 @@ TOOLS_LIST = [
     'pdf-to-ppt', 'pdf-to-excel', 'word-to-pdf', 'ppt-to-pdf',
     'excel-to-pdf', 'pdf-to-jpg', 'jpg-to-pdf', 'unlock-pdf',
     'protect-pdf', 'page-numbers', 'translate-pdf', 'compress-image',
-    'convert-image-format', 'edit-pdf'
+    'convert-image-format', 'edit-pdf', 'image-to-text', 'image-to-excel'
 ]
 
 @app.route('/')

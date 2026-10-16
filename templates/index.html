@@ -40,6 +40,10 @@
     <!-- Quill.js Rich Text Editor for Document & PDF Studio -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <!-- Tesseract.js for AI Optical Character Recognition (OCR) -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <!-- SheetJS for In-Browser Editable Excel (.xlsx) Generation -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <!-- Open Graph / Facebook Meta Tags -->
     <meta property="og:type" content="website">
@@ -458,6 +462,26 @@
             <p class="text-xs text-zinc-500 font-normal leading-relaxed">Edit PDF text, replace text, and add elements.</p>
         </div>
 
+        <div id="tool-card-image-to-text" role="button" tabindex="0"
+            aria-label="Image to Text - Extract text from images using OCR."
+            onclick="openWorkspaceById('image-to-text')" class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M14 3h7m-7 4h7m-7 4h4"></path></svg>
+            </div>
+            <h2 id="tool-title-image-to-text" class="text-base font-semibold text-zinc-900 mb-1">Image to Text</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Extract text from photos and PNGs via OCR.</p>
+        </div>
+
+        <div id="tool-card-image-to-excel" role="button" tabindex="0"
+            aria-label="Image to Excel - Extract marksheets and tables from photo to Excel."
+            onclick="openWorkspaceById('image-to-excel')" class="tool-card">
+            <div class="tool-icon-wrapper" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 3h6v6h-6zM15 6h6"></path></svg>
+            </div>
+            <h2 id="tool-title-image-to-excel" class="text-base font-semibold text-zinc-900 mb-1">Image to Excel</h2>
+            <p class="text-xs text-zinc-500 font-normal leading-relaxed">Extract marksheets and tables into Excel.</p>
+        </div>
+
     </main>
 
     <!-- WORKSPACE VIEW -->
@@ -599,6 +623,119 @@
                         <!-- Quill MS Word Style Paper Page Workspace (Hidden by Default) -->
                         <div id="quillPaperPage" class="hidden w-full max-w-[850px]">
                             <div id="quillEditor"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OCR Image to Text & Excel Studio -->
+                <div id="ocrStudioBlock" class="hidden mb-6 w-full">
+                    <!-- Studio Header & Action Bar -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 bg-zinc-900 border border-zinc-800 p-4 rounded-xl mb-4 text-white">
+                        <div class="flex items-center space-x-3">
+                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-md bg-zinc-800 text-emerald-400 font-semibold text-xs border border-zinc-700">OCR</span>
+                            <div>
+                                <h3 class="font-semibold text-sm text-zinc-100 leading-tight" id="ocrStudioTitle">AI Image to Text &amp; Table Scanner</h3>
+                                <p class="text-xs text-zinc-400" id="ocrStudioSubtitle">Extract student marksheets, tables &amp; text into editable format</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <button type="button" onclick="document.getElementById('ocrFileInput').click()" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-md text-xs font-medium transition flex items-center gap-1.5 border border-zinc-700">
+                                <svg class="w-3.5 h-3.5 text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                Choose Photo
+                            </button>
+                            <button type="button" id="ocrCopyBtn" onclick="copyOcrText()" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-md text-xs font-medium transition border border-zinc-700">
+                                Copy Text
+                            </button>
+                            <button type="button" id="ocrDownloadWordBtn" onclick="downloadOcrWord()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-md text-xs font-medium transition flex items-center gap-1">
+                                Download Word
+                            </button>
+                            <button type="button" id="ocrDownloadExcelBtn" onclick="downloadOcrExcel()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-xs font-semibold shadow transition flex items-center gap-1">
+                                Download Excel (.xlsx)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Hidden file input for OCR -->
+                    <input type="file" id="ocrFileInput" accept="image/*" class="hidden" onchange="handleOcrFileSelect(this.files[0])">
+
+                    <!-- OCR Empty State Drop Zone -->
+                    <div id="ocrDropZone" onclick="document.getElementById('ocrFileInput').click()"
+                        class="border-2 border-dashed border-zinc-300 hover:border-zinc-500 rounded-xl p-10 text-center cursor-pointer transition bg-white/70 flex flex-col items-center justify-center min-h-[220px]">
+                        <svg class="w-10 h-10 text-zinc-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <h4 class="text-sm font-semibold text-zinc-900 mb-1" id="ocrDropTitle">Upload Marksheet or Document Photo (PNG, JPG, WEBP)</h4>
+                        <p class="text-xs text-zinc-500 max-w-md">Our high-accuracy AI OCR will scan the image, extract all student names, marks, grades, and columns, and let you edit them directly.</p>
+                    </div>
+
+                    <!-- OCR Scanning Progress Indicator -->
+                    <div id="ocrProgressBlock" class="hidden bg-white border border-zinc-200 rounded-xl p-6 text-center my-4 shadow-sm">
+                        <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 mb-3 animate-spin">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        </div>
+                        <p id="ocrProgressStatus" class="text-sm font-semibold text-zinc-900 mb-1.5">Initializing AI OCR Engine...</p>
+                        <p class="text-xs text-zinc-500 mb-3" id="ocrProgressDetail">Recognizing characters and table grid from photo...</p>
+                        <div class="w-full bg-zinc-100 rounded-full h-2 overflow-hidden max-w-md mx-auto border border-zinc-200">
+                            <div id="ocrProgressBar" class="bg-emerald-600 h-2 rounded-full transition-all duration-200" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- OCR Results Workspace (Visible after scan) -->
+                    <div id="ocrResultBlock" class="hidden mt-4 space-y-4">
+                        <!-- Tab selector: Table View vs Raw Text View -->
+                        <div class="flex items-center justify-between border-b border-zinc-200 pb-3 flex-wrap gap-2">
+                            <div class="flex items-center gap-1 bg-zinc-100 p-1 rounded-lg border border-zinc-200">
+                                <button type="button" id="ocrTableViewBtn" onclick="setOcrMode('table')" class="px-3 py-1 text-xs font-semibold rounded-md bg-white text-zinc-900 shadow-sm transition">
+                                    Table / Marksheet View
+                                </button>
+                                <button type="button" id="ocrTextViewBtn" onclick="setOcrMode('text')" class="px-3 py-1 text-xs font-medium rounded-md text-zinc-600 hover:text-zinc-900 transition">
+                                    Raw Text View
+                                </button>
+                            </div>
+                            <span class="text-xs text-zinc-500 italic">Tip: Click any cell or text below to directly edit names, numbers, or marks!</span>
+                        </div>
+
+                        <!-- 2 Column Layout: Image on left, Editable Table/Text on right -->
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                            <!-- Left: Uploaded Photo Preview -->
+                            <div class="lg:col-span-4 bg-zinc-50 border border-zinc-200 rounded-xl p-3 flex flex-col items-center">
+                                <div class="w-full flex items-center justify-between mb-2">
+                                    <span class="text-xs font-semibold text-zinc-700">Original Photo</span>
+                                    <button type="button" onclick="document.getElementById('ocrFileInput').click()" class="text-[11px] text-zinc-500 hover:text-zinc-900 underline">Change Photo</button>
+                                </div>
+                                <div class="max-h-[350px] overflow-auto rounded-lg border border-zinc-200 bg-white w-full flex items-center justify-center p-1">
+                                    <img id="ocrImagePreview" src="" alt="Uploaded Document" class="max-w-full h-auto object-contain rounded">
+                                </div>
+                            </div>
+
+                            <!-- Right: Editable Table Grid or Text -->
+                            <div class="lg:col-span-8 bg-white border border-zinc-200 rounded-xl p-4 shadow-sm flex flex-col">
+                                <!-- Editable Table Grid -->
+                                <div id="ocrTableContainer" class="w-full overflow-x-auto max-h-[360px] border border-zinc-200 rounded-lg">
+                                    <table id="ocrDataTable" class="w-full text-xs text-left border-collapse">
+                                        <!-- Populated dynamically -->
+                                    </table>
+                                </div>
+
+                                <!-- Editable Raw Text Area -->
+                                <div id="ocrTextContainer" class="hidden w-full">
+                                    <textarea id="ocrRawTextArea" rows="12" class="w-full p-3 text-xs font-mono border border-zinc-200 rounded-lg outline-none focus:ring-2 focus:ring-zinc-900 bg-zinc-50/50 leading-relaxed" placeholder="Extracted text will appear here..."></textarea>
+                                </div>
+
+                                <!-- Bottom Quick Action Row -->
+                                <div class="flex items-center justify-between mt-3 pt-3 border-t border-zinc-100 flex-wrap gap-2">
+                                    <button type="button" onclick="addOcrTableRow()" class="text-xs text-zinc-600 hover:text-zinc-900 font-medium flex items-center gap-1">
+                                        + Add Row
+                                    </button>
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" onclick="downloadOcrExcel()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg text-xs shadow-sm transition flex items-center gap-1.5">
+                                            Export Excel (.xlsx)
+                                        </button>
+                                        <button type="button" onclick="downloadOcrWord()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-xs shadow-sm transition flex items-center gap-1.5">
+                                            Export Word (.doc)
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -835,7 +972,9 @@
             'translate-pdf': `<svg class="w-8 h-8 text-zinc-900" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>`,
             'compress-image': `<svg class="w-8 h-8 text-zinc-900" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>`,
             'convert-image-format': `<svg class="w-8 h-8 text-zinc-900" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>`,
-            'edit-pdf': `<svg class="w-8 h-8 text-zinc-900" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>`
+            'edit-pdf': `<svg class="w-8 h-8 text-zinc-900" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>`,
+            'image-to-text': `<svg class="w-8 h-8 text-zinc-900" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M14 3h7m-7 4h7m-7 4h4"></path></svg>`,
+            'image-to-excel': `<svg class="w-8 h-8 text-zinc-900" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 3h6v6h-6zM15 6h6"></path></svg>`
         };
 
         const toolsData = {
@@ -856,7 +995,9 @@
             'translate-pdf': { name: 'Translate PDF', icon: svgIcons['translate-pdf'] },
             'compress-image': { name: 'Compress Image', icon: svgIcons['compress-image'] },
             'convert-image-format': { name: 'Convert Image', icon: svgIcons['convert-image-format'] },
-            'edit-pdf': { name: 'Edit PDF Studio', icon: svgIcons['edit-pdf'] }
+            'edit-pdf': { name: 'Edit PDF Studio', icon: svgIcons['edit-pdf'] },
+            'image-to-text': { name: 'Image to Text', icon: svgIcons['image-to-text'] },
+            'image-to-excel': { name: 'Image to Excel', icon: svgIcons['image-to-excel'] }
         };
 
         const gridContainer = document.getElementById('gridContainer');
@@ -884,7 +1025,9 @@
             'translate-pdf': { title: 'Translate PDF Online Free | Smart File Converter', desc: 'Translate PDF document text into English, Spanish, French, German, Chinese, Arabic, or Hindi online for free.' },
             'compress-image': { title: 'Compress Image Online Free | Smart File Converter', desc: 'Compress JPG, PNG, and WEBP images online to target KB size for free without losing image quality.' },
             'convert-image-format': { title: 'Convert Image Format Online | Smart File Converter', desc: 'Convert images between JPG, PNG, WEBP, and BMP formats online for free.' },
-            'edit-pdf': { title: 'Edit PDF Online Free | Smart File Converter', desc: 'Edit PDF text directly, replace text, add text annotations, or rotate PDF pages online for free with exact layout retention.' }
+            'edit-pdf': { title: 'Edit PDF Online Free | Smart File Converter', desc: 'Edit PDF text directly, replace text, add text annotations, or rotate PDF pages online for free with exact layout retention.' },
+            'image-to-text': { title: 'Image to Text Converter Free | Smart File Converter', desc: 'Extract text from images, PNG, and JPG online for free using AI OCR. Convert photos to editable Word or Text instantly.' },
+            'image-to-excel': { title: 'Image to Excel Converter Free | Smart File Converter', desc: 'Convert marksheet, table, and document images to Excel (XLSX) online for free using OCR. Extract photo data into spreadsheet cells.' }
         };
 
         function toggleEditPdfFields(val) {
@@ -938,7 +1081,7 @@
             document.getElementById('statusArea').classList.add('hidden');
             document.getElementById('convertBtn').disabled = false;
 
-            ['passwordBlock', 'languageBlock', 'compressPdfBlock', 'compressImgBlock', 'imgFormatBlock', 'editPdfBlock'].forEach(id => {
+            ['passwordBlock', 'languageBlock', 'compressPdfBlock', 'compressImgBlock', 'imgFormatBlock', 'editPdfBlock', 'ocrStudioBlock'].forEach(id => {
                 document.getElementById(id)?.classList.add('hidden');
             });
 
@@ -955,6 +1098,14 @@
                 document.getElementById('dropZone')?.classList.add('hidden');
                 document.getElementById('convertBtn')?.classList.add('hidden');
                 showSettings = true;
+            } else if (toolId === 'image-to-text' || toolId === 'image-to-excel') {
+                workspaceContainer.classList.remove('max-w-2xl');
+                workspaceContainer.classList.add('max-w-5xl');
+                document.getElementById('ocrStudioBlock').classList.remove('hidden');
+                document.getElementById('dropZone')?.classList.add('hidden');
+                document.getElementById('convertBtn')?.classList.add('hidden');
+                showSettings = true;
+                initOcrStudio(toolId);
             } else {
                 workspaceContainer.classList.remove('max-w-5xl');
                 workspaceContainer.classList.add('max-w-2xl');
@@ -1592,6 +1743,312 @@
                 document.getElementById('convertBtn').disabled = false;
             }
         });
+
+        // ==========================================
+        // AI OCR Image to Text & Excel Studio Logic
+        // ==========================================
+        let currentOcrText = "";
+        let currentOcrRows = [];
+        let currentOcrTool = "image-to-excel";
+
+        let ocrDropZoneInitialized = false;
+        function initOcrStudio(toolId) {
+            currentOcrTool = toolId;
+            const isExcel = (toolId === 'image-to-excel');
+            const studioTitle = document.getElementById('ocrStudioTitle');
+            const studioSubtitle = document.getElementById('ocrStudioSubtitle');
+            const dropTitle = document.getElementById('ocrDropTitle');
+            
+            if (studioTitle) studioTitle.innerText = isExcel ? 'AI Marksheet & Table to Excel' : 'AI Image to Text & Word OCR';
+            if (studioSubtitle) studioSubtitle.innerText = isExcel ? 'Extract student marksheets, tables & data into editable Excel (.xlsx)' : 'Extract text from photos and PNGs into editable Word or Text';
+            if (dropTitle) dropTitle.innerText = isExcel ? 'Upload Marksheet or Table Photo (PNG, JPG, WEBP)' : 'Upload Document or Text Photo (PNG, JPG, WEBP)';
+            
+            const ocrDropZone = document.getElementById('ocrDropZone');
+            if (ocrDropZone && !ocrDropZoneInitialized) {
+                ocrDropZoneInitialized = true;
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
+                    ocrDropZone.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); });
+                });
+                ['dragenter', 'dragover'].forEach(evt => {
+                    ocrDropZone.addEventListener(evt, () => ocrDropZone.classList.add('border-zinc-900', 'bg-zinc-50'));
+                });
+                ['dragleave', 'drop'].forEach(evt => {
+                    ocrDropZone.addEventListener(evt, () => ocrDropZone.classList.remove('border-zinc-900', 'bg-zinc-50'));
+                });
+                ocrDropZone.addEventListener('drop', e => {
+                    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+                        handleOcrFileSelect(e.dataTransfer.files[0]);
+                    }
+                });
+            }
+
+            clearOcrStudio();
+            setOcrMode(isExcel ? 'table' : 'text');
+        }
+
+        function clearOcrStudio() {
+            currentOcrText = "";
+            currentOcrRows = [];
+            const dropZone = document.getElementById('ocrDropZone');
+            const progressBlock = document.getElementById('ocrProgressBlock');
+            const resultBlock = document.getElementById('ocrResultBlock');
+            const fileInput = document.getElementById('ocrFileInput');
+            const imgPreview = document.getElementById('ocrImagePreview');
+            const rawText = document.getElementById('ocrRawTextArea');
+            const table = document.getElementById('ocrDataTable');
+
+            if (dropZone) dropZone.classList.remove('hidden');
+            if (progressBlock) progressBlock.classList.add('hidden');
+            if (resultBlock) resultBlock.classList.add('hidden');
+            if (fileInput) fileInput.value = '';
+            if (imgPreview) imgPreview.src = '';
+            if (rawText) rawText.value = '';
+            if (table) table.innerHTML = '';
+        }
+
+        function handleOcrFileSelect(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const dataUrl = e.target.result;
+                const imgPreview = document.getElementById('ocrImagePreview');
+                const dropZone = document.getElementById('ocrDropZone');
+                const progressBlock = document.getElementById('ocrProgressBlock');
+                const resultBlock = document.getElementById('ocrResultBlock');
+                
+                if (imgPreview) imgPreview.src = dataUrl;
+                if (dropZone) dropZone.classList.add('hidden');
+                if (progressBlock) progressBlock.classList.remove('hidden');
+                if (resultBlock) resultBlock.classList.add('hidden');
+                
+                runTesseractOcr(dataUrl);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function runTesseractOcr(imageSource) {
+            const progressBar = document.getElementById('ocrProgressBar');
+            const statusText = document.getElementById('ocrProgressStatus');
+            const detailText = document.getElementById('ocrProgressDetail');
+            
+            try {
+                if (typeof Tesseract === 'undefined') {
+                    throw new Error("OCR library is still loading. Please check your internet connection and try again.");
+                }
+                if (statusText) statusText.innerText = "Scanning characters & table lines...";
+                if (progressBar) progressBar.style.width = '15%';
+
+                const worker = await Tesseract.createWorker('eng', 1, {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            const pct = Math.max(15, Math.round((m.progress || 0) * 100));
+                            if (progressBar) progressBar.style.width = pct + '%';
+                            if (statusText) statusText.innerText = `Recognizing Text & Tables: ${pct}%`;
+                            if (detailText) detailText.innerText = 'Scanning characters, student names, and grade columns...';
+                        }
+                    }
+                });
+
+                const ret = await worker.recognize(imageSource);
+                await worker.terminate();
+
+                currentOcrText = ret.data.text || "";
+                parseOcrTextToGrid(currentOcrText);
+
+                const progressBlock = document.getElementById('ocrProgressBlock');
+                const resultBlock = document.getElementById('ocrResultBlock');
+                if (progressBlock) progressBlock.classList.add('hidden');
+                if (resultBlock) resultBlock.classList.remove('hidden');
+            } catch (err) {
+                console.error("OCR error:", err);
+                if (statusText) statusText.innerText = "OCR Scan Notice: " + err.message;
+            }
+        }
+
+        function parseOcrTextToGrid(rawText) {
+            const rawTextArea = document.getElementById('ocrRawTextArea');
+            if (rawTextArea) rawTextArea.value = rawText;
+
+            const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            currentOcrRows = [];
+
+            lines.forEach(line => {
+                let cols = [];
+                if (line.includes('\t')) {
+                    cols = line.split('\t');
+                } else if (line.includes('|')) {
+                    cols = line.split('|').map(c => c.trim()).filter(c => c.length > 0);
+                } else if (/\s{2,}/.test(line)) {
+                    cols = line.split(/\s{2,}/);
+                } else if (line.includes(',')) {
+                    cols = line.split(',');
+                } else {
+                    cols = line.split(/\s+/);
+                }
+                if (cols.length > 0) {
+                    currentOcrRows.push(cols.map(c => c.trim()));
+                }
+            });
+
+            if (currentOcrRows.length === 0) {
+                currentOcrRows = [["Student Name / Data", "Marks", "Status"], ["Example", "100", "Pass"]];
+            }
+            renderOcrTable();
+        }
+
+        function renderOcrTable() {
+            const table = document.getElementById('ocrDataTable');
+            if (!table) return;
+            table.innerHTML = '';
+
+            if (currentOcrRows.length === 0) return;
+
+            let maxCols = 0;
+            currentOcrRows.forEach(r => { if (r.length > maxCols) maxCols = r.length; });
+
+            // Table Header
+            const thead = document.createElement('thead');
+            thead.className = 'bg-zinc-100 text-zinc-800 font-semibold border-b border-zinc-200 text-xs';
+            const headerRow = document.createElement('tr');
+            for (let c = 0; c < maxCols; c++) {
+                const th = document.createElement('th');
+                th.className = 'p-2.5 border border-zinc-200 bg-zinc-100 text-zinc-900 font-semibold';
+                th.contentEditable = 'true';
+                th.innerText = (currentOcrRows[0] && currentOcrRows[0][c]) ? currentOcrRows[0][c] : `Col ${c + 1}`;
+                headerRow.appendChild(th);
+            }
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // Table Body
+            const tbody = document.createElement('tbody');
+            const startIdx = (currentOcrRows.length > 1) ? 1 : 0;
+            for (let r = startIdx; r < currentOcrRows.length; r++) {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-zinc-50 border-b border-zinc-100';
+                for (let c = 0; c < maxCols; c++) {
+                    const td = document.createElement('td');
+                    td.className = 'p-2.5 border border-zinc-200 text-zinc-800 outline-none focus:bg-amber-50 focus:ring-1 focus:ring-zinc-900 transition-colors';
+                    td.contentEditable = 'true';
+                    td.innerText = (currentOcrRows[r] && currentOcrRows[r][c] !== undefined) ? currentOcrRows[r][c] : '';
+                    tr.appendChild(td);
+                }
+                tbody.appendChild(tr);
+            }
+            table.appendChild(tbody);
+        }
+
+        function addOcrTableRow() {
+            const table = document.getElementById('ocrDataTable');
+            if (!table) return;
+            const tbody = table.querySelector('tbody');
+            if (!tbody) return;
+            const headerThs = table.querySelectorAll('thead th');
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-zinc-50 border-b border-zinc-100';
+            headerThs.forEach(() => {
+                const td = document.createElement('td');
+                td.className = 'p-2.5 border border-zinc-200 text-zinc-800 outline-none focus:bg-amber-50 focus:ring-1 focus:ring-zinc-900';
+                td.contentEditable = 'true';
+                td.innerText = '';
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        }
+
+        function setOcrMode(mode) {
+            const tblBtn = document.getElementById('ocrTableViewBtn');
+            const txtBtn = document.getElementById('ocrTextViewBtn');
+            const tblCont = document.getElementById('ocrTableContainer');
+            const txtCont = document.getElementById('ocrTextContainer');
+            if (mode === 'table') {
+                if (tblCont) tblCont.classList.remove('hidden');
+                if (txtCont) txtCont.classList.add('hidden');
+                if (tblBtn) tblBtn.className = 'px-3 py-1 text-xs font-semibold rounded-md bg-white text-zinc-900 shadow-sm transition';
+                if (txtBtn) txtBtn.className = 'px-3 py-1 text-xs font-medium rounded-md text-zinc-600 hover:text-zinc-900 transition';
+            } else {
+                if (tblCont) tblCont.classList.add('hidden');
+                if (txtCont) txtCont.classList.remove('hidden');
+                if (txtBtn) txtBtn.className = 'px-3 py-1 text-xs font-semibold rounded-md bg-white text-zinc-900 shadow-sm transition';
+                if (tblBtn) tblBtn.className = 'px-3 py-1 text-xs font-medium rounded-md text-zinc-600 hover:text-zinc-900 transition';
+            }
+        }
+
+        function getTableDataAsArray() {
+            const table = document.getElementById('ocrDataTable');
+            const rows = [];
+            if (!table) return rows;
+            table.querySelectorAll('tr').forEach(tr => {
+                const row = [];
+                tr.querySelectorAll('th, td').forEach(cell => {
+                    row.push(cell.innerText.trim());
+                });
+                if (row.length > 0) rows.push(row);
+            });
+            return rows;
+        }
+
+        function downloadOcrExcel() {
+            if (typeof XLSX === 'undefined') {
+                alert("Excel generator library is loading, please wait a moment...");
+                return;
+            }
+            const data = getTableDataAsArray();
+            if (data.length === 0) {
+                alert("Please scan an image first!");
+                return;
+            }
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Marksheet");
+            XLSX.writeFile(wb, "marksheet_data.xlsx");
+        }
+
+        function downloadOcrWord() {
+            const data = getTableDataAsArray();
+            if (data.length === 0) {
+                alert("Please scan an image first!");
+                return;
+            }
+            let htmlContent = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>";
+            htmlContent += "<head><meta charset='utf-8'><title>Marksheet Document</title><style>table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; } th, td { border: 1px solid #d1d5db; padding: 8px 12px; text-align: left; } th { background-color: #f3f4f6; font-weight: bold; }</style></head>";
+            htmlContent += "<body>";
+            htmlContent += "<h2>Scanned Document &amp; Marksheet</h2>";
+            htmlContent += "<table>";
+            data.forEach((row, idx) => {
+                htmlContent += "<tr>";
+                row.forEach(cell => {
+                    if (idx === 0) {
+                        htmlContent += `<th>${cell}</th>`;
+                    } else {
+                        htmlContent += `<td>${cell}</td>`;
+                    }
+                });
+                htmlContent += "</tr>";
+            });
+            htmlContent += "</table></body></html>";
+
+            const blob = new Blob([htmlContent], { type: 'application/msword;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = "marksheet_document.doc";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function copyOcrText() {
+            const rawText = document.getElementById('ocrRawTextArea')?.value || "";
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(rawText);
+                const copyBtn = document.getElementById('ocrCopyBtn');
+                if (copyBtn) {
+                    const orig = copyBtn.innerText;
+                    copyBtn.innerText = "Copied!";
+                    setTimeout(() => { copyBtn.innerText = orig; }, 2000);
+                }
+            }
+        }
     </script>
 </body>
 

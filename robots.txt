@@ -21,6 +21,8 @@ Allow: /translate-pdf
 Allow: /compress-image
 Allow: /convert-image-format
 Allow: /edit-pdf
+Allow: /image-to-text
+Allow: /image-to-excel
 Disallow: /download/
 Disallow: /upload
 

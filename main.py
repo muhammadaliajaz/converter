@@ -19,7 +19,7 @@ TOOLS_LIST = [
     'pdf-to-ppt', 'pdf-to-excel', 'word-to-pdf', 'ppt-to-pdf',
     'excel-to-pdf', 'pdf-to-jpg', 'jpg-to-pdf', 'unlock-pdf',
     'protect-pdf', 'page-numbers', 'translate-pdf', 'compress-image',
-    'convert-image-format', 'edit-pdf'
+    'convert-image-format', 'edit-pdf', 'image-to-text', 'image-to-excel'
 ]
 
 TOOLS_SEO_DATA = {
@@ -94,6 +94,14 @@ TOOLS_SEO_DATA = {
     'edit-pdf': {
         'title': 'Edit PDF Online Free | Smart File Converter',
         'desc': 'Edit PDF text directly, replace text, add text annotations, or rotate PDF pages online for free with exact layout retention.'
+    },
+    'image-to-text': {
+        'title': 'Image to Text Converter Free | Smart File Converter',
+        'desc': 'Extract text from images, PNG, and JPG online for free using AI OCR. Convert photos to editable Word or Text instantly.'
+    },
+    'image-to-excel': {
+        'title': 'Image to Excel Converter Free | Smart File Converter',
+        'desc': 'Convert marksheet, table, and document images to Excel (XLSX) online for free using OCR. Extract photo data into spreadsheet cells.'
     }
 }
 
@@ -303,6 +311,8 @@ Allow: /translate-pdf
 Allow: /compress-image
 Allow: /convert-image-format
 Allow: /edit-pdf
+Allow: /image-to-text
+Allow: /image-to-excel
 Disallow: /download/
 Disallow: /upload
 
