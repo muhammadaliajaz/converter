@@ -689,9 +689,6 @@ def parse_pdf_for_edit():
 
 @app.after_request
 def apply_connection_and_security_headers(response):
-    response.headers['Alt-Svc'] = 'clear'
-    response.headers['Connection'] = 'keep-alive'
-    response.headers['Keep-Alive'] = 'timeout=30, max=100'
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
     response.headers['X-XSS-Protection'] = '1; mode=block'

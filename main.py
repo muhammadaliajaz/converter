@@ -256,13 +256,17 @@ def dispatch_wsgi(flask_app, path, method, headers, query, body_bytes):
     response_chunks = flask_app(environ, start_response)
     response_bytes = b''.join(response_chunks)
     
-    resp_headers = {k: v for k, v in headers_box if k.lower() != 'content-length'}
-    resp_headers['Content-Length'] = str(len(response_bytes))
+    resp_headers = {}
+    for k, v in headers_box:
+        if k.lower() == 'content-length':
+            continue
+        resp_headers[k] = v
+        if k.lower() == 'content-type':
+            resp_headers['content-type'] = v
+
+    resp_headers['content-length'] = str(len(response_bytes))
     resp_headers['Access-Control-Allow-Origin'] = '*'
     resp_headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains; preload'
-    resp_headers['Alt-Svc'] = 'clear'
-    resp_headers['Connection'] = 'keep-alive'
-    resp_headers['Keep-Alive'] = 'timeout=30, max=100'
 
     return status_code_box[0], resp_headers, response_bytes
 
@@ -421,9 +425,6 @@ Sitemap: https://officialali.dev/sitemap.xml
                     'cache-control': 'no-cache, no-store, must-revalidate, max-age=0, s-maxage=0',
                     'pragma': 'no-cache',
                     'expires': '0',
-                    'Alt-Svc': 'clear',
-                    'Connection': 'keep-alive',
-                    'Keep-Alive': 'timeout=30, max=100',
                     'Access-Control-Allow-Origin': '*'
                 })
         except Exception as e:
@@ -443,9 +444,6 @@ Sitemap: https://officialali.dev/sitemap.xml
             "version": "1.0.0"
         }, 200, {
             'cache-control': 'no-cache, no-store, must-revalidate',
-            'Connection': 'keep-alive',
-            'Keep-Alive': 'timeout=30, max=100',
-            'Alt-Svc': 'clear',
             'Access-Control-Allow-Origin': '*'
         })
 
@@ -459,8 +457,6 @@ Sitemap: https://officialali.dev/sitemap.xml
         return res.text('', 204, {
             'content-type': mime,
             'cache-control': 'public, max-age=604800',
-            'Alt-Svc': 'clear',
-            'Connection': 'keep-alive',
             'Access-Control-Allow-Origin': '*'
         })
 
